@@ -5,7 +5,7 @@ import BackgroundSource from '@images/title_bg.png'
 import Button, {ButtonsWhite} from '@components/Button'
 import SearchBar from '@components/SeachBar'
 import Card from '@components/Card'
-import {useGetMultiSessionData} from '@state/sessionData/hooks'
+import {useGetMultiSessionData} from '@state/singleToken/hooks'
 import { useSelector } from 'react-redux'
 import {AppState} from '@state/index'
 import Loader from 'react-loader'
@@ -57,11 +57,11 @@ const Home: React.FC = () => {
     const getMultiSessionData = useGetMultiSessionData()
     const multiSessionData = useSelector<AppState, AppState['sessionData']['multiSessionData']>(state => state.sessionData.multiSessionData)
     const [searchValue, setSearchValue] = useState('')
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         if (multiSessionData !== null) {
-            setIsLoading(false)
+            //setIsLoading(false)
         }
     }, [multiSessionData])
 

@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
 import { createAction } from '@reduxjs/toolkit'
 import application from './application/reducer'
-import sessionData from './sessionData/reducer'
+import sessionData from './singleToken/reducer'
 
 const PERSISTED_KEYS: string[] = []
 

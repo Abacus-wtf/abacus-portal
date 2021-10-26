@@ -5,7 +5,7 @@ const path = require(`path`)
 module.exports = {
   siteMetadata: {
     title: `Abacus Protocol Portal`,
-    description: ``,
+    description: `NFT Valuation Tool`,
     author: {
       name: 'Abacus Team'
     }
@@ -46,8 +46,6 @@ module.exports = {
         showSpinner: true
       }
     },
-
-
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-typescript`,
