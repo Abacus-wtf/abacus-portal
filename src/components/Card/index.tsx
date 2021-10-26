@@ -5,7 +5,7 @@ import {User} from 'react-feather'
 import EthSymbol from '@images/eth_symbol.svg'
 import {Text} from '@components/global.styles'
 import Link from 'gatsby-link'
-import {SessionData} from '@state/singleToken/reducer'
+import {SessionData} from '@state/sessionData/reducer'
 
 const CardContainer = styled.div`
   width: 100%;
