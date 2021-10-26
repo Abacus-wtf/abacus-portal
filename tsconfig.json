@@ -21,6 +21,12 @@
         "jsx": "preserve",
         "baseUrl": "./src",
         "paths": {
+            "@state/*": [
+                "state/*"
+            ],
+            "@images/*": [
+                "images/*"
+            ],
             "@components/*": [
                 "components/*"
             ],

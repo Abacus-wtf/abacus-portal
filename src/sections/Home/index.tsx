@@ -1,10 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
 import {Title, Subheader} from '@components/global.styles'
-import BackgroundSource from '../../images/title_bg.png'
+import BackgroundSource from '@images/title_bg.png'
 import Button, {ButtonsWhite} from '@components/Button'
 import SearchBar from '@components/SeachBar'
 import Card from '@components/Card'
+import {useGetMultiSessionData} from '@state/sessionData/hooks'
+import { useSelector } from 'react-redux'
+import {AppState} from '@state/index'
+import Loader from 'react-loader'
+import _ from 'lodash';
 
 const BackgroundIMG = styled.img.attrs({
     src: BackgroundSource
@@ -15,6 +20,7 @@ const BackgroundIMG = styled.img.attrs({
     opacity: 0.4;
     height: 450px;
     z-index: -1;
+    top: 0;
 `
 
 const HomeContainer = styled.div`
@@ -30,6 +36,7 @@ const HeaderBar = styled.div`
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
+    margin-bottom: 45px;
 `
 
 const HeaderBarContainer = styled.div`
@@ -40,12 +47,28 @@ const HeaderBarContainer = styled.div`
 `
 
 const CardContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 20px;
+    row-gap: 40px;
 `
 
 const Home: React.FC = () => {
+    const getMultiSessionData = useGetMultiSessionData()
+    const multiSessionData = useSelector<AppState, AppState['sessionData']['multiSessionData']>(state => state.sessionData.multiSessionData)
     const [searchValue, setSearchValue] = useState('')
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        if (multiSessionData !== null) {
+            setIsLoading(false)
+        }
+    }, [multiSessionData])
+
+    useEffect(() => {
+        getMultiSessionData()
+    }, [])
+
     return (
         <HomeContainer>
             <BackgroundIMG />
@@ -64,8 +87,16 @@ const Home: React.FC = () => {
                     <Button>Create Session</Button>
                 </HeaderBarContainer>
             </HeaderBar>
-            <CardContainer>
-            </CardContainer>
+            {isLoading
+                ? 
+                    <HomeContainer style={{alignItems: 'center'}}>
+                        <Loader />
+                    </HomeContainer>
+                : 
+                    <CardContainer>
+                        {_.map(multiSessionData, (i) => <Card {...i}/>)}
+                    </CardContainer>
+            }
         </HomeContainer>
     )
 }

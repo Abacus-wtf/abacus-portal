@@ -12,7 +12,7 @@ const StyledContainer = styled(Container)`
 
 const RowContainer = styled(Row)`
   flex-wrap: inherit;
-  padding: 45px 80px;
+  padding: 65px 80px;
 `
 
 const GlobalLayout: React.FC = (props: any) => {

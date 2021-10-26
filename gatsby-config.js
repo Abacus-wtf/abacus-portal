@@ -12,6 +12,7 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-lodash`,
     {
       resolve: 'gatsby-plugin-generate-types',
       options: {
@@ -28,7 +29,6 @@ module.exports = {
         icon: `src/images/logo-gatsby.png`
       }
     },
-
     {
       resolve: `gatsby-source-filesystem`,
       options: {
