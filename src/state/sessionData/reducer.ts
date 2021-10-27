@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
 import {
-  getMultipleSessionData
+  getMultipleSessionData,
+  getCurrentSessionData
 } from './actions'
 import _ from 'lodash'
 
@@ -13,19 +14,25 @@ export interface SessionData {
   nftName: string
   address: string
   tokenId: string
+  owner: string
 }
 
 interface SessionDataState {
   multiSessionData: SessionData[] | null
+  currentSessionData: SessionData | null
 }
 
 export const initialState: SessionDataState = {
-  multiSessionData: null
+  multiSessionData: null,
+  currentSessionData: null
 }
 
 export default createReducer(initialState, builder =>
   builder
     .addCase(getMultipleSessionData, (state, action) => {
       state.multiSessionData = action.payload
+    })
+    .addCase(getCurrentSessionData, (state, action) => {
+      state.currentSessionData = action.payload
     })
 )

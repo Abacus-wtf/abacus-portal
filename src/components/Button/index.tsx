@@ -20,7 +20,7 @@ interface IProps {
 
 const Buttons = styled(Button)`
   background-color: ${theme.colors.accent} !important;
-  border-radius: 53px !important;
+  border-radius: 53px;
   color: ${theme.colors.bg1};
   transition: 0.3s;
   opacity: 1.0;
@@ -28,6 +28,7 @@ const Buttons = styled(Button)`
   font-weight: 500;
   border: none;
   padding: 11px 16px;
+  width: fit-content;
   min-width: fit-content;
 
   &:hover {

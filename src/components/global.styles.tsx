@@ -5,6 +5,7 @@ import { Col } from 'shards-react';
 export const Text = styled.span`
     color: ${theme.colors.text1};
     text-align: center;
+    font-weight: normal;
 `;
 
 export const SubText = styled.span`
@@ -27,6 +28,10 @@ export const UniversalContainer = styled.div`
     width: 100%;
     height: 100%;
     padding-bottom: 0px;
+`
+
+export const SmallUniversalContainer = styled(UniversalContainer)`
+    max-width: 1100px;
 `
 
 export const Title = styled.h2`
@@ -68,4 +73,20 @@ export const CategoryButton = styled.div<{active: boolean}>`
             opacity: 1.0;
         }
     `}
+`
+
+export const ImageContainer = styled.div<{src: string}>`
+  width: 100%;
+  height: 100%;
+  border: 1px solid #C3C8D7;
+  background-image: url("${({src}) => src}");
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 7px;
+  background-position: center;
+  background-color: black;
+  border-radius: 6px;
 `

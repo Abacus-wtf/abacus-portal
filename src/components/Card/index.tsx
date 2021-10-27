@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Countdown from 'react-countdown';
 import {User} from 'react-feather'
 import EthSymbol from '@images/eth_symbol.svg'
-import {Text} from '@components/global.styles'
+import {Text, ImageContainer} from '@components/global.styles'
 import Link from 'gatsby-link'
 import {SessionData} from '@state/sessionData/reducer'
 
@@ -21,22 +21,6 @@ const CardContainer = styled.div`
   &:hover {
     opacity: 0.6;
   }
-`
-
-const ImageContainer = styled.div<{src: string}>`
-  width: 100%;
-  height: 100%;
-  border: 1px solid #C3C8D7;
-  background-image: url("${({src}) => src}");
-  background-size: contain;
-  background-repeat: no-repeat;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 7px;
-  background-position: center;
-  background-color: black;
-  border-radius: 6px;
 `
 
 const MiniText = styled.div`
@@ -90,7 +74,7 @@ const EthText = styled(BoldText)`
 
 export default (props: SessionData) => {
   return (
-    <CardContainer as={Link} to={`/session/${props.address}/${props.tokenId}`}>
+    <CardContainer as={Link} to={`/current-session?address=${props.address}&tokenId=${props.tokenId}`}>
       <ImageContainer src={props.img}>
         <MiniText>
           <Countdown
@@ -113,7 +97,7 @@ export default (props: SessionData) => {
           <EthText><img style={{height: 15}} src={EthSymbol} /> {props.totalStaked}</EthText>
         </TextContainer>
         <TextContainer>
-          <SubText>{props.nftName}</SubText>
+          <SubText>{props.title}</SubText>
           <SubText>Total Staked</SubText>
         </TextContainer>
       </OuterTextContainer>
