@@ -1,5 +1,6 @@
 const sizes = {
     tablet: '1200px',
+    splitCenter: '885px',
     phone: '600px',
 };
 
@@ -17,6 +18,7 @@ export const theme = {
     },
 
     media: {
+        splitCenter: `(max-width: ${sizes.splitCenter})`,
         tablet: `(max-width: ${sizes.tablet})`,
         phone: `(max-width: ${sizes.phone})`,
     },

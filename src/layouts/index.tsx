@@ -14,6 +14,10 @@ const RowContainer = styled(Row)`
   flex-wrap: inherit;
   padding: 65px 80px;
   justify-content: center;
+
+  @media ${({theme}) => theme.media.tablet} {
+    width: 100%;
+  }
 `
 
 const GlobalLayout: React.FC = (props: any) => {

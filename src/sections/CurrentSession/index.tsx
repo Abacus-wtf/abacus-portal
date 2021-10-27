@@ -23,6 +23,10 @@ const SplitContainer = styled.div`
   grid-template-columns: 4fr 3fr;
   grid-gap: 40px;
   width: 100%;
+  
+  @media ${({theme}) => theme.media.splitCenter} {
+    grid-template-columns: 1fr;
+  }
 `
 
 const VerticalContainer = styled.div`
