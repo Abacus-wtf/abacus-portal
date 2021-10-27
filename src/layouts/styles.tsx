@@ -7,6 +7,10 @@ export const GlobalStyles = createGlobalStyle`
     padding: 0;
   }
   
+  .list-group-item {
+    margin-bottom: 0px;
+  }
+
   body {
     background-color: ${theme.colors.bg1};
     height: 100vh;

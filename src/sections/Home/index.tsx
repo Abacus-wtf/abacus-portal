@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
-import {Title, Subheader} from '@components/global.styles'
+import {Title, Subheader, UniversalContainer} from '@components/global.styles'
 import BackgroundSource from '@images/title_bg.png'
 import Button, {ButtonsWhite} from '@components/Button'
 import SearchBar from '@components/SeachBar'
@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux'
 import {AppState} from '@state/index'
 import Loader from 'react-loader'
 import _ from 'lodash';
+import Link from 'gatsby-link'
 
 const BackgroundIMG = styled.img.attrs({
     src: BackgroundSource
@@ -21,14 +22,6 @@ const BackgroundIMG = styled.img.attrs({
     height: 450px;
     z-index: -1;
     top: 0;
-`
-
-const HomeContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    padding-bottom: 0px;
 `
 
 const HeaderBar = styled.div`
@@ -70,7 +63,7 @@ const Home: React.FC = () => {
     }, [])
 
     return (
-        <HomeContainer>
+        <UniversalContainer>
             <BackgroundIMG />
             <HeaderBar>
                 <div>
@@ -84,20 +77,20 @@ const Home: React.FC = () => {
                         changeInput={(input) => setSearchValue(input)}
                         placeholder={'Find something'}
                         onEnter={() => {}} />
-                    <Button>Create Session</Button>
+                    <Button style={{display: 'flex', alignItems: 'center'}} as={Link} to="/create-session">Create Session</Button>
                 </HeaderBarContainer>
             </HeaderBar>
             {isLoading
                 ? 
-                    <HomeContainer style={{alignItems: 'center'}}>
+                    <UniversalContainer style={{alignItems: 'center'}}>
                         <Loader />
-                    </HomeContainer>
+                    </UniversalContainer>
                 : 
                     <CardContainer>
                         {_.map(multiSessionData, (i) => <Card {...i}/>)}
                     </CardContainer>
             }
-        </HomeContainer>
+        </UniversalContainer>
     )
 }
 

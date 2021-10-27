@@ -24,6 +24,7 @@ const Buttons = styled(Button)`
   color: ${theme.colors.bg1};
   transition: 0.3s;
   opacity: 1.0;
+  font-size: 0.85rem;
   font-weight: 500;
   border: none;
   padding: 11px 16px;
@@ -43,6 +44,23 @@ export const ButtonsWhite = styled(Buttons)`
   border: 1px solid #C3C8D7;
   &:hover {
     opacity: 0.8;
+    color: ${theme.colors.text2} !important;
+    border: 1px solid #C3C8D7;
+    background-color: #fff !important;
+  }
+
+  &:active {
+    box-shadow: none !important;
+    color: ${theme.colors.text1} !important;
+  }
+
+  &:focus {
+    box-shadow: none !important;
+    color: ${theme.colors.text1} !important;
+  }
+
+  &:disabled {
+    opacity: 0.6;
     color: ${theme.colors.text2} !important;
     border: 1px solid #C3C8D7;
     background-color: #fff !important;

@@ -29,6 +29,7 @@ const HeaderLink = styled(ButtonClear).attrs(props => ({
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
+  font-size: 1rem;
 
   &.${activeClassName} {
     opacity: 1.0;

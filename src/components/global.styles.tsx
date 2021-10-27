@@ -7,6 +7,12 @@ export const Text = styled.span`
     text-align: center;
 `;
 
+export const SubText = styled.span`
+    font-weight: 400;
+    color: ${theme.colors.text2};
+    font-size: 0.8rem;
+`
+
 export const Subheader = styled.h4`
     color: ${theme.colors.text2} !important;
     font-weight: bold;
@@ -14,6 +20,14 @@ export const Subheader = styled.h4`
     font-size: 1rem;
     margin: 0px !important;
 `;
+
+export const UniversalContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 0px;
+`
 
 export const Title = styled.h2`
     color: ${theme.colors.text1} !important;
