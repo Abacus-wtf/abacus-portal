@@ -90,3 +90,8 @@ export const ImageContainer = styled.div<{src: string}>`
   background-color: black;
   border-radius: 6px;
 `
+
+export const Label = styled.label`
+  font-weight: 500;
+  font-size: 0.9rem;
+`

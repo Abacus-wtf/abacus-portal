@@ -107,7 +107,8 @@ export const useGetCurrentSessionData = () => {
         nftName: 'Gen 3',
         address: '0x',
         tokenId: '110',
-        owner: 'Medici'
+        owner: 'Medici',
+        totalStakedInUSD: 65000
       }
 
     dispatch(getCurrentSessionData(sessionData))

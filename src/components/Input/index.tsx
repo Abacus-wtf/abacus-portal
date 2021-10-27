@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from "styled-components";
 import { FormInput } from "shards-react";
+import {Label} from '../global.styles'
 
 export const MainInput = styled(FormInput).attrs((props) => {
   size: props.size || 'sm'
@@ -42,7 +43,7 @@ interface InputWithTitle extends React.HTMLProps<HTMLInputElement> {
 export const InputWithTitle = (props: InputWithTitle) => {
   return (
     <>
-      <label>{props.title}</label>
+      <Label>{props.title}</Label>
       {/**@ts-ignore */}
       <MainInput style={{borderRadius: 0}} size={'lg'} {...props}/>
     </>
