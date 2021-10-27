@@ -36,7 +36,7 @@ export const MainInput = styled(FormInput).attrs((props) => {
   }
 `
 
-interface InputWithTitle extends React.HTMLProps<HTMLInputElement> {
+interface InputWithTitle extends React.ComponentProps<FormInput> {
   title: string
 }
 
@@ -44,7 +44,6 @@ export const InputWithTitle = (props: InputWithTitle) => {
   return (
     <>
       <Label>{props.title}</Label>
-      {/**@ts-ignore */}
       <MainInput style={{borderRadius: 0}} size={'lg'} {...props}/>
     </>
   )

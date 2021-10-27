@@ -11,6 +11,10 @@ export const GlobalStyles = createGlobalStyle`
     margin-bottom: 0px;
   }
 
+  .form-control.is-invalid {
+    box-shadow: none !important;
+  }
+
   body {
     background-color: ${theme.colors.bg1};
     height: 100vh;

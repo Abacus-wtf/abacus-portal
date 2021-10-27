@@ -57,6 +57,11 @@ export const ButtonClear = styled(Buttons)`
   background-color: transparent !important;
   color: black;
   
+  &:disabled {
+    opacity: 0.6;
+    color: ${theme.colors.text2} !important;
+  }
+
   &:hover {
     background-color: transparent !important;
     opacity: 0.8;
@@ -64,7 +69,13 @@ export const ButtonClear = styled(Buttons)`
   }
 
   &:active {
-      color: black !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  &:focus {
+    border: none !important;
+    color: black !important;
   }
 `
 

@@ -16,6 +16,7 @@ import Link from'gatsby-link'
 import Countdown from 'react-countdown'
 import {InputWithTitle} from '@components/Input'
 import {User} from 'react-feather'
+import HashSystem from './hashSystem'
 
 const SplitContainer = styled.div`
   display: grid;
@@ -55,6 +56,7 @@ const CurrentSession = ({location}) => {
   const { address, tokenId } = queryString.parse(location.search);
   const theme = useContext(ThemeContext)
   const [isLoading, setIsLoading] = useState(true)
+  const [appraisalHash, setAppraisalHash] = useState('')
   
   useEffect(() => {
     const loadData = async () => {
@@ -134,11 +136,16 @@ const CurrentSession = ({location}) => {
               console.log(e.target['stake'].value)
             }}>
             <ListGroup>
+              <HashSystem onCreateHash={(appraisalValue, password) => {
+                setAppraisalHash('0x')
+              }}/>
               <ListGroupItem>
                 <InputWithTitle 
-                  title={'Appraise'}
+                  title={'Appraisal Result (Hashed)'}
                   id={'appraise'}
                   placeholder="0"
+                  disabled={true}
+                  value={appraisalHash}
                 />
               </ListGroupItem>
               <ListGroupItem>

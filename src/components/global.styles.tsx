@@ -94,4 +94,5 @@ export const ImageContainer = styled.div<{src: string}>`
 export const Label = styled.label`
   font-weight: 500;
   font-size: 0.9rem;
+  cursor: default;
 `
