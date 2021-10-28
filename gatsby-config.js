@@ -32,7 +32,7 @@ module.exports = {
         name: `Personal Website`,
         display: `minimal-ui`,
         path: `${__dirname}/src/images`,
-        icon: `src/images/logo-gatsby.png`
+        icon: `src/images/logo.png`
       }
     },
     {
