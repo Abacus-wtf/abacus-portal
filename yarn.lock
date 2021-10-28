@@ -7037,6 +7037,15 @@ gatsby-plugin-generate-types@^0.1.0:
     apollo "^2.18.0"
     write "^1.0.3"
 
+gatsby-plugin-google-analytics@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-google-analytics/-/gatsby-plugin-google-analytics-4.0.0.tgz#8bb6228b3a13adb749930d0ab80643e2ffe69243"
+  integrity sha512-VZAy7aVaMMIKJgcQPWXnwKZqKNY8fA4ugdx+/7lzTGSrDs1extX8SVdwA8UCHjkL799vEveRkNFXOP4Bb01khg==
+  dependencies:
+    "@babel/runtime" "^7.15.4"
+    minimatch "3.0.4"
+    web-vitals "^1.1.2"
+
 gatsby-plugin-lodash@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-lodash/-/gatsby-plugin-lodash-5.0.0.tgz#170e347d599fb80c2b4fafc8a3478750d82c7272"
@@ -15244,6 +15253,11 @@ wbuf@^1.1.0, wbuf@^1.7.3:
   integrity sha512-O84QOnr0icsbFGLS0O3bI5FswxzRr8/gHwWkDlQFskhSPryQXvrTMxjxGP4+iWYoauLoBvfDpkrOauZ+0iZpDA==
   dependencies:
     minimalistic-assert "^1.0.0"
+
+web-vitals@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-1.1.2.tgz#06535308168986096239aa84716e68b4c6ae6d1c"
+  integrity sha512-PFMKIY+bRSXlMxVAQ+m2aw9c/ioUYfDgrYot0YUa+/xa0sakubWhSDyxAKwzymvXVdF4CZI71g06W+mqhzu6ig==
 
 webpack-dev-middleware@^3.7.2:
   version "3.7.3"

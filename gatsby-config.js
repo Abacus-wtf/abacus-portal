@@ -19,7 +19,13 @@ module.exports = {
         inProduction: true
       }
     },
-
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: "G-0NEGLJHXHQ",
+        head: true
+      }
+    },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
