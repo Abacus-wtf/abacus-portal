@@ -24,7 +24,9 @@ export default () => {
     })
 
     connector &&
-      activate(connector, undefined, true).catch(error => {
+      activate(connector, undefined, true).then(() => {
+        toggleWalletModal()
+      }).catch(error => {
         if (error instanceof UnsupportedChainIdError) {
           activate(connector)
         } else {
