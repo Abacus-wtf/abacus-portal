@@ -24,6 +24,9 @@
             "@state/*": [
                 "state/*"
             ],
+            "@hooks/*": [
+                "hooks/*"
+            ],
             "@images/*": [
                 "images/*"
             ],

@@ -4,6 +4,7 @@ import { GlobalStyles } from './styles'
 import Navbar from '@components/Navbar'
 import styled from 'styled-components'
 import { Container, Row, Col } from "shards-react";
+import Web3Modal from '@components/Web3Modal'
 
 const StyledContainer = styled(Container)`
   width: 100%;
@@ -21,18 +22,19 @@ const RowContainer = styled(Row)`
 `
 
 const GlobalLayout: React.FC = (props: any) => {
-    return (
-        <React.Fragment>
-            <GlobalStyles />
-            <Helmet title={"Abacus Protocol"} />
-            <StyledContainer>
-              <Navbar />
-              <RowContainer>
-                {props.children}
-              </RowContainer>
-            </StyledContainer>
-        </React.Fragment>
-    )
+  return (
+      <React.Fragment>
+        <GlobalStyles />
+        <Helmet title={"Abacus Protocol"} />
+        <StyledContainer>
+          <Navbar />
+          <RowContainer>
+            <Web3Modal />
+            {props.children}
+          </RowContainer>
+        </StyledContainer>
+      </React.Fragment>
+  )
 }
 
 export default GlobalLayout;
