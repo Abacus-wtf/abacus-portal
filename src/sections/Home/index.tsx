@@ -52,11 +52,11 @@ const Home: React.FC = () => {
     AppState["sessionData"]["multiSessionData"]
   >(state => state.sessionData.multiSessionData)
   const [searchValue, setSearchValue] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (multiSessionData !== null) {
-      //setIsLoading(false)
+      setIsLoading(false)
     }
   }, [multiSessionData])
 
@@ -70,7 +70,7 @@ const Home: React.FC = () => {
       <HeaderBar>
         <div>
           <Title>Highlighted</Title>
-          <Subheader>Browse 345 Total Sessions</Subheader>
+          <Subheader>Browse {multiSessionData ? multiSessionData.length : '-'} Total Sessions</Subheader>
         </div>
         <HeaderBarContainer>
           <ButtonsWhite>Filter</ButtonsWhite>
@@ -96,7 +96,7 @@ const Home: React.FC = () => {
       ) : (
         <CardContainer>
           {_.map(multiSessionData, i => (
-            <Card key={i.title} {...i} />
+            <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
           ))}
         </CardContainer>
       )}

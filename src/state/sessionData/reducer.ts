@@ -15,6 +15,7 @@ export interface SessionData {
   address: string
   tokenId: string
   owner: string
+  nonce: number
   totalStakedInUSD?: number
 }
 

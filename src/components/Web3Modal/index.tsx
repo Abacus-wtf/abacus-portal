@@ -34,10 +34,6 @@ export default () => {
       })
   }
 
-  useEffect(() => {
-    console.log(isWalletModalOpen, 'open modal')
-  }, [isWalletModalOpen])
-
   return (
     <Modal size="md" open={isWalletModalOpen} toggle={toggleWalletModal} centered={true}>
       <ModalBody>

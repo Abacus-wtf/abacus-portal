@@ -17,6 +17,7 @@ const CardContainer = styled.div`
   grid-gap: 14px;
   transition: 0.2s;
   opacity: 1.0;
+  overflow: hidden;
   
   &:hover {
     opacity: 0.6;
@@ -52,15 +53,20 @@ const TextContainer = styled.div`
   width: 100%;
   justify-content: space-between;
   align-items: flex-end;
+  grid-gap: 20px;
 `
 
 const BoldText = styled(Text)`
   font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const SubText = styled(Text)`
   color: ${({theme}) => theme.colors.text2};
   font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const EthText = styled(BoldText)`
@@ -74,7 +80,7 @@ const EthText = styled(BoldText)`
 
 export default (props: SessionData) => {
   return (
-    <CardContainer as={Link} to={`/current-session?address=${props.address}&tokenId=${props.tokenId}`}>
+    <CardContainer as={Link} to={`/current-session?address=${props.address}&tokenId=${props.tokenId}&nonce=${props.nonce}`}>
       <ImageContainer src={props.img}>
         <MiniText>
           <Countdown
@@ -93,11 +99,11 @@ export default (props: SessionData) => {
       </ImageContainer>
       <OuterTextContainer>
         <TextContainer>
-          <BoldText>{props.nftName} #{props.tokenId}</BoldText>
+          <BoldText style={{maxWidth: 'min-content', overflow: 'hidden'}}>{props.nftName} #{props.tokenId}</BoldText>
           <EthText><img style={{height: 15}} src={EthSymbol} /> {props.totalStaked}</EthText>
         </TextContainer>
         <TextContainer>
-          <SubText>{props.title}</SubText>
+          <SubText style={{maxWidth: 'min-content', overflow: 'hidden'}}>{props.title}</SubText>
           <SubText>Total Staked</SubText>
         </TextContainer>
       </OuterTextContainer>

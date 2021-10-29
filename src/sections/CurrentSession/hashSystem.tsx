@@ -4,6 +4,7 @@ import {HorizontalListGroup} from '@components/ListGroupMods'
 import {ListGroupItem, Tooltip} from 'shards-react'
 import {InputWithTitle} from '@components/Input'
 import styled from 'styled-components'
+import {useActiveWeb3React} from '@hooks/index'
 
 const HorizontalListGroupModified = styled(HorizontalListGroup)`
   .list-group-item {
@@ -19,21 +20,28 @@ interface HashSystem {
 
 export default ({onCreateHash}: HashSystem) => {
   const [isAppraisalValid, setIsAppraisalValid] = useState(true)
+  const [isPasswordValid, setIsPasswordValid] = useState(true)
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const [appraisalValue, setAppraisalValue] = useState('')
   const [passwordValue, setPasswordValue] = useState('')
-  const [isConnectedToWallet, ] = useState(true)
+  const {account, chainId, library} = useActiveWeb3React()
 
   const onSubmit = () => {
-    if (!isConnectedToWallet) return
+    if (!account) return
 
     if (isNaN(Number(appraisalValue))) {
       setIsAppraisalValid(false)
       return
     }
-    setIsAppraisalValid(true)
 
-    onCreateHash(Number(appraisalValue), passwordValue)
+    if (isNaN(Number(passwordValue))) {
+      setIsPasswordValid(true)
+      return
+    }
+    setIsAppraisalValid(true)
+    setIsPasswordValid(true)
+
+    onCreateHash(Number(appraisalValue), Number(passwordValue))
   }
 
   return (
@@ -43,7 +51,7 @@ export default ({onCreateHash}: HashSystem) => {
             <InputWithTitle 
                 title={'Appraisal Value'}
                 id={'appraisalValue'}
-                placeholder="0"
+                placeholder="5"
                 invalid={!isAppraisalValid}
                 value={appraisalValue}
                 onChange={(e) => setAppraisalValue(e.target.value)}
@@ -52,17 +60,18 @@ export default ({onCreateHash}: HashSystem) => {
           <ListGroupItem style={{display: 'flex', alignItems: 'center'}}>
             <div>
               <InputWithTitle 
-                  title={'Password'}
+                  title={'Seed'}
                   id={'password'}
-                  placeholder="Input"
+                  placeholder="5"
                   value={passwordValue}
+                  invalid={!isPasswordValid}
                   onChange={(e) => setPasswordValue(e.target.value)}
                 />
             </div>
-            <ButtonsWhite style={{maxHeight: 40}} disabled={appraisalValue === '' || passwordValue === ''} onClick={onSubmit}>Hash</ButtonsWhite>
+            <ButtonsWhite id={'hashButton'} style={{maxHeight: 40}} disabled={appraisalValue === '' || passwordValue === ''} onClick={onSubmit}>Hash</ButtonsWhite>
           </ListGroupItem>
         </HorizontalListGroupModified>
-        {!isConnectedToWallet && 
+        {!account && 
           <Tooltip
             open={isToolTipOpen}
             target="#hashButton"

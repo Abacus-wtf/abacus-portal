@@ -20,6 +20,8 @@ import Countdown from "react-countdown"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import HashSystem from "./hashSystem"
+import {useActiveWeb3React} from '@hooks/index'
+import {web3} from '@config/constants'
 
 const SplitContainer = styled.div`
   display: grid;
@@ -59,22 +61,25 @@ const SubText = styled(Text)`
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
+  const {account, chainId, library} = useActiveWeb3React()
   const sessionData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]
   >(state => state.sessionData.currentSessionData)
-  const { address, tokenId } = queryString.parse(location.search)
+  const { address, tokenId, nonce } = queryString.parse(location.search)
   const theme = useContext(ThemeContext)
   const [isLoading, setIsLoading] = useState(true)
   const [appraisalHash, setAppraisalHash] = useState("")
+  const [stakeVal, setStakeVal] = useState('')
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true)
-      await getCurrentSessionData()
+      // @ts-ignore
+      await getCurrentSessionData(address!, tokenId, nonce)
       setIsLoading(false)
     }
-    if (address === undefined || tokenId === undefined) {
+    if (!address || !tokenId || !nonce) {
       alert("This is a broken link, we are redirecting you to the home page.")
       navigate("/")
     } else {
@@ -120,7 +125,7 @@ const CurrentSession = ({ location }) => {
             </SubText>
           </VerticalSmallGapContainer>
           <HorizontalListGroup>
-            <ListGroupItem style={{ paddingRight: 50 }}>
+            <ListGroupItem style={{ paddingRight: 50, minWidth: 'fit-content' }}>
               <Label>Total Staked</Label>
               <ListGroupHeader style={{ color: theme.colors.accent }}>
                 {sessionData.totalStaked} ETH
@@ -185,7 +190,9 @@ const CurrentSession = ({ location }) => {
             <ListGroup>
               <HashSystem
                 onCreateHash={(appraisalValue, password) => {
-                  setAppraisalHash("0x")
+                  setAppraisalHash(
+                    web3.eth.abi.encodeParameters(['uint256','address','uint256'], [appraisalValue, account!, password])
+                  )
                 }}
               />
               <ListGroupItem>
@@ -193,16 +200,21 @@ const CurrentSession = ({ location }) => {
                   title={"Appraisal Result (Hashed)"}
                   id={"appraise"}
                   placeholder="0"
-                  disabled={true}
                   value={appraisalHash}
+                  disabled={true}
                 />
               </ListGroupItem>
               <ListGroupItem>
-                <InputWithTitle title={"Stake"} id={"stake"} placeholder="0" />
+                <InputWithTitle 
+                  title={"Stake"} 
+                  id={"stake"}
+                  value={stakeVal}
+                  onChange={(e) => setStakeVal(e.target.value)}
+                  placeholder="0.001" />
               </ListGroupItem>
             </ListGroup>
             <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-              <Button style={{ width: "100%" }} type="submit">
+              <Button disabled={appraisalHash === '' || isNaN(stakeVal) || stakeVal === ''} style={{ width: "100%" }} type="submit">
                 Submit
               </Button>
               <SubText style={{ display: "flex", alignItems: "center" }}>
