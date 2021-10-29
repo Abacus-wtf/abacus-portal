@@ -1,9 +1,6 @@
-import { createReducer } from '@reduxjs/toolkit'
-import {
-  getMultipleSessionData,
-  getCurrentSessionData
-} from './actions'
-import _ from 'lodash'
+import { createReducer } from "@reduxjs/toolkit"
+import { getMultipleSessionData, getCurrentSessionData } from "./actions"
+import _ from "lodash"
 
 export interface SessionData {
   img: any
@@ -25,7 +22,7 @@ interface SessionDataState {
 
 export const initialState: SessionDataState = {
   multiSessionData: null,
-  currentSessionData: null
+  currentSessionData: null,
 }
 
 export default createReducer(initialState, builder =>

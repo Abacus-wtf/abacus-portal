@@ -1,5 +1,5 @@
-import { theme } from '@config/theme'
-import { createGlobalStyle } from 'styled-components'
+import { theme } from "@config/theme"
+import { createGlobalStyle } from "styled-components"
 
 export const GlobalStyles = createGlobalStyle`
   * {

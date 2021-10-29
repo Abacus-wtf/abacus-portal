@@ -1,13 +1,8 @@
-import { createReducer } from '@reduxjs/toolkit'
-import _ from 'lodash'
+import { createReducer } from "@reduxjs/toolkit"
+import _ from "lodash"
 
-interface ApplicationState {
-}
+interface ApplicationState {}
 
-export const initialState: ApplicationState = {
-}
+export const initialState: ApplicationState = {}
 
-export default createReducer(initialState, builder =>
-  builder
-  
-)
+export default createReducer(initialState, builder => builder)

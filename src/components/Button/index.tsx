@@ -1,14 +1,14 @@
-import { theme } from "@config/theme";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { Button } from "shards-react";
-import styled from "styled-components";
+import { theme } from "@config/theme"
+import { IconProp } from "@fortawesome/fontawesome-svg-core"
+import { Button } from "shards-react"
+import styled from "styled-components"
 
 const Buttons = styled(Button)`
   background-color: ${theme.colors.accent} !important;
   border-radius: 53px;
   color: ${theme.colors.bg1};
   transition: 0.3s;
-  opacity: 1.0;
+  opacity: 1;
   font-size: 0.85rem;
   font-weight: 500;
   border: none;
@@ -22,16 +22,16 @@ const Buttons = styled(Button)`
     background-color: ${theme.colors.accent} !important;
     box-shadow: none;
   }
-`;
+`
 
 export const ButtonsWhite = styled(Buttons)`
   background-color: #fff !important;
   color: ${theme.colors.text2};
-  border: 1px solid #C3C8D7;
+  border: 1px solid #c3c8d7;
   &:hover {
     opacity: 0.8;
     color: ${theme.colors.text2} !important;
-    border: 1px solid #C3C8D7;
+    border: 1px solid #c3c8d7;
     background-color: #fff !important;
   }
 
@@ -48,7 +48,7 @@ export const ButtonsWhite = styled(Buttons)`
   &:disabled {
     opacity: 0.6;
     color: ${theme.colors.text2} !important;
-    border: 1px solid #C3C8D7;
+    border: 1px solid #c3c8d7;
     background-color: #fff !important;
   }
 `
@@ -56,7 +56,7 @@ export const ButtonsWhite = styled(Buttons)`
 export const ButtonClear = styled(Buttons)`
   background-color: transparent !important;
   color: black;
-  
+
   &:disabled {
     opacity: 0.6;
     color: ${theme.colors.text2} !important;
@@ -65,7 +65,7 @@ export const ButtonClear = styled(Buttons)`
   &:hover {
     background-color: transparent !important;
     opacity: 0.8;
-    color: black; 
+    color: black;
   }
 
   &:active {

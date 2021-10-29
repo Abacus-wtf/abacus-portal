@@ -1,71 +1,73 @@
-import { theme } from '@config/theme';
-import styled from 'styled-components';
-import { Col } from 'shards-react';
+import { theme } from "@config/theme"
+import styled from "styled-components"
+import { Col } from "shards-react"
 
 export const Text = styled.span`
-    color: ${theme.colors.text1};
-    text-align: center;
-    font-weight: normal;
-`;
+  color: ${theme.colors.text1};
+  text-align: center;
+  font-weight: normal;
+`
 
 export const SubText = styled.span`
-    font-weight: 400;
-    color: ${theme.colors.text2};
-    font-size: 0.8rem;
+  font-weight: 400;
+  color: ${theme.colors.text2};
+  font-size: 0.8rem;
 `
 
 export const Subheader = styled.h4`
-    color: ${theme.colors.text2} !important;
-    font-weight: bold;
-    text-align: left;
-    font-size: 1rem;
-    margin: 0px !important;
-`;
+  color: ${theme.colors.text2} !important;
+  font-weight: bold;
+  text-align: left;
+  font-size: 1rem;
+  margin: 0px !important;
+`
 
 export const UniversalContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    padding-bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 0px;
 `
 
 export const SmallUniversalContainer = styled(UniversalContainer)`
-    max-width: 1100px;
+  max-width: 1100px;
 `
 
 export const Title = styled.h2`
-    color: ${theme.colors.text1} !important;
-    font-weight: 900;
-    font-size: 1.5rem;
-    text-align: left;
-    margin: 0px !important;
-`;
-
-export const MainContainer = styled(Col)`
-    display: flex;
-    flex-direction: column;
-    padding: 32px;
-    grid-gap: 24px;
-    padding-top: 32px;
+  color: ${theme.colors.text1} !important;
+  font-weight: 900;
+  font-size: 1.5rem;
+  text-align: left;
+  margin: 0px !important;
 `
 
-export const CategoryButton = styled.div<{active: boolean}>`
-    font-weight: 400;
-    padding: 8px 16px;
-    border-radius: 20px;
-    opacity: 1.0;
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 0.85rem;
-    width: fit-content;
-    color: ${({theme}) => theme.colors.text1};
+export const MainContainer = styled(Col)`
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  grid-gap: 24px;
+  padding-top: 32px;
+`
 
-    &:hover {
-        opacity: 0.8;
-    }
+export const CategoryButton = styled.div<{ active: boolean }>`
+  font-weight: 400;
+  padding: 8px 16px;
+  border-radius: 20px;
+  opacity: 1;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 0.85rem;
+  width: fit-content;
+  color: ${({ theme }) => theme.colors.text1};
 
-    ${({active, theme}) => active && `
+  &:hover {
+    opacity: 0.8;
+  }
+
+  ${({ active, theme }) =>
+    active &&
+    `
         cursor: default;
         color: ${theme.colors.accent};
         background-color: rgba(89,89,89, 0.06);
@@ -75,11 +77,11 @@ export const CategoryButton = styled.div<{active: boolean}>`
     `}
 `
 
-export const ImageContainer = styled.div<{src: string}>`
+export const ImageContainer = styled.div<{ src: string }>`
   width: 100%;
   height: 100%;
   border: 1px solid #C3C8D7;
-  background-image: url("${({src}) => src}");
+  background-image: url("${({ src }) => src}");
   background-size: contain;
   background-repeat: no-repeat;
   display: flex;

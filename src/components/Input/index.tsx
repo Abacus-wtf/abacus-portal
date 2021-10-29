@@ -1,12 +1,12 @@
-import React from 'react'
-import styled from "styled-components";
-import { FormInput } from "shards-react";
-import {Label} from '../global.styles'
+import React from "react"
+import styled from "styled-components"
+import { FormInput } from "shards-react"
+import { Label } from "../global.styles"
 
-export const MainInput = styled(FormInput).attrs((props) => {
-  size: props.size || 'sm'
+export const MainInput = styled(FormInput).attrs(props => {
+  size: props.size || "sm"
 })`
-  border: #C3C8D7;
+  border: #c3c8d7;
   border-radius: 53px;
   padding: 0px;
 
@@ -44,7 +44,7 @@ export const InputWithTitle = (props: InputWithTitle) => {
   return (
     <>
       <Label>{props.title}</Label>
-      <MainInput style={{borderRadius: 0}} size={'lg'} {...props}/>
+      <MainInput style={{ borderRadius: 0 }} size={"lg"} {...props} />
     </>
   )
 }
