@@ -1,7 +1,10 @@
 import { useCallback } from "react"
+import { AppState } from "@state/index"
+import { useDispatch, useSelector } from "react-redux"
 import { getMultipleSessionData, getCurrentSessionData } from "./actions"
 import { SessionData } from "./reducer"
-import { useDispatch } from "react-redux"
+import { getCurrentSessionState } from "./selectors"
+
 import { AppDispatch } from "../index"
 
 export const useGetMultiSessionData = () => {
@@ -20,6 +23,7 @@ export const useGetMultiSessionData = () => {
         address: "0x",
         tokenId: "110",
         owner: "Medici",
+        state: 0,
       },
       {
         img:
@@ -32,6 +36,7 @@ export const useGetMultiSessionData = () => {
         address: "0x",
         tokenId: "110",
         owner: "Medici",
+        state: 0,
       },
       {
         img:
@@ -44,6 +49,7 @@ export const useGetMultiSessionData = () => {
         address: "0x",
         tokenId: "110",
         owner: "Medici",
+        state: 0,
       },
       {
         img:
@@ -56,6 +62,7 @@ export const useGetMultiSessionData = () => {
         address: "0x",
         tokenId: "110",
         owner: "Medici",
+        state: 0,
       },
       {
         img:
@@ -68,6 +75,7 @@ export const useGetMultiSessionData = () => {
         address: "0x",
         tokenId: "110",
         owner: "Medici",
+        state: 0,
       },
       {
         img:
@@ -80,6 +88,7 @@ export const useGetMultiSessionData = () => {
         address: "0x",
         tokenId: "110",
         owner: "Medici",
+        state: 0,
       },
       {
         img:
@@ -92,6 +101,7 @@ export const useGetMultiSessionData = () => {
         address: "0x",
         tokenId: "110",
         owner: "Medici",
+        state: 0,
       },
     ]
     dispatch(getMultipleSessionData(sessionData))
@@ -114,8 +124,15 @@ export const useGetCurrentSessionData = () => {
       tokenId: "110",
       owner: "Medici",
       totalStakedInUSD: 65000,
+      state: 0,
     }
 
     dispatch(getCurrentSessionData(sessionData))
   }, [dispatch])
+}
+
+export const useCurrentSessionState = () => {
+  return useSelector<AppState, AppState["sessionData"]["currentSessionData"]>(
+    getCurrentSessionState
+  )
 }

@@ -13,6 +13,7 @@ export interface SessionData {
   tokenId: string
   owner: string
   totalStakedInUSD?: number
+  state: number
 }
 
 interface SessionDataState {
