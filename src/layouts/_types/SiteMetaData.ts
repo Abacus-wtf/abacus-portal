@@ -8,21 +8,21 @@
 // ====================================================
 
 export interface SiteMetaData_site_siteMetadata_author {
-  __typename: "SiteSiteMetadataAuthor";
-  name: string | null;
+  __typename: "SiteSiteMetadataAuthor"
+  name: string | null
 }
 
 export interface SiteMetaData_site_siteMetadata {
-  __typename: "SiteSiteMetadata";
-  title: string | null;
-  author: SiteMetaData_site_siteMetadata_author | null;
+  __typename: "SiteSiteMetadata"
+  title: string | null
+  author: SiteMetaData_site_siteMetadata_author | null
 }
 
 export interface SiteMetaData_site {
-  __typename: "Site";
-  siteMetadata: SiteMetaData_site_siteMetadata | null;
+  __typename: "Site"
+  siteMetadata: SiteMetaData_site_siteMetadata | null
 }
 
 export interface SiteMetaData {
-  site: SiteMetaData_site | null;
+  site: SiteMetaData_site | null
 }

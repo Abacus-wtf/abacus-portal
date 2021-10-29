@@ -1,5 +1,9 @@
-import {ListGroup, ListGroupItemHeading, ListGroupItemText} from 'shards-react'
-import styled from 'styled-components'
+import {
+  ListGroup,
+  ListGroupItemHeading,
+  ListGroupItemText,
+} from "shards-react"
+import styled from "styled-components"
 
 export const HorizontalListGroup = styled(ListGroup)`
   flex-direction: row;
@@ -31,5 +35,5 @@ export const ListGroupHeader = styled(ListGroupItemHeading)`
 
 export const ListGroupSubtext = styled(ListGroupItemText)`
   margin: 0px;
-  color: ${({theme}) => theme.colors.text2} !important;
+  color: ${({ theme }) => theme.colors.text2} !important;
 `

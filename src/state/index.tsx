@@ -1,20 +1,27 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { save, load } from 'redux-localstorage-simple'
-import { createAction } from '@reduxjs/toolkit'
-import application from './application/reducer'
-import sessionData from './sessionData/reducer'
+import { configureStore } from "@reduxjs/toolkit"
+import { save, load } from "redux-localstorage-simple"
+import { createAction } from "@reduxjs/toolkit"
+import application from "./application/reducer"
+import sessionData from "./sessionData/reducer"
 
 const PERSISTED_KEYS: string[] = []
 
-export const updateVersion = createAction<void>('global/updateVersion')
+export const updateVersion = createAction<void>("global/updateVersion")
 
 const store = configureStore({
   reducer: {
     application,
-    sessionData
+    sessionData,
   },
-  middleware: (getDefaultMiddleware) => [...getDefaultMiddleware({ thunk: false, immutableCheck: false, serializableCheck: false }), save({ states: PERSISTED_KEYS })],
-  preloadedState: load({ states: PERSISTED_KEYS })
+  middleware: getDefaultMiddleware => [
+    ...getDefaultMiddleware({
+      thunk: false,
+      immutableCheck: false,
+      serializableCheck: false,
+    }),
+    save({ states: PERSISTED_KEYS }),
+  ],
+  preloadedState: load({ states: PERSISTED_KEYS }),
 })
 
 export default store
