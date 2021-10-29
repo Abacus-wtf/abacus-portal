@@ -1,17 +1,8 @@
 import React, { useState } from "react"
 import { ButtonsWhite } from "@components/Button"
-import { HorizontalListGroup } from "@components/ListGroupMods"
 import { ListGroupItem, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
-import styled from "styled-components"
-
-const HorizontalListGroupModified = styled(HorizontalListGroup)`
-  .list-group-item {
-    border-bottom-left-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
-    border-bottom: none;
-  }
-`
+import { HorizontalListGroupModified } from "./CurrentSession.styles"
 
 interface HashSystem {
   onCreateHash: (appraisalValue: number, password: string) => void
@@ -52,7 +43,7 @@ export default ({ onCreateHash }: HashSystem) => {
         <ListGroupItem style={{ display: "flex", alignItems: "center" }}>
           <div>
             <InputWithTitle
-              title={"Password"}
+              title={"Seed"}
               id={"password"}
               placeholder="Input"
               value={passwordValue}

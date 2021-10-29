@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { Text } from "@components/global.styles"
 import { ImageContainer } from "@components/global.styles"
+import { HorizontalListGroup } from "@components/ListGroupMods"
 
 export const SplitContainer = styled.div`
   display: grid;
@@ -36,4 +37,12 @@ export const SquareImageContainer = styled(ImageContainer)`
 export const SubText = styled(Text)`
   color: ${({ theme }) => theme.colors.text2};
   text-align: left;
+`
+
+export const HorizontalListGroupModified = styled(HorizontalListGroup)`
+  .list-group-item {
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-bottom: none;
+  }
 `
