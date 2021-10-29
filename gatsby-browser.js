@@ -6,6 +6,7 @@ import { theme } from './src/config/theme'
 import { Fragment } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { Web3Provider } from '@ethersproject/providers'
+import MetamaskProvider from '@config/MetamaskProvider'
 import {NetworkContextName} from '@config/constants'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'shards-ui/dist/css/shards.min.css'
@@ -16,7 +17,6 @@ const getLibrary = (provider) => {
     library.pollingInterval = 15000
     return library
 }
-  
 
 export const wrapRootElement = ({ element }) => {
     return (
@@ -24,9 +24,11 @@ export const wrapRootElement = ({ element }) => {
             <Web3ReactProvider getLibrary={getLibrary}>
                 <Web3ProviderNetwork getLibrary={getLibrary}>
                     <Provider store={store}>
-                        <ThemeProvider theme={theme}>
-                            {element}
-                        </ThemeProvider>
+                        <MetamaskProvider>
+                            <ThemeProvider theme={theme}>
+                                {element}
+                            </ThemeProvider>
+                        </MetamaskProvider>
                     </Provider>
                 </Web3ProviderNetwork>
             </Web3ReactProvider>

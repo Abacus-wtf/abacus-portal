@@ -62,7 +62,6 @@ export const useGetCurrentSessionData = () => {
   return useCallback(async (address: string, tokenId: string, nonce: number) => {
     const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
     
-    // TODO: Make sure API works for more than 20 contracts
     let URL = `asset/${address}/${tokenId}`
     const [pricingSessionMetadata, pricingSessionData, ethUsd] = await Promise.all([
       openseaGet(URL),
@@ -71,7 +70,7 @@ export const useGetCurrentSessionData = () => {
     ])
 
     const sessionData: SessionData = {
-        img: pricingSessionMetadata.image_preview_url || pricingSessionMetadata.image_url,
+        img: pricingSessionMetadata.image_url || pricingSessionMetadata.image_preview_url,
         endTime: Number(pricingSessionData.endTime)*1000,
         numPpl: Number(pricingSessionData.uniqueVoters),
         title: pricingSessionMetadata.collection.name,

@@ -214,7 +214,7 @@ const CurrentSession = ({ location }) => {
               </ListGroupItem>
             </ListGroup>
             <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-              <Button disabled={appraisalHash === '' || isNaN(stakeVal) || stakeVal === ''} style={{ width: "100%" }} type="submit">
+              <Button disabled={appraisalHash === '' || isNaN(Number(stakeVal)) || stakeVal === ''} style={{ width: "100%" }} type="submit">
                 Submit
               </Button>
               <SubText style={{ display: "flex", alignItems: "center" }}>
