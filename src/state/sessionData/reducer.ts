@@ -33,6 +33,7 @@ export interface SessionData {
   owner: string
   nonce: number
   totalStakedInUSD?: number
+  state: number
 }
 
 export interface CurrentSessionState {

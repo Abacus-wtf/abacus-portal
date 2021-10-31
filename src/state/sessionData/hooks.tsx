@@ -1,4 +1,6 @@
 import { useCallback } from "react"
+import { AppState } from "@state/index"
+import { useDispatch, useSelector } from "react-redux"
 import { getMultipleSessionData, getCurrentSessionData } from "./actions"
 import {
   SessionData,
@@ -6,7 +8,6 @@ import {
   UserState,
   SessionState,
 } from "./reducer"
-import { useDispatch } from "react-redux"
 import { AppDispatch } from "../index"
 import { useWeb3Contract } from "@hooks/index"
 import {
@@ -152,5 +153,11 @@ export const useGetCurrentSessionData = () => {
       dispatch(getCurrentSessionData(currentSessionData))
     },
     [dispatch, account]
+  )
+}
+
+export const useCurrentSessionState = () => {
+  return useSelector<AppState, AppState["sessionData"]["currentSessionData"]['sessionStatus']>(state =>
+    state.sessionData.currentSessionData.sessionStatus
   )
 }

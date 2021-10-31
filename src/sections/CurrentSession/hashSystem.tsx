@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from "react"
 import { ButtonsWhite } from "@components/Button"
-import { HorizontalListGroup } from "@components/ListGroupMods"
 import { ListGroupItem, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
-import styled from "styled-components"
+import { HorizontalListGroupModified } from "./CurrentSession.styles"
 import { useActiveWeb3React } from "@hooks/index"
-import { web3 } from "@config/constants"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
-
-const HorizontalListGroupModified = styled(HorizontalListGroup)`
-  .list-group-item {
-    border-bottom-left-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
-    border-bottom: none;
-  }
-`
+import {web3} from '@config/constants'
 
 interface HashSystem {
   onCreateHash: (appraisalValue: number, password: number) => void

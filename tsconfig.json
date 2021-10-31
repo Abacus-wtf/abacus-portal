@@ -1,4 +1,5 @@
 {
+  "exclude": ["_types/globalTypes.ts"],
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -24,7 +25,8 @@
       "@sections/*": ["sections/*"],
       "@config/*": ["config/*"],
       "@templates/*": ["templates/*"],
-      "@layouts/*": ["layouts/*"]
+      "@layouts/*": ["layouts/*"],
+      "@models/*": ["models/*"]
     }
   }
 }
