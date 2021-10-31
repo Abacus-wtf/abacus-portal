@@ -1,8 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit"
-import { save, load } from "redux-localstorage-simple"
-import { createAction } from "@reduxjs/toolkit"
-import application from "./application/reducer"
-import sessionData from "./sessionData/reducer"
+import { configureStore } from '@reduxjs/toolkit'
+import { save, load } from 'redux-localstorage-simple'
+import { createAction } from '@reduxjs/toolkit'
+import application from './application/reducer'
+import sessionData from './sessionData/reducer'
+import transactions from './transactions/reducer'
 
 const PERSISTED_KEYS: string[] = []
 
@@ -12,6 +13,7 @@ const store = configureStore({
   reducer: {
     application,
     sessionData,
+    transactions
   },
   middleware: getDefaultMiddleware => [
     ...getDefaultMiddleware({

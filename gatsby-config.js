@@ -1,5 +1,9 @@
 "use strict"
 
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 const path = require(`path`)
 
 module.exports = {
@@ -10,11 +14,19 @@ module.exports = {
       name: "Abacus Team",
     },
   },
+  pathPrefix: '__PATH_PREFIX__',
   plugins: [
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-lodash`,
     {
-      resolve: "gatsby-plugin-generate-types",
+      resolve: `gatsby-plugin-swarm`,
+      options: {
+        prefix: `__PATH_PREFIX__`,
+        pattern: /^(\/bzz:\/[^/]+)/ // use /^(\/(?:ipfs|ipns)\/[^/]+)/ for IPFS
+      },
+    },
+    {
+      resolve: 'gatsby-plugin-generate-types',
       options: {
         inProduction: true,
       },
