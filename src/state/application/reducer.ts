@@ -1,18 +1,17 @@
-import { createReducer } from '@reduxjs/toolkit'
-import {toggleWalletModal} from './actions'
-import _ from 'lodash'
+import { createReducer } from "@reduxjs/toolkit"
+import { toggleWalletModal } from "./actions"
+import _ from "lodash"
 
 interface ApplicationState {
   isWalletModalOpen: boolean
 }
 
 export const initialState: ApplicationState = {
-  isWalletModalOpen: false
+  isWalletModalOpen: false,
 }
 
 export default createReducer(initialState, builder =>
-  builder
-    .addCase(toggleWalletModal, (state, action) => {
-      state.isWalletModalOpen = action.payload
-    })
+  builder.addCase(toggleWalletModal, (state, action) => {
+    state.isWalletModalOpen = action.payload
+  })
 )

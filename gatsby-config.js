@@ -14,7 +14,7 @@ module.exports = {
       name: "Abacus Team",
     },
   },
-  pathPrefix: '__PATH_PREFIX__',
+  pathPrefix: "__PATH_PREFIX__",
   plugins: [
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-lodash`,
@@ -22,11 +22,11 @@ module.exports = {
       resolve: `gatsby-plugin-swarm`,
       options: {
         prefix: `__PATH_PREFIX__`,
-        pattern: /^(\/bzz:\/[^/]+)/ // use /^(\/(?:ipfs|ipns)\/[^/]+)/ for IPFS
+        pattern: /^(\/bzz:\/[^/]+)/, // use /^(\/(?:ipfs|ipns)\/[^/]+)/ for IPFS
       },
     },
     {
-      resolve: 'gatsby-plugin-generate-types',
+      resolve: "gatsby-plugin-generate-types",
       options: {
         inProduction: true,
       },

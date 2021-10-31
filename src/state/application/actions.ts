@@ -1,3 +1,5 @@
-import { createAction } from '@reduxjs/toolkit'
+import { createAction } from "@reduxjs/toolkit"
 
-export const toggleWalletModal = createAction<boolean>('application/toggleWalletModal')
+export const toggleWalletModal = createAction<boolean>(
+  "application/toggleWalletModal"
+)

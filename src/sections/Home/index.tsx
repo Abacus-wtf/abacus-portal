@@ -70,7 +70,10 @@ const Home: React.FC = () => {
       <HeaderBar>
         <div>
           <Title>Highlighted</Title>
-          <Subheader>Browse {multiSessionData ? multiSessionData.length : '-'} Total Sessions</Subheader>
+          <Subheader>
+            Browse {multiSessionData ? multiSessionData.length : "-"} Total
+            Sessions
+          </Subheader>
         </div>
         <HeaderBarContainer>
           <ButtonsWhite>Filter</ButtonsWhite>

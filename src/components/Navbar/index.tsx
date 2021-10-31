@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react'
-import styled from 'styled-components'
-import Link from 'gatsby-link'
-import { ChevronsLeft, AlignJustify } from "react-feather";
-import {Row} from 'shards-react'
-import Button, {ButtonClear} from '../Button'
-import {useActiveWeb3React} from '@hooks/index'
-import {shortenAddress} from '@config/utils'
-import {useToggleWalletModal} from '@state/application/hooks'
+import React, { useEffect, useState } from "react"
+import styled from "styled-components"
+import Link from "gatsby-link"
+import { ChevronsLeft, AlignJustify } from "react-feather"
+import { Row } from "shards-react"
+import Button, { ButtonClear } from "../Button"
+import { useActiveWeb3React } from "@hooks/index"
+import { shortenAddress } from "@config/utils"
+import { useToggleWalletModal } from "@state/application/hooks"
 
 const RowStyled = styled(Row)`
   padding: 0px;
@@ -51,7 +51,7 @@ const NavbarContainer = styled.div`
 `
 
 const Navbar = () => {
-  const {account, chainId, library} = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
 
   return (
@@ -70,7 +70,7 @@ const Navbar = () => {
           </HeaderLink>
         </LinkList>
         <Button onClick={() => toggleWalletModal()}>
-          {account ? shortenAddress(account) : 'Connect Wallet'}
+          {account ? shortenAddress(account) : "Connect Wallet"}
         </Button>
       </NavbarContainer>
     </RowStyled>

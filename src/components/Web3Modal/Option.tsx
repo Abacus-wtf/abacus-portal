@@ -1,8 +1,8 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from "react"
+import styled from "styled-components"
 
 const ExternalLink = styled.a.attrs({
-  target: '_blank'
+  target: "_blank",
 })
 
 const InfoCard = styled.button<{ active?: boolean }>`
@@ -39,7 +39,7 @@ const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
   justify-content: center;
   grid-gap: 7px;
 
-  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
+  opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
 `
 
 const GreenCircle = styled.div`
@@ -62,7 +62,10 @@ const CircleWrapper = styled.div`
 `
 
 const HeaderText = styled.div`
-  color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : ({ theme }) => theme.text1)};
+  color: ${props =>
+    props.color === "blue"
+      ? ({ theme }) => theme.primary1
+      : ({ theme }) => theme.text1};
   font-size: 1rem;
   font-weight: 500;
 `
@@ -93,7 +96,7 @@ export default function Option({
   subheader = null,
   icon,
   active = false,
-  id
+  id,
 }: {
   link?: string | null
   clickable?: boolean
@@ -109,7 +112,7 @@ export default function Option({
   const content = (
     <OptionCardClickable id={id} onClick={onClick} active={active}>
       <IconWrapper size={size}>
-        <img src={icon} alt={'Icon'} />
+        <img src={icon} alt={"Icon"} />
       </IconWrapper>
       <OptionCardLeft>
         <HeaderText color={color}>
@@ -120,7 +123,7 @@ export default function Option({
               </GreenCircle>
             </CircleWrapper>
           ) : (
-            ''
+            ""
           )}
           Connect with {header}
         </HeaderText>

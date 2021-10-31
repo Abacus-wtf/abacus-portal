@@ -3,22 +3,22 @@ import { getMultipleSessionData, getCurrentSessionData } from "./actions"
 import _ from "lodash"
 
 export enum SessionState {
-  Vote=1,
-  Weigh=2,
-  SetFinalAppraisal=3,
-  Harvest=4,
-  Claim=5,
-  EndSession=6,
-  Complete=7
+  Vote = 1,
+  Weigh = 2,
+  SetFinalAppraisal = 3,
+  Harvest = 4,
+  Claim = 5,
+  EndSession = 6,
+  Complete = 7,
 }
 
 export enum UserState {
-  NotLoggedIn=-1,
-  NotVoted=0,
-  CompletedVote=1,
-  CompletedWeigh=2,
-  CompletedHarvest=3,
-  CompletedClaim=4
+  NotLoggedIn = -1,
+  NotVoted = 0,
+  CompletedVote = 1,
+  CompletedWeigh = 2,
+  CompletedHarvest = 3,
+  CompletedClaim = 4,
 }
 
 export interface SessionData {

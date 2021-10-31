@@ -16,9 +16,9 @@ const CardContainer = styled.div`
   align-items: center;
   grid-gap: 14px;
   transition: 0.2s;
-  opacity: 1.0;
+  opacity: 1;
   overflow: hidden;
-  
+
   &:hover {
     opacity: 0.6;
   }
@@ -115,7 +115,9 @@ export default (props: SessionData) => {
           </EthText>
         </TextContainer>
         <TextContainer>
-          <SubText style={{maxWidth: 'min-content', overflow: 'hidden'}}>{props.title}</SubText>
+          <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
+            {props.title}
+          </SubText>
           <SubText>Total Staked</SubText>
         </TextContainer>
       </OuterTextContainer>

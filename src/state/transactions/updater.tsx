@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useActiveWeb3React } from '../../hooks'
-import { useAddPopup, useBlockNumber } from '../application/hooks'
-import { AppDispatch, AppState } from '../index'
-import { checkedTransaction, finalizeTransaction } from './actions'
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useActiveWeb3React } from "../../hooks"
+import { useAddPopup, useBlockNumber } from "../application/hooks"
+import { AppDispatch, AppState } from "../index"
+import { checkedTransaction, finalizeTransaction } from "./actions"
 
 export function shouldCheck(
   lastBlockNumber: number,
@@ -32,7 +32,9 @@ export default function Updater(): null {
   const lastBlockNumber = useBlockNumber()
 
   const dispatch = useDispatch<AppDispatch>()
-  const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
+  const state = useSelector<AppState, AppState["transactions"]>(
+    state => state.transactions
+  )
 
   const transactions = chainId ? state[chainId] ?? {} : {}
 
@@ -61,8 +63,8 @@ export default function Updater(): null {
                     status: receipt.status,
                     to: receipt.to,
                     transactionHash: receipt.transactionHash,
-                    transactionIndex: receipt.transactionIndex
-                  }
+                    transactionIndex: receipt.transactionIndex,
+                  },
                 })
               )
 
@@ -71,13 +73,19 @@ export default function Updater(): null {
                   txn: {
                     hash,
                     success: receipt.status === 1,
-                    summary: transactions[hash]?.summary
-                  }
+                    summary: transactions[hash]?.summary,
+                  },
                 },
                 hash
               )
             } else {
-              dispatch(checkedTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
+              dispatch(
+                checkedTransaction({
+                  chainId,
+                  hash,
+                  blockNumber: lastBlockNumber,
+                })
+              )
             }
           })
           .catch(error => {

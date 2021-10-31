@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import { injected } from '@config/constants'
-import { useWeb3React } from '@web3-react/core'
+import React, { useEffect, useState } from "react"
+import { injected } from "@config/constants"
+import { useWeb3React } from "@web3-react/core"
 
-function MetamaskProvider({ children }: { children: JSX.Element }): JSX.Element {
-  const { active: networkActive, error: networkError, activate: activateNetwork } = useWeb3React()
+function MetamaskProvider({
+  children,
+}: {
+  children: JSX.Element
+}): JSX.Element {
+  const {
+    active: networkActive,
+    error: networkError,
+    activate: activateNetwork,
+  } = useWeb3React()
   const [loaded, setLoaded] = useState(false)
   useEffect(() => {
     injected
       .isAuthorized()
-      .then((isAuthorized) => {
+      .then(isAuthorized => {
         setLoaded(true)
         if (isAuthorized && !networkActive && !networkError) {
           activateNetwork(injected)
