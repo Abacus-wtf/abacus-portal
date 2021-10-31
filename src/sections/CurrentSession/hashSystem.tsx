@@ -21,7 +21,7 @@ interface HashSystem {
   onCreateHash: (appraisalValue: number, password: number) => void
 }
 
-export default ({onCreateHash}: HashSystem) => {
+export default ({ onCreateHash }: HashSystem) => {
   const [isAppraisalValid, setIsAppraisalValid] = useState(true)
   const [isPasswordValid, setIsPasswordValid] = useState(true)
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -91,15 +91,16 @@ export default ({onCreateHash}: HashSystem) => {
             <ButtonsWhite id={'hashButton'} style={{maxHeight: 40}} disabled={appraisalValue === '' || passwordValue === ''} onClick={onSubmit}>Hash</ButtonsWhite>
           </ListGroupItem>
         </HorizontalListGroupModified>
-        {!account && 
+        {!account && (
           <Tooltip
             open={isToolTipOpen}
             target="#hashButton"
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
-            placement={'right'}
+            placement={"right"}
           >
             Please connect your wallet to hash your appraisal!
-          </Tooltip>}
-      </div>
+          </Tooltip>
+        )}
+    </div>
   )
 }

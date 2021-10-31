@@ -17,7 +17,7 @@ const RowContainer = styled(Row)`
   padding: 65px 80px;
   justify-content: center;
 
-  @media ${({theme}) => theme.media.tablet} {
+  @media ${({ theme }) => theme.media.tablet} {
     width: 100%;
   }
 `
@@ -62,4 +62,4 @@ const GlobalLayout: React.FC = (props: any) => {
   )
 }
 
-export default GlobalLayout;
+export default GlobalLayout

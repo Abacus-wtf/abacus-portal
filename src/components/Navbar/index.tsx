@@ -16,10 +16,10 @@ const RowStyled = styled(Row)`
 const Logo = styled(Link)`
   font-size: 1.5rem;
   font-weight: 500;
-  color: ${({theme}) => theme.colors.text1};
+  color: ${({ theme }) => theme.colors.text1};
 `
 
-const activeClassName = 'ACTIVE'
+const activeClassName = "ACTIVE"
 
 const LinkList = styled.div`
   display: flex;
@@ -27,7 +27,7 @@ const LinkList = styled.div`
 `
 
 const HeaderLink = styled(ButtonClear).attrs(props => ({
-  activeClassName
+  activeClassName,
 }))`
   min-width: fit-content;
   opacity: 0.4;
@@ -35,7 +35,7 @@ const HeaderLink = styled(ButtonClear).attrs(props => ({
   font-size: 1rem;
 
   &.${activeClassName} {
-    opacity: 1.0;
+    opacity: 1;
   }
 `
 
@@ -46,8 +46,8 @@ const NavbarContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  border-bottom: 1px solid #E4E6EE;
-  background-color: ${({theme}) => theme.colors.bg1};
+  border-bottom: 1px solid #e4e6ee;
+  background-color: ${({ theme }) => theme.colors.bg1};
 `
 
 const Navbar = () => {
@@ -57,9 +57,7 @@ const Navbar = () => {
   return (
     <RowStyled>
       <NavbarContainer>
-        <Logo to="/">
-          Abacus
-        </Logo>
+        <Logo to="/">Abacus</Logo>
         <LinkList>
           <HeaderLink as={Link} to="/">
             Home

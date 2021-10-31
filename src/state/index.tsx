@@ -7,7 +7,7 @@ import transactions from './transactions/reducer'
 
 const PERSISTED_KEYS: string[] = []
 
-export const updateVersion = createAction<void>('global/updateVersion')
+export const updateVersion = createAction<void>("global/updateVersion")
 
 const store = configureStore({
   reducer: {
@@ -15,8 +15,15 @@ const store = configureStore({
     sessionData,
     transactions
   },
-  middleware: (getDefaultMiddleware) => [...getDefaultMiddleware({ thunk: false, immutableCheck: false, serializableCheck: false }), save({ states: PERSISTED_KEYS })],
-  preloadedState: load({ states: PERSISTED_KEYS })
+  middleware: getDefaultMiddleware => [
+    ...getDefaultMiddleware({
+      thunk: false,
+      immutableCheck: false,
+      serializableCheck: false,
+    }),
+    save({ states: PERSISTED_KEYS }),
+  ],
+  preloadedState: load({ states: PERSISTED_KEYS }),
 })
 
 export default store
