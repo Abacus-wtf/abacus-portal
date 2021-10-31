@@ -8,9 +8,9 @@ const ExternalLink = styled.a.attrs({
 const InfoCard = styled.button<{ active?: boolean }>`
   padding: 1rem;
   outline: none;
-  border: 1px solid;
   border-radius: 12px;
   width: 100% !important;
+  border: none;
 `
 
 const OptionCard = styled(InfoCard as any)`
@@ -29,10 +29,16 @@ const OptionCardLeft = styled.div`
 
 const OptionCardClickable = styled(OptionCard as any)<{ clickable?: boolean }>`
   margin-top: 0;
+  background-color: transparent;
+  transition: 0.3s;
   &:hover {
-    cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
-    border: ${({ clickable }) => (clickable ? `1px solid` : ``)};
+    opacity: 0.6;
   }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  grid-gap: 7px;
+
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
 `
 
@@ -72,8 +78,8 @@ const IconWrapper = styled.div<{ size?: number | null }>`
   justify-content: center;
   & > img,
   span {
-    height: ${({ size }) => (size ? size + 'px' : '24px')};
-    width: ${({ size }) => (size ? size + 'px' : '24px')};
+    height: 120px;
+    width: 120px;
   }
 `
 
@@ -101,7 +107,10 @@ export default function Option({
   id: string
 }) {
   const content = (
-    <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active}>
+    <OptionCardClickable id={id} onClick={onClick} active={active}>
+      <IconWrapper size={size}>
+        <img src={icon} alt={'Icon'} />
+      </IconWrapper>
       <OptionCardLeft>
         <HeaderText color={color}>
           {active ? (
@@ -113,13 +122,10 @@ export default function Option({
           ) : (
             ''
           )}
-          {header}
+          Connect with {header}
         </HeaderText>
         {subheader && <SubHeader>{subheader}</SubHeader>}
       </OptionCardLeft>
-      <IconWrapper size={size}>
-        <img src={icon} alt={'Icon'} />
-      </IconWrapper>
     </OptionCardClickable>
   )
   if (link) {

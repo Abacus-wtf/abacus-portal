@@ -35,7 +35,7 @@ export const useOnSubmitVote = () => {
         hash
       ]
       value = parseEther(stake)
-      const txnCb = (response) => {
+      const txnCb = (response: any) => {
         addTransaction(response, {
           summary: 'Submit Vote'
         })
@@ -75,7 +75,7 @@ export const useOnUpdateVote = () => {
         hash
       ]
       value = null
-      const txnCb = (response) => {
+      const txnCb = (response: any) => {
         addTransaction(response, {
           summary: 'Update Vote'
         })
