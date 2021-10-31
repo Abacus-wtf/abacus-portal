@@ -3,7 +3,7 @@ import {
   getMultipleSessionData,
   getCurrentSessionData
 } from './actions'
-import {SessionData} from './reducer'
+import {SessionData, CurrentSessionState, UserState, SessionState} from './reducer'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../index'
 import {useWeb3Contract} from '@hooks/index'
@@ -13,6 +13,7 @@ import _ from 'lodash'
 import { openseaGet, shortenAddress } from '@config/utils'
 import { formatEther } from 'ethers/lib/utils'
 import axios from 'axios'
+import {useActiveWeb3React} from '@hooks/index'
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -58,16 +59,25 @@ export const useGetMultiSessionData = () => {
 export const useGetCurrentSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const {account} = useActiveWeb3React()
 
   return useCallback(async (address: string, tokenId: string, nonce: number) => {
     const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
     
     let URL = `asset/${address}/${tokenId}`
-    const [pricingSessionMetadata, pricingSessionData, ethUsd] = await Promise.all([
+    const [pricingSessionMetadata, pricingSessionData, ethUsd, getStatus] = await Promise.all([
       openseaGet(URL),
       pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
-      axios.get(COINGECKO_ETH_USD)
+      axios.get(COINGECKO_ETH_USD),
+      pricingSession.methods.getStatus(address, tokenId).call(),
     ])
+
+    let getVoterCheck
+    if (account) {
+      getVoterCheck = await pricingSession.methods.getVoterCheck(address, tokenId, account).call()
+    } else {
+      getVoterCheck = '-1'
+    }
 
     const sessionData: SessionData = {
         img: pricingSessionMetadata.image_url || pricingSessionMetadata.image_preview_url,
@@ -83,6 +93,11 @@ export const useGetCurrentSessionData = () => {
         owner: pricingSessionMetadata.owner.user && pricingSessionMetadata.owner.user.username ? pricingSessionMetadata.owner.user.username : shortenAddress(pricingSessionMetadata.owner.address)
       }
 
-    dispatch(getCurrentSessionData(sessionData))
-  }, [dispatch])
+    const currentSessionData: CurrentSessionState = {
+      sessionData,
+      userStatus: Number(getVoterCheck),
+      sessionStatus: Number(getStatus)
+    }
+    dispatch(getCurrentSessionData(currentSessionData))
+  }, [dispatch, account])
 }

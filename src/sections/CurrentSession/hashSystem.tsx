@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ButtonsWhite} from '@components/Button'
 import {HorizontalListGroup} from '@components/ListGroupMods'
 import {ListGroupItem, Tooltip} from 'shards-react'
 import {InputWithTitle} from '@components/Input'
 import styled from 'styled-components'
 import {useActiveWeb3React} from '@hooks/index'
+import {web3} from '@config/constants'
+import { useSelector } from "react-redux"
+import { AppState } from "@state/index"
 
 const HorizontalListGroupModified = styled(HorizontalListGroup)`
   .list-group-item {
@@ -15,7 +18,7 @@ const HorizontalListGroupModified = styled(HorizontalListGroup)`
 `
 
 interface HashSystem {
-  onCreateHash: (appraisalValue: number, password: string) => void
+  onCreateHash: (appraisalValue: number, password: number) => void
 }
 
 export default ({onCreateHash}: HashSystem) => {
@@ -24,7 +27,11 @@ export default ({onCreateHash}: HashSystem) => {
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const [appraisalValue, setAppraisalValue] = useState('')
   const [passwordValue, setPasswordValue] = useState('')
-  const {account, chainId, library} = useActiveWeb3React()
+  const {account} = useActiveWeb3React()
+  const sessionData = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
 
   const onSubmit = () => {
     if (!account) return
@@ -41,8 +48,21 @@ export default ({onCreateHash}: HashSystem) => {
     setIsAppraisalValid(true)
     setIsPasswordValid(true)
 
+    const hash = web3.eth.abi.encodeParameters(['address','uint256','uint256'], [sessionData.address, Number(sessionData.tokenId), sessionData.nonce])
+    localStorage.setItem(hash, JSON.stringify({appraisal: Number(appraisalValue), password: Number(passwordValue)}))
     onCreateHash(Number(appraisalValue), Number(passwordValue))
   }
+
+  useEffect(() => {
+    const hash = web3.eth.abi.encodeParameters(['address','uint256','uint256'], [sessionData.address, Number(sessionData.tokenId), sessionData.nonce])
+    const itemsString = localStorage.getItem(hash)
+    if (itemsString !== null && account) {
+      const items = JSON.parse(itemsString)
+      setPasswordValue(items.password)
+      setAppraisalValue(items.appraisal)
+      onCreateHash(Number(appraisalValue), Number(passwordValue))
+    }
+  }, [account])
 
   return (
     <div>

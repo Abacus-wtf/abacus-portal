@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, FormEvent } from "react"
+import React, { useEffect, useState, useContext, FormEvent, useMemo } from "react"
 import { Title, SmallUniversalContainer, Text } from "@components/global.styles"
 import styled, { ThemeContext } from "styled-components"
 import * as queryString from "query-string"
@@ -8,6 +8,7 @@ import Button from "@components/Button"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import { UserState, SessionState } from "@state/sessionData/reducer"
 import {
   HorizontalListGroup,
   ListGroupHeader,
@@ -22,6 +23,10 @@ import { User } from "react-feather"
 import HashSystem from "./hashSystem"
 import {useActiveWeb3React} from '@hooks/index'
 import {web3} from '@config/constants'
+import {useOnSubmitVote, useOnUpdateVote} from '@hooks/current-session'
+import { keccak256 } from "@ethersproject/keccak256"
+import { useAllTransactions, isTransactionRecent } from '../../state/transactions/hooks'
+import _ from 'lodash'
 
 const SplitContainer = styled.div`
   display: grid;
@@ -62,23 +67,44 @@ const SubText = styled(Text)`
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
   const {account, chainId, library} = useActiveWeb3React()
+  
   const sessionData = useSelector<
     AppState,
-    AppState["sessionData"]["currentSessionData"]
-  >(state => state.sessionData.currentSessionData)
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionStatus"]
+  >(state => state.sessionData.currentSessionData.sessionStatus)
+  const userStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(state => state.sessionData.currentSessionData.userStatus)
+
+  const submitVote = useOnSubmitVote()
+  const updateVote = useOnUpdateVote()
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const theme = useContext(ThemeContext)
   const [isLoading, setIsLoading] = useState(true)
   const [appraisalHash, setAppraisalHash] = useState("")
   const [stakeVal, setStakeVal] = useState('')
+  const [txHash, setTxHash] = useState('')
+  const allTransactions = useAllTransactions()
+  const sortedRecentTransactions = useMemo(() => {
+      const txs = Object.values(allTransactions)
+      return txs.filter(isTransactionRecent)
+  }, [allTransactions])
+  const pending = sortedRecentTransactions.filter(tx => !tx.receipt).map(tx => tx.hash)
+  const isTxOccurring = _.includes(pending, txHash ? txHash : '')
+
+  const loadData = async () => {
+    setIsLoading(true)
+    // @ts-ignore
+    await getCurrentSessionData(address!, tokenId, nonce)
+    setIsLoading(false)
+  }
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true)
-      // @ts-ignore
-      await getCurrentSessionData(address!, tokenId, nonce)
-      setIsLoading(false)
-    }
     if (!address || !tokenId || !nonce) {
       alert("This is a broken link, we are redirecting you to the home page.")
       navigate("/")
@@ -86,6 +112,12 @@ const CurrentSession = ({ location }) => {
       loadData()
     }
   }, [address, tokenId])
+
+  useEffect(() => {
+    if (!isTxOccurring && (!address || !tokenId || !nonce)) {
+      loadData()
+    }
+  }, [isTxOccurring])
 
   if (isLoading || sessionData === null) {
     return (
@@ -181,17 +213,28 @@ const CurrentSession = ({ location }) => {
             </ListGroupItem>
           </HorizontalListGroup>
           <Form
-            onSubmit={(e: FormEvent<HTMLDivElement>) => {
+            onSubmit={async (e: FormEvent<HTMLDivElement>) => {
               e.preventDefault()
-              console.log(e.target["appraise"].value)
-              console.log(e.target["stake"].value)
+              const cb = (hash) => {
+                setTxHash(hash)
+              }
+              switch (userStatus) {
+                case UserState.NotVoted:
+                  await submitVote(e.target["appraise"].value, e.target["stake"].value, cb)
+                  break;
+                case UserState.CompletedVote:
+                  await updateVote(e.target["appraise"].value, cb)
+                  break;
+                default:
+                  break;
+              }
             }}
           >
             <ListGroup>
               <HashSystem
                 onCreateHash={(appraisalValue, password) => {
                   setAppraisalHash(
-                    web3.eth.abi.encodeParameters(['uint256','address','uint256'], [appraisalValue, account!, password])
+                    keccak256(web3.eth.abi.encodeParameters(['uint256','address','uint256'], [appraisalValue, account!, password]))
                   )
                 }}
               />
@@ -204,18 +247,18 @@ const CurrentSession = ({ location }) => {
                   disabled={true}
                 />
               </ListGroupItem>
-              <ListGroupItem>
+              {userStatus !== UserState.CompletedVote ? <ListGroupItem>
                 <InputWithTitle 
                   title={"Stake"} 
                   id={"stake"}
                   value={stakeVal}
                   onChange={(e) => setStakeVal(e.target.value)}
                   placeholder="0.001" />
-              </ListGroupItem>
+              </ListGroupItem> : null}
             </ListGroup>
             <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-              <Button disabled={appraisalHash === '' || isNaN(Number(stakeVal)) || stakeVal === ''} style={{ width: "100%" }} type="submit">
-                Submit
+              <Button disabled={isTxOccurring || appraisalHash === '' || isNaN(Number(stakeVal)) || stakeVal === ''} style={{ width: "100%" }} type="submit">
+                {isTxOccurring ? 'Pending...' : userStatus === UserState.CompletedVote ? 'Update' : 'Submit'}
               </Button>
               <SubText style={{ display: "flex", alignItems: "center" }}>
                 <User style={{ height: 14 }} /> {sessionData.numPpl}{" "}
