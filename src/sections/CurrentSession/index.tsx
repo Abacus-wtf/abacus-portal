@@ -88,7 +88,7 @@ const CurrentSession = ({ location }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [appraisalHash, setAppraisalHash] = useState("")
   const [stakeVal, setStakeVal] = useState('')
-  const [txHash, setTxHash] = useState('')
+  const [txHash, setTxHash] = useState()
   const allTransactions = useAllTransactions()
   const sortedRecentTransactions = useMemo(() => {
       const txs = Object.values(allTransactions)
@@ -96,7 +96,6 @@ const CurrentSession = ({ location }) => {
   }, [allTransactions])
   const pending = sortedRecentTransactions.filter(tx => !tx.receipt).map(tx => tx.hash)
   const isTxOccurring = _.includes(pending, txHash ? txHash : '')
-
   const loadData = async () => {
     setIsLoading(true)
     // @ts-ignore
@@ -257,7 +256,11 @@ const CurrentSession = ({ location }) => {
               </ListGroupItem> : null}
             </ListGroup>
             <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-              <Button disabled={isTxOccurring || appraisalHash === '' || isNaN(Number(stakeVal)) || stakeVal === ''} style={{ width: "100%" }} type="submit">
+              <Button disabled={
+                  isTxOccurring || 
+                  appraisalHash === '' || 
+                  (userStatus === UserState.NotVoted && (isNaN(Number(stakeVal)) || stakeVal === ''))
+                } style={{ width: "100%" }} type="submit">
                 {isTxOccurring ? 'Pending...' : userStatus === UserState.CompletedVote ? 'Update' : 'Submit'}
               </Button>
               <SubText style={{ display: "flex", alignItems: "center" }}>
