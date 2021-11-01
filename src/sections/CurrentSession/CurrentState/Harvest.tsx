@@ -39,6 +39,7 @@ import { keccak256 } from "@ethersproject/keccak256"
 import {
   useAllTransactions,
   isTransactionRecent,
+  useIsTxOccurring,
 } from "@state/transactions/hooks"
 import _ from "lodash"
 
@@ -54,15 +55,7 @@ const Harvest: FunctionComponent = () => {
 
   const onHarvest = useOnHarvest()
   const [txHash, setTxHash] = useState("")
-  const allTransactions = useAllTransactions()
-  const sortedRecentTransactions = useMemo(() => {
-    const txs = Object.values(allTransactions)
-    return txs.filter(isTransactionRecent)
-  }, [allTransactions])
-  const pending = sortedRecentTransactions
-    .filter(tx => !tx.receipt)
-    .map(tx => tx.hash)
-  const isTxOccurring = _.includes(pending, txHash ? txHash : "")
+  const isTxOccurring = useIsTxOccurring(txHash)
 
   const theme = useContext(ThemeContext)
   return (

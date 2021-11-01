@@ -1,7 +1,7 @@
 import { TransactionResponse } from "@ethersproject/providers"
 import { useCallback, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
-
+import _ from "lodash"
 import { useActiveWeb3React } from "../../hooks"
 import { AppDispatch, AppState } from "../index"
 import { addTransaction } from "./actions"
@@ -129,4 +129,16 @@ export function useUserHasSubmittedClaim(
   }, [account, allTransactions])
 
   return { claimSubmitted: Boolean(claimTxn), claimTxn }
+}
+
+export const useIsTxOccurring = (txHash: string): boolean => {
+  const allTransactions = useAllTransactions()
+  const sortedRecentTransactions = useMemo(() => {
+    const txs = Object.values(allTransactions)
+    return txs.filter(isTransactionRecent)
+  }, [allTransactions])
+  const pending = sortedRecentTransactions
+    .filter(tx => !tx.receipt)
+    .map(tx => tx.hash)
+  return _.includes(pending, txHash ? txHash : "")
 }

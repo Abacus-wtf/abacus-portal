@@ -27,6 +27,7 @@ import { useOnSetFinalAppraisal } from "@hooks/current-session"
 import {
   isTransactionRecent,
   useAllTransactions,
+  useIsTxOccurring,
 } from "@state/transactions/hooks"
 
 export const CallToActionCopy = styled.p`
@@ -49,15 +50,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
 
   const onSetFinalAppraisal = useOnSetFinalAppraisal()
   const [txHash, setTxHash] = useState("")
-  const allTransactions = useAllTransactions()
-  const sortedRecentTransactions = useMemo(() => {
-    const txs = Object.values(allTransactions)
-    return txs.filter(isTransactionRecent)
-  }, [allTransactions])
-  const pending = sortedRecentTransactions
-    .filter(tx => !tx.receipt)
-    .map(tx => tx.hash)
-  const isTxOccurring = _.includes(pending, txHash ? txHash : "")
+  const isTxOccurring = useIsTxOccurring(txHash)
 
   const theme = useContext(ThemeContext)
   return (
