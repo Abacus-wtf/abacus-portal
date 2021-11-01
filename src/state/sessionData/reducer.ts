@@ -32,8 +32,8 @@ export interface SessionData {
   tokenId: string
   owner: string
   nonce: number
+  finalAppraisalValue?: number
   totalStakedInUSD?: number
-  state: number
 }
 
 export interface CurrentSessionState {

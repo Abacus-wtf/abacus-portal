@@ -3,6 +3,8 @@ import React, {
   FunctionComponent,
   useContext,
   useState,
+  useEffect,
+  useMemo
 } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
@@ -15,20 +17,64 @@ import {
 import { ListGroupItem, ListGroup, Form } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
-import { useCurrentSessionState } from "@state/sessionData/hooks"
-import { VerticalContainer, SubText } from "../CurrentSession.styles"
+import { VerticalContainer, SubText, ListGroupItemMinWidth } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
+import { useSelector } from "react-redux"
+import { AppState } from "@state/index"
+import {web3} from '@config/constants'
+import { useActiveWeb3React } from "@hooks/index"
+import {useOnWeightVote} from '@hooks/current-session'
+import {
+  useAllTransactions,
+  isTransactionRecent,
+} from "@state/transactions/hooks"
+import { UserState } from "@state/sessionData/reducer"
+import _ from 'lodash'
 
 const Weigh: FunctionComponent = () => {
-  const sessionData = useCurrentSessionState()
+  const { account } = useActiveWeb3React()
+  const weightVote = useOnWeightVote()
+
+  const userStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(state => state.sessionData.currentSessionData.userStatus)
+  const sessionData = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
   const theme = useContext(ThemeContext)
   const [appraisalValue, setAppraisalValue] = useState("")
   const [passwordValue, setPasswordValue] = useState("")
+  const [txHash, setTxHash] = useState('')
+
+  const allTransactions = useAllTransactions()
+  const sortedRecentTransactions = useMemo(() => {
+    const txs = Object.values(allTransactions)
+    return txs.filter(isTransactionRecent)
+  }, [allTransactions])
+  const pending = sortedRecentTransactions
+    .filter(tx => !tx.receipt)
+    .map(tx => tx.hash)
+  const isTxOccurring = _.includes(pending, txHash ? txHash : "")
+
+  useEffect(() => {
+    const hash = web3.eth.abi.encodeParameters(
+      ["address", "uint256", "uint256"],
+      [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
+    )
+    const itemsString = localStorage.getItem(hash)
+    if (itemsString !== null && account) {
+      const items = JSON.parse(itemsString)
+      setPasswordValue(items.password)
+      setAppraisalValue(items.appraisal)
+    }
+  }, [account])
 
   return (
     <>
       <HorizontalListGroup>
-        <ListGroupItem style={{ paddingRight: 50 }}>
+        <ListGroupItemMinWidth>
           <Label>Total Staked</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
             {sessionData.totalStaked} ETH
@@ -41,14 +87,15 @@ const Weigh: FunctionComponent = () => {
             })}
             )
           </ListGroupSubtext>
-        </ListGroupItem>
+        </ListGroupItemMinWidth>
         <SessionCountdown />
       </HorizontalListGroup>
       <Form
-        onSubmit={(e: FormEvent<HTMLDivElement>) => {
+        onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          console.log(e.target["appraise"].value)
-          console.log(e.target["stake"].value)
+          await weightVote(appraisalValue, passwordValue, (hash) => {
+            setTxHash(hash)
+          })
         }}
       >
         <ListGroup>
@@ -74,8 +121,16 @@ const Weigh: FunctionComponent = () => {
           </HorizontalListGroup>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <Button style={{ width: "100%" }} type="submit">
-            Weigh Vote
+          <Button disabled={
+            isTxOccurring ||
+            appraisalValue === "" ||
+            passwordValue === "" || 
+            isNaN(Number(appraisalValue)) ||
+            isNaN(Number(passwordValue)) ||
+            userStatus === UserState.CompletedWeigh ||
+            userStatus === UserState.NotLoggedIn
+          } style={{ width: "100%" }} type="submit">
+            {isTxOccurring ? 'Pending...' : userStatus === UserState.CompletedWeigh ? 'Vote Weighed' : 'Weigh'}
           </Button>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants

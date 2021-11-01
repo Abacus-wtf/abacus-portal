@@ -5,9 +5,14 @@ import { ThemeContext } from "styled-components"
 import { ListGroupItem } from "shards-react"
 import { ListGroupHeader, ListGroupSubtext } from "@components/ListGroupMods"
 import { Label } from "@components/global.styles"
+import { useSelector } from "react-redux"
+import { AppState } from "@state/index"
 
 const SessionCountdown: FunctionComponent = () => {
-  const sessionData = useCurrentSessionState()
+  const sessionData = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
   const theme = useContext(ThemeContext)
   return (
     <ListGroupItem style={{ width: "100%" }}>

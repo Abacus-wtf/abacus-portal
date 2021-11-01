@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import {ListGroupItem} from 'shards-react'
 import { Text } from "@components/global.styles"
 import { ImageContainer } from "@components/global.styles"
 import { HorizontalListGroup } from "@components/ListGroupMods"
@@ -45,4 +46,9 @@ export const HorizontalListGroupModified = styled(HorizontalListGroup)`
     border-bottom-right-radius: 0px !important;
     border-bottom: none;
   }
+`
+
+export const ListGroupItemMinWidth = styled(ListGroupItem)`
+  padding-right: 50px;
+  min-width: fit-content;
 `

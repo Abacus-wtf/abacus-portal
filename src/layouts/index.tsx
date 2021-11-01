@@ -38,10 +38,7 @@ const GlobalLayout: React.FC = (props: any) => {
       }
 
       // Check if User is already connected by retrieving the accounts
-      web3.eth.getAccounts().then(async (addr: string) => {
-        console.log(addr, "addr")
-        // Set User account into state
-      })
+      web3.eth.getAccounts()
     }
     checkConnection()
   }, [])
