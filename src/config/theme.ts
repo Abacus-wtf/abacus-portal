@@ -16,7 +16,9 @@ export const theme = {
 
     accent: "#355DFF",
   },
-
+  copy: {
+    large: "40px",
+  },
   media: {
     splitCenter: `(max-width: ${sizes.splitCenter})`,
     tablet: `(max-width: ${sizes.tablet})`,

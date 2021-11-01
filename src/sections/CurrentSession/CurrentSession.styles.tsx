@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import {ListGroupItem} from 'shards-react'
+import { ListGroupItem } from "shards-react"
 import { Text } from "@components/global.styles"
 import { ImageContainer } from "@components/global.styles"
 import { HorizontalListGroup } from "@components/ListGroupMods"
