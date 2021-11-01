@@ -6,11 +6,10 @@ import Weigh from "./Weigh"
 import SetFinalAppraisal from "./SetFinalAppraisal"
 import Harvest from "./Harvest"
 import Claim from "./Claim"
+import EndSession from "./EndSession"
 
 const CurrentState: FunctionComponent = () => {
   const state = useCurrentSessionState()
-
-  return <Claim />
 
   switch (state) {
     case SessionState.Vote:
@@ -23,6 +22,8 @@ const CurrentState: FunctionComponent = () => {
       return <Harvest />
     case SessionState.Claim:
       return <Claim />
+    case SessionState.EndSession:
+      return <EndSession />
     default:
       return null
   }
