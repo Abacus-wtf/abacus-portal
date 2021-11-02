@@ -151,15 +151,6 @@ export const useGetCurrentSessionData = () => {
           .call(),
       ])
 
-      let getVoterCheck
-      if (account) {
-        getVoterCheck = await pricingSession.methods
-          .getVoterCheck(address, tokenId, account)
-          .call()
-      } else {
-        getVoterCheck = "-1"
-      }
-
       let sessionStatus = Number(getStatus)
       let endTime = Number(pricingSessionData.endTime) * 1000
       if (stateVals.finalAppraisalSet && sessionStatus === 4) {
@@ -172,11 +163,7 @@ export const useGetCurrentSessionData = () => {
           Number(pricingSessionData.votingTime) * 2
       } else if (sessionStatus == 2) {
         endTime =
-          endTime + Number(pricingSessionData.votingTime) * sessionStatus
-        const timeNow = new Date().getTime()
-        if (timeNow >= endTime) {
-          sessionStatus = 3
-        }
+          endTime + Number(pricingSessionData.votingTime)
       }
 
       const sessionData: SessionData = {
@@ -205,7 +192,6 @@ export const useGetCurrentSessionData = () => {
 
       const currentSessionData: CurrentSessionState = {
         sessionData,
-        userStatus: Number(getVoterCheck),
         sessionStatus: sessionStatus,
       }
       dispatch(getCurrentSessionData(currentSessionData))

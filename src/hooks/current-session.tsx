@@ -128,10 +128,11 @@ export const useOnWeightVote = () => {
       )
       method = pricingSessionContract.weightVote
       estimate = pricingSessionContract.estimateGas.weightVote
+      console.log(parseEther(''+appraisalValue))
       args = [
         sessionData.address,
         Number(sessionData.tokenId),
-        appraisalValue,
+        parseEther(''+appraisalValue),
         seed,
       ]
       value = null

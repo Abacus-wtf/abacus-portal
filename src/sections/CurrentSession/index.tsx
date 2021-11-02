@@ -59,21 +59,25 @@ const CurrentSession = ({ location }) => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(state => state.sessionData.currentSessionData.sessionData)
+  const userStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(state => state.sessionData.currentSessionData.userStatus)
   const { account } = useActiveWeb3React()
 
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadUserData = async () => {
       setIsLoading(true)
       // @ts-ignore
       await getUserStatus(address!, tokenId)
       setIsLoading(false)
     }
 
-    if (address && tokenId) {
-      loadData()
+    if (address && tokenId && !userStatus) {
+      loadUserData()
     }
   }, [account, address, tokenId])
 

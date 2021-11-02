@@ -41,6 +41,7 @@ import {
   useIsTxOccurring,
 } from "@state/transactions/hooks"
 import _ from "lodash"
+import { parseEther } from "ethers/lib/utils"
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
@@ -65,7 +66,6 @@ const Vote: FunctionComponent = () => {
   const [txHash, setTxHash] = useState()
   const isTxOccurring = useIsTxOccurring(txHash)
   const loadData = async () => {
-    // @ts-ignore
     await getCurrentSessionData(
       sessionData.address,
       sessionData.tokenId,
@@ -128,7 +128,7 @@ const Vote: FunctionComponent = () => {
                 keccak256(
                   web3.eth.abi.encodeParameters(
                     ["uint256", "address", "uint256"],
-                    [appraisalValue, account!, password]
+                    [parseEther(''+appraisalValue), account!, password]
                   )
                 )
               )
