@@ -1,5 +1,9 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { getMultipleSessionData, getCurrentSessionData } from "./actions"
+import {
+  getMultipleSessionData,
+  getCurrentSessionData,
+  setUserStatus,
+} from "./actions"
 import _ from "lodash"
 
 export enum SessionState {
@@ -59,5 +63,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(getCurrentSessionData, (state, action) => {
       state.currentSessionData = action.payload
+    })
+    .addCase(setUserStatus, (state, action) => {
+      state.currentSessionData.userStatus = action.payload
     })
 )

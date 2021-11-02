@@ -1,7 +1,11 @@
 import { useCallback } from "react"
 import { AppState } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
-import { getMultipleSessionData, getCurrentSessionData } from "./actions"
+import {
+  getMultipleSessionData,
+  getCurrentSessionData,
+  setUserStatus,
+} from "./actions"
 import {
   SessionData,
   CurrentSessionState,
@@ -210,6 +214,30 @@ export const useGetCurrentSessionData = () => {
   )
 }
 
+export const useGetUserStatus = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const { account } = useActiveWeb3React()
+
+  return useCallback(
+    async (address: string, tokenId: string) => {
+      const pricingSession = getPricingSessionContract(
+        ABC_PRICING_SESSION_ADDRESS
+      )
+      let getVoterCheck
+      if (account) {
+        getVoterCheck = await pricingSession.methods
+          .getVoterCheck(address, tokenId, account)
+          .call()
+      } else {
+        getVoterCheck = "-1"
+      }
+      dispatch(setUserStatus(Number(getVoterCheck)))
+    },
+    [dispatch, getPricingSessionContract, account]
+  )
+}
+
 export const useCurrentSessionState = () => {
   return useSelector<
     AppState,
@@ -229,11 +257,17 @@ export const useCanUserInteract = () => {
 
   switch (sessionStatus) {
     case SessionState.Vote:
-      return userStatus === UserState.NotVoted
+      return (
+        userStatus === UserState.NotVoted ||
+        userStatus === UserState.CompletedVote
+      )
     case SessionState.Weigh:
       return userStatus === UserState.CompletedVote
     case SessionState.SetFinalAppraisal:
-      return userStatus === UserState.CompletedWeigh
+      return (
+        userStatus === UserState.CompletedWeigh ||
+        userStatus === UserState.CompletedVote
+      )
     case SessionState.Harvest:
       return userStatus === UserState.CompletedWeigh
     case SessionState.Claim:

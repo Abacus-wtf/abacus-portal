@@ -7,3 +7,6 @@ export const getMultipleSessionData = createAction<SessionData[]>(
 export const getCurrentSessionData = createAction<CurrentSessionState>(
   "sessionData/getCurrentSessionData"
 )
+export const setUserStatus = createAction<CurrentSessionState["userStatus"]>(
+  "sessionData/setUserStatus"
+)

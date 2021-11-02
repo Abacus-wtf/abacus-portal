@@ -6,11 +6,15 @@ import { navigate } from "gatsby"
 import { ImageContainer } from "@components/global.styles"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
-import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useGetCurrentSessionData,
+  useGetUserStatus,
+} from "@state/sessionData/hooks"
 import { ButtonsWhite } from "@components/Button"
 import Link from "gatsby-link"
 import _ from "lodash"
 import CurrentState from "./CurrentState"
+import { useActiveWeb3React } from "@hooks/index"
 
 const SplitContainer = styled.div`
   display: grid;
@@ -50,29 +54,44 @@ const SubText = styled(Text)`
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
+  const getUserStatus = useGetUserStatus()
   const sessionData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(state => state.sessionData.currentSessionData.sessionData)
+  const { account } = useActiveWeb3React()
 
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const [isLoading, setIsLoading] = useState(true)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    // @ts-ignore
-    await getCurrentSessionData(address!, tokenId, nonce)
-    setIsLoading(false)
-  }
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true)
+      // @ts-ignore
+      await getUserStatus(address!, tokenId)
+      setIsLoading(false)
+    }
+
+    if (address && tokenId) {
+      loadData()
+    }
+  }, [account, address, tokenId])
 
   useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true)
+      // @ts-ignore
+      await getCurrentSessionData(address!, tokenId, nonce)
+      setIsLoading(false)
+    }
+
     if (!address || !tokenId || !nonce) {
       alert("This is a broken link, we are redirecting you to the home page.")
       navigate("/")
     } else {
       loadData()
     }
-  }, [address, tokenId])
+  }, [address, tokenId, nonce])
 
   if (isLoading || sessionData === null) {
     return (
