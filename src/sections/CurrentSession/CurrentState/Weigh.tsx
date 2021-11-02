@@ -14,7 +14,7 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, ListGroup, Form } from "shards-react"
+import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import {
@@ -51,6 +51,7 @@ const Weigh: FunctionComponent = () => {
   >(state => state.sessionData.currentSessionData.sessionData)
 
   const canUserInteract = useCanUserInteract()
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
   const theme = useContext(ThemeContext)
   const [appraisalValue, setAppraisalValue] = useState("")
@@ -122,26 +123,39 @@ const Weigh: FunctionComponent = () => {
           </HorizontalListGroup>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <Button
-            disabled={
-              !canUserInteract ||
-              isTxOccurring ||
-              appraisalValue === "" ||
-              passwordValue === "" ||
-              isNaN(Number(appraisalValue)) ||
-              isNaN(Number(passwordValue)) ||
-              userStatus === UserState.CompletedWeigh ||
-              userStatus === UserState.NotLoggedIn
-            }
-            style={{ width: "100%" }}
-            type="submit"
+          <div style={{ width: "100%" }} id={"submitWeighButton"}>
+            <Button
+              disabled={
+                !canUserInteract ||
+                isTxOccurring ||
+                appraisalValue === "" ||
+                passwordValue === "" ||
+                isNaN(Number(appraisalValue)) ||
+                isNaN(Number(passwordValue)) ||
+                userStatus === UserState.CompletedWeigh ||
+                userStatus === UserState.NotLoggedIn
+              }
+              style={{ width: "100%" }}
+              type="submit"
+            >
+              {isTxOccurring
+                ? "Pending..."
+                : userStatus === UserState.CompletedWeigh
+                ? "Vote Weighed"
+                : "Weigh"}
+            </Button>
+          </div>
+          <Tooltip
+            open={isToolTipOpen}
+            target="#submitWeighButton"
+            disabled={canUserInteract || isTxOccurring}
+            toggle={() => setIsToolTipOpen(!isToolTipOpen)}
+            placement={"right"}
           >
-            {isTxOccurring
-              ? "Pending..."
-              : userStatus === UserState.CompletedWeigh
-              ? "Vote Weighed"
-              : "Weigh"}
-          </Button>
+            {userStatus === UserState.CompletedWeigh
+              ? "You already weighed your vote"
+              : "You missed a previous step, so you cannot participate in this part of the session"}
+          </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>

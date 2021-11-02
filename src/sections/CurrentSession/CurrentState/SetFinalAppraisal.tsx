@@ -1,7 +1,6 @@
 import React, {
   FunctionComponent,
   useContext,
-  useMemo,
   FormEvent,
   useState,
 } from "react"
@@ -14,24 +13,16 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, Form } from "shards-react"
+import { ListGroupItem, Form, Tooltip } from "shards-react"
 import { VerticalContainer, SubText } from "../CurrentSession.styles"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import {
-  useCanUserInteract,
-  useGetCurrentSessionData,
-} from "@state/sessionData/hooks"
+import { useCanUserInteract } from "@state/sessionData/hooks"
 import { User } from "react-feather"
-import { useActiveWeb3React } from "@hooks/index"
 import _ from "lodash"
 import { useOnSetFinalAppraisal } from "@hooks/current-session"
-import {
-  isTransactionRecent,
-  useAllTransactions,
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
+import { useIsTxOccurring } from "@state/transactions/hooks"
 
 export const CallToActionCopy = styled.p`
   margin: 0;
@@ -48,6 +39,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
   >(state => state.sessionData.currentSessionData.sessionData)
 
   const canUserInteract = useCanUserInteract()
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
   const onSetFinalAppraisal = useOnSetFinalAppraisal()
   const [txHash, setTxHash] = useState("")
@@ -80,13 +72,24 @@ const SetFinalAppraisal: FunctionComponent = () => {
       >
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <CallToActionCopy>TIME TO SET THE FINAL APPRAISAL!</CallToActionCopy>
-          <Button
-            style={{ width: "100%" }}
-            type="submit"
-            disabled={!canUserInteract || isTxOccurring}
+          <div id={"setFinalAppraisalButton"} style={{ width: "100%" }}>
+            <Button
+              type="submit"
+              disabled={!canUserInteract || isTxOccurring}
+              style={{ width: "100%" }}
+            >
+              Set Final Appraisal
+            </Button>
+          </div>
+          <Tooltip
+            open={isToolTipOpen}
+            target="#setFinalAppraisalButton"
+            disabled={canUserInteract || isTxOccurring}
+            toggle={() => setIsToolTipOpen(!isToolTipOpen)}
           >
-            Set Final Appraisal
-          </Button>
+            You missed a previous step, so you cannot participate in this part
+            of the session
+          </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>

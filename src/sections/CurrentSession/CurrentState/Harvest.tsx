@@ -3,8 +3,6 @@ import React, {
   FunctionComponent,
   useContext,
   useState,
-  useMemo,
-  useEffect,
 } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
@@ -14,7 +12,7 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, ListGroup, Form } from "shards-react"
+import { ListGroupItem, Form, Tooltip } from "shards-react"
 import {
   VerticalContainer,
   SubText,
@@ -24,26 +22,11 @@ import SessionCountdown from "./SessionCountdown"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import {
-  useCanUserInteract,
-  useGetCurrentSessionData,
-} from "@state/sessionData/hooks"
+import { useCanUserInteract } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
-import HashSystem from "../hashSystem"
-import { useActiveWeb3React } from "@hooks/index"
-import { web3 } from "@config/constants"
-import {
-  useOnHarvest,
-  useOnSubmitVote,
-  useOnUpdateVote,
-} from "@hooks/current-session"
-import { keccak256 } from "@ethersproject/keccak256"
-import {
-  useAllTransactions,
-  isTransactionRecent,
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
+import { useOnHarvest } from "@hooks/current-session"
+import { useIsTxOccurring } from "@state/transactions/hooks"
 import _ from "lodash"
 
 const Harvest: FunctionComponent = () => {
@@ -51,8 +34,13 @@ const Harvest: FunctionComponent = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(state => state.sessionData.currentSessionData.sessionData)
+  const userStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(state => state.sessionData.currentSessionData.userStatus)
 
   const canUserInteract = useCanUserInteract()
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
   const onHarvest = useOnHarvest()
   const [txHash, setTxHash] = useState("")
@@ -93,13 +81,26 @@ const Harvest: FunctionComponent = () => {
           />
         </ListGroupItem>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <Button
-            disabled={!canUserInteract || isTxOccurring}
-            style={{ width: "100%" }}
-            type="submit"
+          <div style={{ width: "100%" }} id={"submitHarvestButton"}>
+            <Button
+              disabled={!canUserInteract || isTxOccurring}
+              style={{ width: "100%" }}
+              type="submit"
+            >
+              {isTxOccurring ? "Pending..." : "Harvest"}
+            </Button>
+          </div>
+          <Tooltip
+            open={isToolTipOpen}
+            target="#submitHarvestButton"
+            disabled={canUserInteract || isTxOccurring}
+            toggle={() => setIsToolTipOpen(!isToolTipOpen)}
+            placement={"right"}
           >
-            {isTxOccurring ? "Pending..." : "Harvest"}
-          </Button>
+            {userStatus === UserState.CompletedHarvest
+              ? "You already harvested"
+              : "You missed a previous step so you cannot participate in this part of the session"}
+          </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>

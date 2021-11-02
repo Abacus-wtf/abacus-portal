@@ -14,7 +14,7 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, ListGroup, Form } from "shards-react"
+import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
 import {
   VerticalContainer,
   SubText,
@@ -57,6 +57,7 @@ const Vote: FunctionComponent = () => {
   >(state => state.sessionData.currentSessionData.userStatus)
 
   const canUserInteract = useCanUserInteract()
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
   const submitVote = useOnSubmitVote()
   const updateVote = useOnUpdateVote()
@@ -155,23 +156,34 @@ const Vote: FunctionComponent = () => {
           ) : null}
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <Button
-            disabled={
-              !canUserInteract ||
-              isTxOccurring ||
-              appraisalHash === "" ||
-              (userStatus === UserState.NotVoted &&
-                (isNaN(Number(stakeVal)) || stakeVal === ""))
-            }
-            style={{ width: "100%" }}
-            type="submit"
+          <div style={{ width: "100%" }} id={"submitVoteButton"}>
+            <Button
+              disabled={
+                !canUserInteract ||
+                isTxOccurring ||
+                appraisalHash === "" ||
+                (userStatus === UserState.NotVoted &&
+                  (isNaN(Number(stakeVal)) || stakeVal === ""))
+              }
+              style={{ width: "100%" }}
+              type="submit"
+            >
+              {isTxOccurring
+                ? "Pending..."
+                : userStatus === UserState.CompletedVote
+                ? "Update"
+                : "Submit"}
+            </Button>
+          </div>
+          <Tooltip
+            open={isToolTipOpen}
+            target="#submitVoteButton"
+            disabled={canUserInteract || isTxOccurring}
+            toggle={() => setIsToolTipOpen(!isToolTipOpen)}
+            placement={"right"}
           >
-            {isTxOccurring
-              ? "Pending..."
-              : userStatus === UserState.CompletedVote
-              ? "Update"
-              : "Submit"}
-          </Button>
+            It seems you've already voted, or your'e not logged in
+          </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>
