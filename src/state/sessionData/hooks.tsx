@@ -156,14 +156,18 @@ export const useGetCurrentSessionData = () => {
       if (stateVals.finalAppraisalSet && sessionStatus === 4) {
         endTime =
           Number(stateVals.timeFinalAppraisalSet) * 1000 +
-          Number(pricingSessionData.votingTime)
+          Number(pricingSessionData.votingTime) * 1000
       } else if (stateVals.finalAppraisalSet && sessionStatus === 5) {
         endTime =
           Number(stateVals.timeFinalAppraisalSet) * 1000 +
-          Number(pricingSessionData.votingTime) * 2
+          Number(pricingSessionData.votingTime) * 2 * 1000
       } else if (sessionStatus == 2) {
         endTime =
-          endTime + Number(pricingSessionData.votingTime)
+          endTime + Number(pricingSessionData.votingTime) * 1000
+        const currentTime = Date.now()
+        if (currentTime >= endTime) {
+          sessionStatus = 3
+        }
       }
 
       const sessionData: SessionData = {
@@ -250,10 +254,7 @@ export const useCanUserInteract = () => {
     case SessionState.Weigh:
       return userStatus === UserState.CompletedVote
     case SessionState.SetFinalAppraisal:
-      return (
-        userStatus === UserState.CompletedWeigh ||
-        userStatus === UserState.CompletedVote
-      )
+      return true
     case SessionState.Harvest:
       return userStatus === UserState.CompletedWeigh
     case SessionState.Claim:

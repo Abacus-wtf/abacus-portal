@@ -124,13 +124,14 @@ const Vote: FunctionComponent = () => {
         <ListGroup>
           <HashSystem
             onCreateHash={(appraisalValue, password) => {
+              let encodedParams = web3.eth.abi.encodeParameters(
+                ["uint", "address", "uint"],
+                [parseEther(''+appraisalValue), account!, password]
+              )
+              encodedParams = encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length)
+              console.log(encodedParams)
               setAppraisalHash(
-                keccak256(
-                  web3.eth.abi.encodeParameters(
-                    ["uint256", "address", "uint256"],
-                    [parseEther(''+appraisalValue), account!, password]
-                  )
-                )
+                keccak256(encodedParams)
               )
             }}
           />
