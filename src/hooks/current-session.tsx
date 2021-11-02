@@ -48,8 +48,7 @@ export const useOnSubmitVote = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
