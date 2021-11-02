@@ -80,7 +80,7 @@ const Harvest: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          void onHarvest(hash => setTxHash(hash))
+          onHarvest(hash => setTxHash(hash))
         }}
       >
         <ListGroupItem>

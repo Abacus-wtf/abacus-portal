@@ -295,3 +295,51 @@ export const useOnClaim = () => {
     [account, library, sessionData]
   )
 }
+
+export const useOnEndSession = () => {
+  const { account, library } = useActiveWeb3React()
+  const sessionData = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
+  const generalizedContractCall = useGeneralizedContractCall()
+  const addTransaction = useTransactionAdder()
+
+  return useCallback(
+    async (cb: (hash: string) => void) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const pricingSessionContract = getContract(
+        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ABI,
+        library,
+        account
+      )
+      method = pricingSessionContract.endSession
+      estimate = pricingSessionContract.estimateGas.endSession
+      args = [
+        sessionData.address, 
+        Number(sessionData.tokenId)
+      ]
+      value = null
+      const txnCb = (response: any) => {
+        addTransaction(response, {
+          summary: "End Session",
+        })
+        cb(response.hash)
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        // @ts-ignore
+        txnCb,
+      })
+    },
+    [account, library, sessionData]
+  )
+}
