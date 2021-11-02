@@ -19,7 +19,10 @@ import { VerticalContainer, SubText } from "../CurrentSession.styles"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
 import _ from "lodash"
@@ -43,10 +46,8 @@ const SetFinalAppraisal: FunctionComponent = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(state => state.sessionData.currentSessionData.sessionData)
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
+
+  const canUserInteract = useCanUserInteract()
 
   const onSetFinalAppraisal = useOnSetFinalAppraisal()
   const [txHash, setTxHash] = useState("")
@@ -82,7 +83,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
           <Button
             style={{ width: "100%" }}
             type="submit"
-            disabled={isTxOccurring}
+            disabled={!canUserInteract || isTxOccurring}
           >
             Set Final Appraisal
           </Button>

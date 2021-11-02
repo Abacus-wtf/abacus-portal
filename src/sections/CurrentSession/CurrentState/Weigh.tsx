@@ -35,6 +35,7 @@ import {
 } from "@state/transactions/hooks"
 import { UserState } from "@state/sessionData/reducer"
 import _ from "lodash"
+import { useCanUserInteract } from "@state/sessionData/hooks"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
@@ -48,6 +49,9 @@ const Weigh: FunctionComponent = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(state => state.sessionData.currentSessionData.sessionData)
+
+  const canUserInteract = useCanUserInteract()
+
   const theme = useContext(ThemeContext)
   const [appraisalValue, setAppraisalValue] = useState("")
   const [passwordValue, setPasswordValue] = useState("")
@@ -120,6 +124,7 @@ const Weigh: FunctionComponent = () => {
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <Button
             disabled={
+              !canUserInteract ||
               isTxOccurring ||
               appraisalValue === "" ||
               passwordValue === "" ||

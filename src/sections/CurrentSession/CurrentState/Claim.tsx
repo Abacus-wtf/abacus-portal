@@ -25,7 +25,10 @@ import SessionCountdown from "./SessionCountdown"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import HashSystem from "../hashSystem"
@@ -48,10 +51,8 @@ const Claim: FunctionComponent = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(state => state.sessionData.currentSessionData.sessionData)
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
+
+  const canUserInteract = useCanUserInteract()
 
   const onClaim = useOnClaim()
   const [txHash, setTxHash] = useState("")
@@ -110,7 +111,7 @@ const Claim: FunctionComponent = () => {
         <HorizontalListGroup>
           <div style={{ padding: "0 8px", width: "100%" }}>
             <Button
-              disabled={isTxOccurring}
+              disabled={!canUserInteract || isTxOccurring}
               style={{ width: "100%" }}
               type="button"
               onClick={() => {

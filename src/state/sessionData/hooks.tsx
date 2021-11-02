@@ -216,3 +216,33 @@ export const useCurrentSessionState = () => {
     AppState["sessionData"]["currentSessionData"]["sessionStatus"]
   >(state => state.sessionData.currentSessionData.sessionStatus)
 }
+
+export const useCanUserInteract = () => {
+  const sessionStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionStatus"]
+  >(state => state.sessionData.currentSessionData.sessionStatus)
+  const userStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(state => state.sessionData.currentSessionData.userStatus)
+
+  switch (sessionStatus) {
+    case SessionState.Vote:
+      return userStatus === UserState.NotVoted
+    case SessionState.Weigh:
+      return userStatus === UserState.CompletedVote
+    case SessionState.SetFinalAppraisal:
+      return userStatus === UserState.CompletedWeigh
+    case SessionState.Harvest:
+      return userStatus === UserState.CompletedWeigh
+    case SessionState.Claim:
+      return userStatus === UserState.CompletedHarvest
+    case SessionState.EndSession:
+      return userStatus === UserState.CompletedClaim
+    case SessionState.Complete:
+      return true
+    default:
+      return false
+  }
+}

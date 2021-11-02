@@ -24,7 +24,10 @@ import SessionCountdown from "./SessionCountdown"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import HashSystem from "../hashSystem"
@@ -52,6 +55,8 @@ const Vote: FunctionComponent = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
+
+  const canUserInteract = useCanUserInteract()
 
   const submitVote = useOnSubmitVote()
   const updateVote = useOnUpdateVote()
@@ -152,6 +157,7 @@ const Vote: FunctionComponent = () => {
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <Button
             disabled={
+              !canUserInteract ||
               isTxOccurring ||
               appraisalHash === "" ||
               (userStatus === UserState.NotVoted &&
