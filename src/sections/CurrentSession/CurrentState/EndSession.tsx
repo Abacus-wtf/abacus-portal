@@ -20,9 +20,7 @@ import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnEndSession } from "@hooks/current-session"
 import _ from "lodash"
-import {
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
+import { useIsTxOccurring } from "@state/transactions/hooks"
 
 const EndSession: FunctionComponent = () => {
   const sessionData = useSelector<
@@ -67,14 +65,15 @@ const EndSession: FunctionComponent = () => {
         />
       </ListGroupItem>
       <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-        <Button 
-            disabled={isTxOccurring}
-            style={{ width: "100%" }} 
-            type="button" 
-            onClick={() => {
-              endSession((hash) => setTxHash(hash))
-            }}>
-        {isTxOccurring ? "Pending..." : "End Session"}
+        <Button
+          disabled={isTxOccurring}
+          style={{ width: "100%" }}
+          type="button"
+          onClick={() => {
+            endSession(hash => setTxHash(hash))
+          }}
+        >
+          {isTxOccurring ? "Pending..." : "End Session"}
         </Button>
         <SubText style={{ display: "flex", alignItems: "center" }}>
           <User style={{ height: 14 }} /> {sessionData.numPpl} participants

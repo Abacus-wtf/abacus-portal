@@ -1,7 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-} from "react"
+import React, { useEffect, useState } from "react"
 import { Title, SmallUniversalContainer, Text } from "@components/global.styles"
 import styled from "styled-components"
 import * as queryString from "query-string"
@@ -9,13 +6,11 @@ import { navigate } from "gatsby"
 import { ImageContainer } from "@components/global.styles"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
-import {
-  useGetCurrentSessionData,
-} from "@state/sessionData/hooks"
+import { useGetCurrentSessionData } from "@state/sessionData/hooks"
 import { ButtonsWhite } from "@components/Button"
 import Link from "gatsby-link"
 import _ from "lodash"
-import CurrentState from './CurrentState'
+import CurrentState from "./CurrentState"
 
 const SplitContainer = styled.div`
   display: grid;
@@ -78,7 +73,6 @@ const CurrentSession = ({ location }) => {
       loadData()
     }
   }, [address, tokenId])
-
 
   if (isLoading || sessionData === null) {
     return (

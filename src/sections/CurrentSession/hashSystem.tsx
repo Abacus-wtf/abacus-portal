@@ -6,7 +6,7 @@ import { HorizontalListGroupModified } from "./CurrentSession.styles"
 import { useActiveWeb3React } from "@hooks/index"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
-import {web3} from '@config/constants'
+import { web3 } from "@config/constants"
 
 interface HashSystem {
   onCreateHash: (appraisalValue: number, password: number) => void
