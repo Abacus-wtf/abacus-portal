@@ -30,7 +30,11 @@ import { User } from "react-feather"
 import HashSystem from "../hashSystem"
 import { useActiveWeb3React } from "@hooks/index"
 import { web3 } from "@config/constants"
-import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
+import {
+  useOnHarvest,
+  useOnSubmitVote,
+  useOnUpdateVote,
+} from "@hooks/current-session"
 import { keccak256 } from "@ethersproject/keccak256"
 import {
   useAllTransactions,
@@ -39,11 +43,7 @@ import {
 } from "@state/transactions/hooks"
 import _ from "lodash"
 
-const Vote: FunctionComponent = () => {
-  const [appraisalHash, setAppraisalHash] = useState("")
-  const { account, chainId, library } = useActiveWeb3React()
-  const getCurrentSessionData = useGetCurrentSessionData()
-
+const Harvest: FunctionComponent = () => {
   const sessionData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
@@ -53,25 +53,9 @@ const Vote: FunctionComponent = () => {
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
 
-  const submitVote = useOnSubmitVote()
-  const updateVote = useOnUpdateVote()
-  const [stakeVal, setStakeVal] = useState("")
-  const [txHash, setTxHash] = useState()
+  const onHarvest = useOnHarvest()
+  const [txHash, setTxHash] = useState("")
   const isTxOccurring = useIsTxOccurring(txHash)
-  const loadData = async () => {
-    // @ts-ignore
-    await getCurrentSessionData(
-      sessionData.address,
-      sessionData.tokenId,
-      sessionData.nonce
-    )
-  }
-
-  useEffect(() => {
-    if (!isTxOccurring && sessionData !== null) {
-      //loadData()
-    }
-  }, [isTxOccurring])
 
   const theme = useContext(ThemeContext)
   return (
@@ -96,75 +80,24 @@ const Vote: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = hash => {
-            setTxHash(hash)
-          }
-          switch (userStatus) {
-            case UserState.NotVoted:
-              await submitVote(
-                e.target["appraise"].value,
-                e.target["stake"].value,
-                cb
-              )
-              break
-            case UserState.CompletedVote:
-              await updateVote(e.target["appraise"].value, cb)
-              break
-            default:
-              break
-          }
+          void onHarvest(hash => setTxHash(hash))
         }}
       >
-        <ListGroup>
-          <HashSystem
-            onCreateHash={(appraisalValue, password) => {
-              setAppraisalHash(
-                keccak256(
-                  web3.eth.abi.encodeParameters(
-                    ["uint256", "address", "uint256"],
-                    [appraisalValue, account!, password]
-                  )
-                )
-              )
-            }}
+        <ListGroupItem>
+          <InputWithTitle
+            title={"Final Appraisal Value"}
+            id={"stake"}
+            value={sessionData.finalAppraisalValue}
+            disabled
           />
-          <ListGroupItem>
-            <InputWithTitle
-              title={"Appraisal Result (Hashed)"}
-              id={"appraise"}
-              placeholder="0"
-              value={appraisalHash}
-              disabled={true}
-            />
-          </ListGroupItem>
-          {userStatus !== UserState.CompletedVote ? (
-            <ListGroupItem>
-              <InputWithTitle
-                title={"Stake"}
-                id={"stake"}
-                value={stakeVal}
-                onChange={e => setStakeVal(e.target.value)}
-                placeholder="0.001"
-              />
-            </ListGroupItem>
-          ) : null}
-        </ListGroup>
+        </ListGroupItem>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <Button
-            disabled={
-              isTxOccurring ||
-              appraisalHash === "" ||
-              (userStatus === UserState.NotVoted &&
-                (isNaN(Number(stakeVal)) || stakeVal === ""))
-            }
+            disabled={isTxOccurring}
             style={{ width: "100%" }}
             type="submit"
           >
-            {isTxOccurring
-              ? "Pending..."
-              : userStatus === UserState.CompletedVote
-              ? "Update"
-              : "Submit"}
+            {isTxOccurring ? "Pending..." : "Harvest"}
           </Button>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
@@ -175,4 +108,4 @@ const Vote: FunctionComponent = () => {
   )
 }
 
-export default Vote
+export default Harvest
