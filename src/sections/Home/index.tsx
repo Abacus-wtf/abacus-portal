@@ -75,7 +75,7 @@ const Home: React.FC = () => {
             Sessions
           </Subheader>
         </div>
-        <HeaderBarContainer>
+        {/*<HeaderBarContainer>
           <ButtonsWhite>Filter</ButtonsWhite>
           <SearchBar
             input={searchValue}
@@ -90,7 +90,7 @@ const Home: React.FC = () => {
           >
             Create Session
           </Button>
-        </HeaderBarContainer>
+        </HeaderBarContainer>*/}
       </HeaderBar>
       {isLoading ? (
         <UniversalContainer style={{ alignItems: "center" }}>
