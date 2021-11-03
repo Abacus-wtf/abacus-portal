@@ -37,11 +37,13 @@ export const useOnSubmitVote = () => {
       estimate = pricingSessionContract.estimateGas.setVote
       args = [sessionData.address, Number(sessionData.tokenId), hash]
       value = parseEther(stake)
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Submit Vote",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
@@ -81,11 +83,13 @@ export const useOnUpdateVote = () => {
       estimate = pricingSessionContract.estimateGas.updateVote
       args = [sessionData.address, Number(sessionData.tokenId), hash]
       value = null
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Update Vote",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
@@ -134,11 +138,13 @@ export const useOnWeightVote = () => {
         seed,
       ]
       value = null
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Weight Vote",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
@@ -178,11 +184,13 @@ export const useOnSetFinalAppraisal = () => {
       estimate = pricingSessionContract.estimateGas.setFinalAppraisal
       args = [sessionData.address, Number(sessionData.tokenId)]
       value = null
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Set Final Appraisal",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
@@ -222,11 +230,13 @@ export const useOnHarvest = () => {
       estimate = pricingSessionContract.estimateGas.harvest
       args = [sessionData.address, Number(sessionData.tokenId)]
       value = null
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Harvest",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
@@ -270,11 +280,13 @@ export const useOnClaim = () => {
         isClaimingEth ? 1 : 2,
       ]
       value = null
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Claim Tokens",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
@@ -314,11 +326,13 @@ export const useOnEndSession = () => {
       estimate = pricingSessionContract.estimateGas.endSession
       args = [sessionData.address, Number(sessionData.tokenId)]
       value = null
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "End Session",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
