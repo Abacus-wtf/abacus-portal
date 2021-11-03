@@ -92,8 +92,7 @@ export const useOnUpdateVote = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -109,7 +108,8 @@ export const useOnWeightVote = () => {
   const generalizedContractCall = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback( async (
+  return useCallback(
+    async (
       appraisalValue: string,
       seed: string,
       cb: (hash: string) => void
@@ -127,11 +127,10 @@ export const useOnWeightVote = () => {
       )
       method = pricingSessionContract.weightVote
       estimate = pricingSessionContract.estimateGas.weightVote
-      console.log(parseEther(''+appraisalValue))
       args = [
         sessionData.address,
         Number(sessionData.tokenId),
-        parseEther(''+appraisalValue),
+        parseEther("" + appraisalValue),
         seed,
       ]
       value = null
@@ -146,8 +145,7 @@ export const useOnWeightVote = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -191,8 +189,7 @@ export const useOnSetFinalAppraisal = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -236,8 +233,7 @@ export const useOnHarvest = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -285,8 +281,7 @@ export const useOnClaim = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -330,8 +325,7 @@ export const useOnEndSession = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
