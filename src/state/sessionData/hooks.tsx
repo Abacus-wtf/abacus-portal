@@ -1,7 +1,11 @@
 import { useCallback } from "react"
 import { AppState } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
-import { getMultipleSessionData, getCurrentSessionData } from "./actions"
+import {
+  getMultipleSessionData,
+  getCurrentSessionData,
+  setUserStatus,
+} from "./actions"
 import {
   SessionData,
   CurrentSessionState,
@@ -20,6 +24,36 @@ import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import axios from "axios"
+
+const modifyTimeAndSession = (getStatus: string, pricingSessionData: any, stateVals: any) => {
+  let sessionStatus = Number(getStatus)
+  console.log(sessionStatus)
+  let endTime = Number(pricingSessionData.endTime) * 1000
+  const currentTime = Date.now()
+  if (sessionStatus === 3) {
+    endTime =
+      Number(stateVals.timeFinalAppraisalSet) * 1000 +
+      Number(pricingSessionData.votingTime) * 1000
+    if (currentTime >= endTime) {
+      sessionStatus = 4
+    }
+  } else if (sessionStatus === 4) {
+    endTime =
+      Number(stateVals.timeFinalAppraisalSet) * 1000 +
+      Number(pricingSessionData.votingTime) * 2 * 1000
+  } else if (sessionStatus == 1) {
+    endTime =
+      endTime + Number(pricingSessionData.votingTime) * 1000
+    if (currentTime >= endTime) {
+      sessionStatus = 2
+    }
+  } else if (sessionStatus == 0 && currentTime > endTime) {
+    sessionStatus = 1
+    endTime =
+      endTime + Number(pricingSessionData.votingTime) * 1000
+  }
+  return {endTime, sessionStatus}
+}
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -72,7 +106,7 @@ export const useGetMultiSessionData = () => {
       )
     )
 
-    const pricingSessionData = await Promise.all(
+    const pricingSessionCoreData = await Promise.all(
       _.map(_.range(0, CURRENT_SESSIONS.length), i =>
         pricingSession.methods
           .NftSessionCore(
@@ -84,23 +118,36 @@ export const useGetMultiSessionData = () => {
       )
     )
 
+    const pricingSessionCheckData = await Promise.all(
+      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
+        pricingSession.methods
+          .NftSessionCheck(
+            pricingSessionNonce[i],
+            CURRENT_SESSIONS[i].address,
+            CURRENT_SESSIONS[i].tokenId
+          )
+          .call()
+      )
+    )
+
     const sessionData: SessionData[] = _.map(
       _.range(0, CURRENT_SESSIONS.length),
       i => {
+        const {endTime, sessionStatus} = modifyTimeAndSession(statuses[i], pricingSessionCoreData[i], pricingSessionCheckData[i])
         return {
           img:
             pricingSessionMetadata[i].image_preview_url ||
             pricingSessionMetadata[i].image_url,
-          endTime: Number(pricingSessionData[i].endTime) * 1000,
-          numPpl: Number(pricingSessionData[i].uniqueVoters),
+          endTime: endTime,
+          numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
           title: pricingSessionMetadata[i].collection.name,
           totalStaked: Number(
-            formatEther(pricingSessionData[i].totalSessionStake)
+            formatEther(pricingSessionCoreData[i].totalSessionStake)
           ),
           nftName: pricingSessionMetadata[i].name,
           finalAppraisalValue:
-            Number(statuses[i]) >= 4
-              ? Number(finalAppraisalValues[i])
+            sessionStatus >= 3
+              ? Number(formatEther(finalAppraisalValues[i]))
               : undefined,
           address: CURRENT_SESSIONS[i].address,
           tokenId: CURRENT_SESSIONS[i].tokenId,
@@ -131,15 +178,13 @@ export const useGetCurrentSessionData = () => {
       let URL = `asset/${address}/${tokenId}`
       const [
         pricingSessionMetadata,
-        pricingSessionData,
-        ethUsd,
+        pricingSessionCore,
         getStatus,
-        stateVals,
+        pricingSessionCheck,
         finalAppraisalValue,
       ] = await Promise.all([
         openseaGet(URL),
         pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
-        axios.get(COINGECKO_ETH_USD),
         pricingSession.methods.getStatus(address, tokenId).call(),
         pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
         pricingSession.methods
@@ -147,51 +192,33 @@ export const useGetCurrentSessionData = () => {
           .call(),
       ])
 
-      let getVoterCheck
-      if (account) {
-        getVoterCheck = await pricingSession.methods
-          .getVoterCheck(address, tokenId, account)
-          .call()
-      } else {
-        getVoterCheck = "-1"
+      let ethUsd
+      try {
+        ethUsd = await axios.get(COINGECKO_ETH_USD)
+        ethUsd = ethUsd.data.ethereum.usd
+      } catch (e) {
+        ethUsd = 4500
       }
 
-      let sessionStatus = Number(getStatus)
-      let endTime = Number(pricingSessionData.endTime) * 1000
-      if (stateVals.finalAppraisalSet && sessionStatus === 4) {
-        endTime =
-          Number(stateVals.timeFinalAppraisalSet) * 1000 +
-          Number(pricingSessionData.votingTime)
-      } else if (stateVals.finalAppraisalSet && sessionStatus === 5) {
-        endTime =
-          Number(stateVals.timeFinalAppraisalSet) * 1000 +
-          Number(pricingSessionData.votingTime) * 2
-      } else if (sessionStatus == 2) {
-        endTime =
-          endTime + Number(pricingSessionData.votingTime) * sessionStatus
-        const timeNow = new Date().getTime()
-        if (timeNow >= endTime) {
-          sessionStatus = 3
-        }
-      }
+      const {endTime, sessionStatus} = modifyTimeAndSession(getStatus, pricingSessionCore, pricingSessionCheck)
 
       const sessionData: SessionData = {
         img:
           pricingSessionMetadata.image_url ||
           pricingSessionMetadata.image_preview_url,
         endTime,
-        numPpl: Number(pricingSessionData.uniqueVoters),
+        numPpl: Number(pricingSessionCore.uniqueVoters),
         title: pricingSessionMetadata.collection.name,
-        totalStaked: Number(formatEther(pricingSessionData.totalSessionStake)),
+        totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
         totalStakedInUSD:
-          Number(formatEther(pricingSessionData.totalSessionStake)) *
-          Number(ethUsd.data.ethereum.usd),
+          Number(formatEther(pricingSessionCore.totalSessionStake)) *
+          Number(ethUsd),
         nftName: pricingSessionMetadata.name,
         address: address,
         tokenId: tokenId,
         nonce: nonce,
         finalAppraisalValue:
-          sessionStatus >= 4 ? Number(finalAppraisalValue) : undefined,
+          sessionStatus >= 3 ? Number(formatEther(finalAppraisalValue)) : undefined,
         owner:
           pricingSessionMetadata.owner.user &&
           pricingSessionMetadata.owner.user.username
@@ -201,7 +228,6 @@ export const useGetCurrentSessionData = () => {
 
       const currentSessionData: CurrentSessionState = {
         sessionData,
-        userStatus: Number(getVoterCheck),
         sessionStatus: sessionStatus,
       }
       dispatch(getCurrentSessionData(currentSessionData))
@@ -210,9 +236,65 @@ export const useGetCurrentSessionData = () => {
   )
 }
 
+export const useGetUserStatus = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const { account } = useActiveWeb3React()
+
+  return useCallback(
+    async (address: string, tokenId: string) => {
+      const pricingSession = getPricingSessionContract(
+        ABC_PRICING_SESSION_ADDRESS
+      )
+      let getVoterCheck
+      if (account) {
+        getVoterCheck = await pricingSession.methods
+          .getVoterCheck(address, tokenId, account)
+          .call()
+      } else {
+        getVoterCheck = "-1"
+      }
+      dispatch(setUserStatus(Number(getVoterCheck)))
+    },
+    [dispatch, getPricingSessionContract, account]
+  )
+}
+
 export const useCurrentSessionState = () => {
   return useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionStatus"]
   >(state => state.sessionData.currentSessionData.sessionStatus)
+}
+
+export const useCanUserInteract = () => {
+  const sessionStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionStatus"]
+  >(state => state.sessionData.currentSessionData.sessionStatus)
+  const userStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(state => state.sessionData.currentSessionData.userStatus)
+  switch (sessionStatus) {
+    case SessionState.Vote:
+      return (
+        userStatus === UserState.NotVoted ||
+        userStatus === UserState.CompletedVote
+      )
+    case SessionState.Weigh:
+      return userStatus === UserState.CompletedVote
+    case SessionState.SetFinalAppraisal:
+      return true
+    case SessionState.Harvest:
+      return userStatus === UserState.CompletedWeigh
+    case SessionState.Claim:
+      return userStatus === UserState.CompletedHarvest
+    case SessionState.EndSession:
+      return true
+    case SessionState.Complete:
+      return true
+    default:
+      return false
+  }
 }

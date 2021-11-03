@@ -23,9 +23,9 @@ export const useOnSubmitVote = () => {
   return useCallback(
     async (hash: string, stake: string, cb: (hash: string) => void) => {
       let estimate,
-      method: (...args: any) => Promise<TransactionResponse>,
-      args: Array<BigNumber | number | string>,
-      value: BigNumber | null
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
 
       const pricingSessionContract = getContract(
         ABC_PRICING_SESSION_ADDRESS,
@@ -48,8 +48,7 @@ export const useOnSubmitVote = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -68,9 +67,9 @@ export const useOnUpdateVote = () => {
   return useCallback(
     async (hash: string, cb: (hash: string) => void) => {
       let estimate,
-      method: (...args: any) => Promise<TransactionResponse>,
-      args: Array<BigNumber | number | string>,
-      value: BigNumber | null
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
 
       const pricingSessionContract = getContract(
         ABC_PRICING_SESSION_ADDRESS,
@@ -93,8 +92,7 @@ export const useOnUpdateVote = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -111,7 +109,11 @@ export const useOnWeightVote = () => {
   const addTransaction = useTransactionAdder()
 
   return useCallback(
-    async (appraisalValue: string, seed: string, cb: (hash: string) => void) => {
+    async (
+      appraisalValue: string,
+      seed: string,
+      cb: (hash: string) => void
+    ) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -126,10 +128,10 @@ export const useOnWeightVote = () => {
       method = pricingSessionContract.weightVote
       estimate = pricingSessionContract.estimateGas.weightVote
       args = [
-        sessionData.address, 
-        Number(sessionData.tokenId), 
-        appraisalValue,
-        seed
+        sessionData.address,
+        Number(sessionData.tokenId),
+        parseEther("" + appraisalValue),
+        seed,
       ]
       value = null
       const txnCb = (response: any) => {
@@ -143,8 +145,7 @@ export const useOnWeightVote = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -175,10 +176,7 @@ export const useOnSetFinalAppraisal = () => {
       )
       method = pricingSessionContract.setFinalAppraisal
       estimate = pricingSessionContract.estimateGas.setFinalAppraisal
-      args = [
-        sessionData.address, 
-        Number(sessionData.tokenId)
-      ]
+      args = [sessionData.address, Number(sessionData.tokenId)]
       value = null
       const txnCb = (response: any) => {
         addTransaction(response, {
@@ -191,8 +189,7 @@ export const useOnSetFinalAppraisal = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -223,10 +220,7 @@ export const useOnHarvest = () => {
       )
       method = pricingSessionContract.harvest
       estimate = pricingSessionContract.estimateGas.harvest
-      args = [
-        sessionData.address, 
-        Number(sessionData.tokenId)
-      ]
+      args = [sessionData.address, Number(sessionData.tokenId)]
       value = null
       const txnCb = (response: any) => {
         addTransaction(response, {
@@ -239,8 +233,7 @@ export const useOnHarvest = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]
@@ -269,12 +262,12 @@ export const useOnClaim = () => {
         library,
         account
       )
-      method = pricingSessionContract.harvest
-      estimate = pricingSessionContract.estimateGas.harvest
+      method = pricingSessionContract.claim
+      estimate = pricingSessionContract.estimateGas.claim
       args = [
+        sessionData.address,
+        Number(sessionData.tokenId),
         isClaimingEth ? 1 : 2,
-        sessionData.address, 
-        Number(sessionData.tokenId)
       ]
       value = null
       const txnCb = (response: any) => {
@@ -288,8 +281,51 @@ export const useOnClaim = () => {
         estimate,
         args,
         value,
-        // @ts-ignore
-        txnCb,
+        cb: txnCb,
+      })
+    },
+    [account, library, sessionData]
+  )
+}
+
+export const useOnEndSession = () => {
+  const { account, library } = useActiveWeb3React()
+  const sessionData = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
+  const generalizedContractCall = useGeneralizedContractCall()
+  const addTransaction = useTransactionAdder()
+
+  return useCallback(
+    async (cb: (hash: string) => void) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const pricingSessionContract = getContract(
+        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ABI,
+        library,
+        account
+      )
+      method = pricingSessionContract.endSession
+      estimate = pricingSessionContract.estimateGas.endSession
+      args = [sessionData.address, Number(sessionData.tokenId)]
+      value = null
+      const txnCb = (response: any) => {
+        addTransaction(response, {
+          summary: "End Session",
+        })
+        cb(response.hash)
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        cb: txnCb,
       })
     },
     [account, library, sessionData]

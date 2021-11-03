@@ -14,7 +14,7 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, ListGroup, Form } from "shards-react"
+import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import {
@@ -35,6 +35,7 @@ import {
 } from "@state/transactions/hooks"
 import { UserState } from "@state/sessionData/reducer"
 import _ from "lodash"
+import { useCanUserInteract } from "@state/sessionData/hooks"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
@@ -48,6 +49,10 @@ const Weigh: FunctionComponent = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(state => state.sessionData.currentSessionData.sessionData)
+
+  const canUserInteract = useCanUserInteract()
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
+
   const theme = useContext(ThemeContext)
   const [appraisalValue, setAppraisalValue] = useState("")
   const [passwordValue, setPasswordValue] = useState("")
@@ -90,9 +95,15 @@ const Weigh: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          await weightVote(appraisalValue, passwordValue, hash => {
+          const cb = (hash) => {
             setTxHash(hash)
-          })
+            const hashedMessage = web3.eth.abi.encodeParameters(
+              ["address", "uint256", "uint256"],
+              [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
+            )
+            localStorage.setItem(hashedMessage, '')
+          }
+          await weightVote(appraisalValue, passwordValue, cb)
         }}
       >
         <ListGroup>
@@ -118,25 +129,39 @@ const Weigh: FunctionComponent = () => {
           </HorizontalListGroup>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <Button
-            disabled={
-              isTxOccurring ||
-              appraisalValue === "" ||
-              passwordValue === "" ||
-              isNaN(Number(appraisalValue)) ||
-              isNaN(Number(passwordValue)) ||
-              userStatus === UserState.CompletedWeigh ||
-              userStatus === UserState.NotLoggedIn
-            }
-            style={{ width: "100%" }}
-            type="submit"
+          <div style={{ width: "100%" }} id={"submitWeighButton"}>
+            <Button
+              disabled={
+                !canUserInteract ||
+                isTxOccurring ||
+                appraisalValue === "" ||
+                passwordValue === "" ||
+                isNaN(Number(appraisalValue)) ||
+                isNaN(Number(passwordValue)) ||
+                userStatus === UserState.CompletedWeigh ||
+                userStatus === UserState.NotLoggedIn
+              }
+              style={{ width: "100%" }}
+              type="submit"
+            >
+              {isTxOccurring
+                ? "Pending..."
+                : userStatus === UserState.CompletedWeigh
+                ? "Vote Weighed"
+                : "Weigh"}
+            </Button>
+          </div>
+          <Tooltip
+            open={isToolTipOpen}
+            target="#submitWeighButton"
+            disabled={canUserInteract || isTxOccurring}
+            toggle={() => setIsToolTipOpen(!isToolTipOpen)}
+            placement={"right"}
           >
-            {isTxOccurring
-              ? "Pending..."
-              : userStatus === UserState.CompletedWeigh
-              ? "Vote Weighed"
-              : "Weigh"}
-          </Button>
+            {userStatus === UserState.CompletedWeigh
+              ? "You already weighed your vote"
+              : "You missed a previous step, so you cannot participate in this part of the session"}
+          </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>

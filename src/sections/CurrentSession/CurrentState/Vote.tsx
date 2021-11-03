@@ -14,7 +14,7 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, ListGroup, Form } from "shards-react"
+import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
 import {
   VerticalContainer,
   SubText,
@@ -24,7 +24,10 @@ import SessionCountdown from "./SessionCountdown"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import HashSystem from "../hashSystem"
@@ -38,6 +41,7 @@ import {
   useIsTxOccurring,
 } from "@state/transactions/hooks"
 import _ from "lodash"
+import { parseEther } from "ethers/lib/utils"
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
@@ -53,13 +57,15 @@ const Vote: FunctionComponent = () => {
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
 
+  const canUserInteract = useCanUserInteract()
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
+
   const submitVote = useOnSubmitVote()
   const updateVote = useOnUpdateVote()
   const [stakeVal, setStakeVal] = useState("")
   const [txHash, setTxHash] = useState()
   const isTxOccurring = useIsTxOccurring(txHash)
   const loadData = async () => {
-    // @ts-ignore
     await getCurrentSessionData(
       sessionData.address,
       sessionData.tokenId,
@@ -118,13 +124,13 @@ const Vote: FunctionComponent = () => {
         <ListGroup>
           <HashSystem
             onCreateHash={(appraisalValue, password) => {
+              let encodedParams = web3.eth.abi.encodeParameters(
+                ["uint", "address", "uint"],
+                [parseEther(''+appraisalValue), account!, password]
+              )
+              encodedParams = encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length)
               setAppraisalHash(
-                keccak256(
-                  web3.eth.abi.encodeParameters(
-                    ["uint256", "address", "uint256"],
-                    [appraisalValue, account!, password]
-                  )
-                )
+                keccak256(encodedParams)
               )
             }}
           />
@@ -150,22 +156,34 @@ const Vote: FunctionComponent = () => {
           ) : null}
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <Button
-            disabled={
-              isTxOccurring ||
-              appraisalHash === "" ||
-              (userStatus === UserState.NotVoted &&
-                (isNaN(Number(stakeVal)) || stakeVal === ""))
-            }
-            style={{ width: "100%" }}
-            type="submit"
+          <div style={{ width: "100%" }} id={"submitVoteButton"}>
+            <Button
+              disabled={
+                !canUserInteract ||
+                isTxOccurring ||
+                appraisalHash === "" ||
+                (userStatus === UserState.NotVoted &&
+                  (isNaN(Number(stakeVal)) || stakeVal === ""))
+              }
+              style={{ width: "100%" }}
+              type="submit"
+            >
+              {isTxOccurring
+                ? "Pending..."
+                : userStatus === UserState.CompletedVote
+                ? "Update"
+                : "Submit"}
+            </Button>
+          </div>
+          <Tooltip
+            open={isToolTipOpen}
+            target="#submitVoteButton"
+            disabled={canUserInteract || isTxOccurring}
+            toggle={() => setIsToolTipOpen(!isToolTipOpen)}
+            placement={"right"}
           >
-            {isTxOccurring
-              ? "Pending..."
-              : userStatus === UserState.CompletedVote
-              ? "Update"
-              : "Submit"}
-          </Button>
+            It seems you've already voted, or you're not logged in
+          </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>

@@ -42,6 +42,7 @@ const GlobalLayout: React.FC = (props: any) => {
     }
     checkConnection()
   }, [])
+
   return (
     <React.Fragment>
       <GlobalStyles />
