@@ -262,12 +262,12 @@ export const useOnClaim = () => {
         library,
         account
       )
-      method = pricingSessionContract.harvest
-      estimate = pricingSessionContract.estimateGas.harvest
+      method = pricingSessionContract.claim
+      estimate = pricingSessionContract.estimateGas.claim
       args = [
-        isClaimingEth ? 1 : 2,
         sessionData.address,
         Number(sessionData.tokenId),
+        isClaimingEth ? 1 : 2,
       ]
       value = null
       const txnCb = (response: any) => {

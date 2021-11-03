@@ -67,7 +67,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = (hash) => {
+          const cb: (hash: string) => void = (hash) => {
             setTxHash(hash)
           }
           onSetFinalAppraisal(cb)
@@ -81,7 +81,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
               disabled={!canUserInteract || isTxOccurring}
               style={{ width: "100%" }}
             >
-              Set Final Appraisal
+              {isTxOccurring ? 'Pending...' : 'Set Final Appraisal'}
             </Button>
           </div>
           <Tooltip

@@ -27,13 +27,13 @@ import axios from "axios"
 
 const modifyTimeAndSession = (getStatus: string, pricingSessionData: any, stateVals: any) => {
   let sessionStatus = Number(getStatus)
+  console.log(sessionStatus)
   let endTime = Number(pricingSessionData.endTime) * 1000
   const currentTime = Date.now()
   if (sessionStatus === 3) {
     endTime =
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 1000
-    console.log(endTime)
     if (currentTime >= endTime) {
       sessionStatus = 4
     }

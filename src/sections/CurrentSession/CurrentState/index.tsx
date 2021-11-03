@@ -7,6 +7,7 @@ import SetFinalAppraisal from "./SetFinalAppraisal"
 import Harvest from "./Harvest"
 import Claim from "./Claim"
 import EndSession from "./EndSession"
+import SessionCompleted from "./SessionCompleted"
 
 const CurrentState: FunctionComponent = () => {
   const state = useCurrentSessionState()
@@ -24,6 +25,8 @@ const CurrentState: FunctionComponent = () => {
       return <Claim />
     case SessionState.EndSession:
       return <EndSession />
+    case SessionState.Complete:
+      return <SessionCompleted />
     default:
       return null
   }
