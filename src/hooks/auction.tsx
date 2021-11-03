@@ -15,7 +15,13 @@ export const useOnBid = () => {
   const addTransaction = useTransactionAdder()
 
   return useCallback(
-    async (bid: string, initAppraisal: string, nftAddress: string, tokenId: string, cb: (hash: string) => void) => {
+    async (
+      bid: string,
+      initAppraisal: string,
+      nftAddress: string,
+      tokenId: string,
+      cb: (hash: string) => void
+    ) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -29,17 +35,15 @@ export const useOnBid = () => {
       )
       method = auctionContract.newBid
       estimate = auctionContract.estimateGas.newBid
-      args = [
-        nftAddress,
-        tokenId,
-        parseEther(initAppraisal),
-      ]
+      args = [nftAddress, tokenId, parseEther(initAppraisal)]
       value = parseEther(bid)
-      const txnCb = (response: any) => {
+      const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Bid Action",
         })
         cb(response.hash)
+        await response.wait()
+        cb("")
       }
       await generalizedContractCall({
         method,
