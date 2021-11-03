@@ -95,7 +95,7 @@ const Weigh: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          await weightVote(appraisalValue, passwordValue, hash => {
+          await weightVote(appraisalValue, passwordValue, (hash) => {
             setTxHash(hash)
           })
         }}

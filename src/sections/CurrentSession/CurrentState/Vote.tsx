@@ -129,7 +129,6 @@ const Vote: FunctionComponent = () => {
                 [parseEther(''+appraisalValue), account!, password]
               )
               encodedParams = encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length)
-              console.log(encodedParams)
               setAppraisalHash(
                 keccak256(encodedParams)
               )

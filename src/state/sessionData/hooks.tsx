@@ -136,20 +136,26 @@ export const useGetCurrentSessionData = () => {
       const [
         pricingSessionMetadata,
         pricingSessionData,
-        ethUsd,
         getStatus,
         stateVals,
         finalAppraisalValue,
       ] = await Promise.all([
         openseaGet(URL),
         pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
-        axios.get(COINGECKO_ETH_USD),
         pricingSession.methods.getStatus(address, tokenId).call(),
         pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
         pricingSession.methods
           .finalAppraisalValue(nonce, address, tokenId)
           .call(),
       ])
+
+      let ethUsd
+      try {
+        ethUsd = await axios.get(COINGECKO_ETH_USD)
+        ethUsd = ethUsd.data.ethereum.usd
+      } catch (e) {
+        ethUsd = 4500
+      }
 
       let sessionStatus = Number(getStatus)
       let endTime = Number(pricingSessionData.endTime) * 1000
@@ -180,7 +186,7 @@ export const useGetCurrentSessionData = () => {
         totalStaked: Number(formatEther(pricingSessionData.totalSessionStake)),
         totalStakedInUSD:
           Number(formatEther(pricingSessionData.totalSessionStake)) *
-          Number(ethUsd.data.ethereum.usd),
+          Number(ethUsd),
         nftName: pricingSessionMetadata.name,
         address: address,
         tokenId: tokenId,
@@ -254,7 +260,7 @@ export const useCanUserInteract = () => {
     case SessionState.Weigh:
       return userStatus === UserState.CompletedVote
     case SessionState.SetFinalAppraisal:
-      return true
+      return userStatus === UserState.CompletedWeigh
     case SessionState.Harvest:
       return userStatus === UserState.CompletedWeigh
     case SessionState.Claim:

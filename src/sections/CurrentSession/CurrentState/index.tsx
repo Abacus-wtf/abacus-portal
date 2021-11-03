@@ -17,7 +17,7 @@ const CurrentState: FunctionComponent = () => {
     case SessionState.Weigh:
       return <Weigh />
     case SessionState.SetFinalAppraisal:
-      return <Vote />
+      return <SetFinalAppraisal />
     case SessionState.Harvest:
       return <Harvest />
     case SessionState.Claim:

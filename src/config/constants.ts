@@ -30,7 +30,7 @@ export const ABC_AUCTION_ADDRESS = IS_PRODUCTION
   : "0xecb3B34e65D1a194Ed33215a54FE5a1ab32D8a72"
 export const ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? ""
-  : "0x61f060f5615d4c3329e8ba32d29f2232ce35af69"
+  : "0x8eba8ac672bca60a7a3bdfd5a1fcb2332154b205"
 
 interface NetworkInfo {
   rpc: any
