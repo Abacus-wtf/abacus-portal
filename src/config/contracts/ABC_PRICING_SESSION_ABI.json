@@ -245,29 +245,9 @@
     "name": "NftSessionCheck",
     "outputs": [
       {
-        "internalType": "bool",
-        "name": "claimsComplete",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "finalAppraisalSet",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "harvestLossComplete",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "sessionOver",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "votesWeighted",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "sessionProgression",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",

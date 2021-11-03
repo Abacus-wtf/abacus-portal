@@ -159,23 +159,32 @@ export const useGetCurrentSessionData = () => {
 
       let sessionStatus = Number(getStatus)
       let endTime = Number(pricingSessionData.endTime) * 1000
-      if (stateVals.finalAppraisalSet && sessionStatus === 4) {
+      const currentTime = Date.now()
+      if (stateVals.finalAppraisalSet && sessionStatus === 3) {
         endTime =
           Number(stateVals.timeFinalAppraisalSet) * 1000 +
           Number(pricingSessionData.votingTime) * 1000
-      } else if (stateVals.finalAppraisalSet && sessionStatus === 5) {
+        console.log(endTime)
+        if (currentTime >= endTime) {
+          sessionStatus = 4
+        }
+      } else if (stateVals.finalAppraisalSet && sessionStatus === 4) {
         endTime =
           Number(stateVals.timeFinalAppraisalSet) * 1000 +
           Number(pricingSessionData.votingTime) * 2 * 1000
-      } else if (sessionStatus == 2) {
+      } else if (sessionStatus == 1) {
         endTime =
           endTime + Number(pricingSessionData.votingTime) * 1000
-        const currentTime = Date.now()
         if (currentTime >= endTime) {
-          sessionStatus = 3
+          sessionStatus = 2
         }
-      }
+      } else if (sessionStatus == 0 && currentTime > endTime) {
+        sessionStatus = 1
+        endTime =
+          endTime + Number(pricingSessionData.votingTime) * 1000
 
+      }
+      console.log(sessionStatus)
       const sessionData: SessionData = {
         img:
           pricingSessionMetadata.image_url ||
@@ -192,7 +201,7 @@ export const useGetCurrentSessionData = () => {
         tokenId: tokenId,
         nonce: nonce,
         finalAppraisalValue:
-          sessionStatus >= 4 ? Number(finalAppraisalValue) : undefined,
+          sessionStatus >= 3 ? formatEther(finalAppraisalValue) : undefined,
         owner:
           pricingSessionMetadata.owner.user &&
           pricingSessionMetadata.owner.user.username
@@ -250,7 +259,6 @@ export const useCanUserInteract = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
-
   switch (sessionStatus) {
     case SessionState.Vote:
       return (
@@ -260,13 +268,13 @@ export const useCanUserInteract = () => {
     case SessionState.Weigh:
       return userStatus === UserState.CompletedVote
     case SessionState.SetFinalAppraisal:
-      return userStatus === UserState.CompletedWeigh
+      return true
     case SessionState.Harvest:
       return userStatus === UserState.CompletedWeigh
     case SessionState.Claim:
       return userStatus === UserState.CompletedHarvest
     case SessionState.EndSession:
-      return userStatus === UserState.CompletedClaim
+      return true
     case SessionState.Complete:
       return true
     default:

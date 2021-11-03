@@ -7,13 +7,13 @@ import {
 import _ from "lodash"
 
 export enum SessionState {
-  Vote = 1,
-  Weigh = 2,
-  SetFinalAppraisal = 3,
-  Harvest = 4,
-  Claim = 5,
-  EndSession = 6,
-  Complete = 7,
+  Vote = 0,
+  Weigh = 1,
+  SetFinalAppraisal = 2,
+  Harvest = 3,
+  Claim = 4,
+  EndSession = 5,
+  Complete = 6,
 }
 
 export enum UserState {

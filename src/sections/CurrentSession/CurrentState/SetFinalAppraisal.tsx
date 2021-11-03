@@ -67,7 +67,10 @@ const SetFinalAppraisal: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          void onSetFinalAppraisal(hash => setTxHash(hash))
+          const cb = (hash) => {
+            setTxHash(hash)
+          }
+          onSetFinalAppraisal(cb)
         }}
       >
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>

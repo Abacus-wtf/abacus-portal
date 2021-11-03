@@ -109,8 +109,7 @@ export const useOnWeightVote = () => {
   const generalizedContractCall = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
-    async (
+  return useCallback( async (
       appraisalValue: string,
       seed: string,
       cb: (hash: string) => void

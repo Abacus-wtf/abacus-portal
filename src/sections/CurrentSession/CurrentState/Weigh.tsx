@@ -95,9 +95,15 @@ const Weigh: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          await weightVote(appraisalValue, passwordValue, (hash) => {
+          const cb = (hash) => {
             setTxHash(hash)
-          })
+            const hashedMessage = web3.eth.abi.encodeParameters(
+              ["address", "uint256", "uint256"],
+              [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
+            )
+            localStorage.setItem(hashedMessage, '')
+          }
+          await weightVote(appraisalValue, passwordValue, cb)
         }}
       >
         <ListGroup>
