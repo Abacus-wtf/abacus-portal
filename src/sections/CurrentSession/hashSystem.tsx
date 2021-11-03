@@ -64,6 +64,8 @@ export default ({ onCreateHash }: HashSystem) => {
       setPasswordValue(items.password)
       setAppraisalValue(items.appraisal)
       onCreateHash(Number(appraisalValue), Number(passwordValue))
+    } else if (!isNaN(Number(passwordValue)) && !isNaN(Number(appraisalValue))) {
+      onCreateHash(Number(appraisalValue), Number(passwordValue))
     }
   }, [account])
 

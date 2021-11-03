@@ -182,7 +182,7 @@ const Vote: FunctionComponent = () => {
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
           >
-            It seems you've already voted, or your'e not logged in
+            It seems you've already voted, or you're not logged in
           </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants

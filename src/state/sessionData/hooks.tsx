@@ -25,6 +25,36 @@ import { openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import axios from "axios"
 
+const modifyTimeAndSession = (getStatus: string, pricingSessionData: any, stateVals: any) => {
+  let sessionStatus = Number(getStatus)
+  let endTime = Number(pricingSessionData.endTime) * 1000
+  const currentTime = Date.now()
+  if (sessionStatus === 3) {
+    endTime =
+      Number(stateVals.timeFinalAppraisalSet) * 1000 +
+      Number(pricingSessionData.votingTime) * 1000
+    console.log(endTime)
+    if (currentTime >= endTime) {
+      sessionStatus = 4
+    }
+  } else if (sessionStatus === 4) {
+    endTime =
+      Number(stateVals.timeFinalAppraisalSet) * 1000 +
+      Number(pricingSessionData.votingTime) * 2 * 1000
+  } else if (sessionStatus == 1) {
+    endTime =
+      endTime + Number(pricingSessionData.votingTime) * 1000
+    if (currentTime >= endTime) {
+      sessionStatus = 2
+    }
+  } else if (sessionStatus == 0 && currentTime > endTime) {
+    sessionStatus = 1
+    endTime =
+      endTime + Number(pricingSessionData.votingTime) * 1000
+  }
+  return {endTime, sessionStatus}
+}
+
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
@@ -76,7 +106,7 @@ export const useGetMultiSessionData = () => {
       )
     )
 
-    const pricingSessionData = await Promise.all(
+    const pricingSessionCoreData = await Promise.all(
       _.map(_.range(0, CURRENT_SESSIONS.length), i =>
         pricingSession.methods
           .NftSessionCore(
@@ -88,23 +118,36 @@ export const useGetMultiSessionData = () => {
       )
     )
 
+    const pricingSessionCheckData = await Promise.all(
+      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
+        pricingSession.methods
+          .NftSessionCheck(
+            pricingSessionNonce[i],
+            CURRENT_SESSIONS[i].address,
+            CURRENT_SESSIONS[i].tokenId
+          )
+          .call()
+      )
+    )
+
     const sessionData: SessionData[] = _.map(
       _.range(0, CURRENT_SESSIONS.length),
       i => {
+        const {endTime, sessionStatus} = modifyTimeAndSession(statuses[i], pricingSessionCoreData[i], pricingSessionCheckData[i])
         return {
           img:
             pricingSessionMetadata[i].image_preview_url ||
             pricingSessionMetadata[i].image_url,
-          endTime: Number(pricingSessionData[i].endTime) * 1000,
-          numPpl: Number(pricingSessionData[i].uniqueVoters),
+          endTime: endTime,
+          numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
           title: pricingSessionMetadata[i].collection.name,
           totalStaked: Number(
-            formatEther(pricingSessionData[i].totalSessionStake)
+            formatEther(pricingSessionCoreData[i].totalSessionStake)
           ),
           nftName: pricingSessionMetadata[i].name,
           finalAppraisalValue:
-            Number(statuses[i]) >= 4
-              ? Number(finalAppraisalValues[i])
+            sessionStatus >= 3
+              ? Number(formatEther(finalAppraisalValues[i]))
               : undefined,
           address: CURRENT_SESSIONS[i].address,
           tokenId: CURRENT_SESSIONS[i].tokenId,
@@ -135,9 +178,9 @@ export const useGetCurrentSessionData = () => {
       let URL = `asset/${address}/${tokenId}`
       const [
         pricingSessionMetadata,
-        pricingSessionData,
+        pricingSessionCore,
         getStatus,
-        stateVals,
+        pricingSessionCheck,
         finalAppraisalValue,
       ] = await Promise.all([
         openseaGet(URL),
@@ -157,51 +200,25 @@ export const useGetCurrentSessionData = () => {
         ethUsd = 4500
       }
 
-      let sessionStatus = Number(getStatus)
-      let endTime = Number(pricingSessionData.endTime) * 1000
-      const currentTime = Date.now()
-      if (stateVals.finalAppraisalSet && sessionStatus === 3) {
-        endTime =
-          Number(stateVals.timeFinalAppraisalSet) * 1000 +
-          Number(pricingSessionData.votingTime) * 1000
-        console.log(endTime)
-        if (currentTime >= endTime) {
-          sessionStatus = 4
-        }
-      } else if (stateVals.finalAppraisalSet && sessionStatus === 4) {
-        endTime =
-          Number(stateVals.timeFinalAppraisalSet) * 1000 +
-          Number(pricingSessionData.votingTime) * 2 * 1000
-      } else if (sessionStatus == 1) {
-        endTime =
-          endTime + Number(pricingSessionData.votingTime) * 1000
-        if (currentTime >= endTime) {
-          sessionStatus = 2
-        }
-      } else if (sessionStatus == 0 && currentTime > endTime) {
-        sessionStatus = 1
-        endTime =
-          endTime + Number(pricingSessionData.votingTime) * 1000
+      const {endTime, sessionStatus} = modifyTimeAndSession(getStatus, pricingSessionCore, pricingSessionCheck)
 
-      }
-      console.log(sessionStatus)
       const sessionData: SessionData = {
         img:
           pricingSessionMetadata.image_url ||
           pricingSessionMetadata.image_preview_url,
         endTime,
-        numPpl: Number(pricingSessionData.uniqueVoters),
+        numPpl: Number(pricingSessionCore.uniqueVoters),
         title: pricingSessionMetadata.collection.name,
-        totalStaked: Number(formatEther(pricingSessionData.totalSessionStake)),
+        totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
         totalStakedInUSD:
-          Number(formatEther(pricingSessionData.totalSessionStake)) *
+          Number(formatEther(pricingSessionCore.totalSessionStake)) *
           Number(ethUsd),
         nftName: pricingSessionMetadata.name,
         address: address,
         tokenId: tokenId,
         nonce: nonce,
         finalAppraisalValue:
-          sessionStatus >= 3 ? formatEther(finalAppraisalValue) : undefined,
+          sessionStatus >= 3 ? Number(formatEther(finalAppraisalValue)) : undefined,
         owner:
           pricingSessionMetadata.owner.user &&
           pricingSessionMetadata.owner.user.username
