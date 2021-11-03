@@ -1,4 +1,4 @@
-import { useGetCurrentSessionData, useGetUserStatus } from "@state/sessionData/hooks"
+import { useGetCurrentSessionData } from "@state/sessionData/hooks"
 import React, { FunctionComponent, useContext } from "react"
 import Countdown from "react-countdown"
 import { ThemeContext } from "styled-components"
@@ -15,15 +15,17 @@ const SessionCountdown: FunctionComponent = () => {
   >(state => state.sessionData.currentSessionData.sessionData)
   const theme = useContext(ThemeContext)
   const getCurrentSessionData = useGetCurrentSessionData()
-  const getUserStatus = useGetUserStatus()
   return (
     <ListGroupItem style={{ width: "100%" }}>
       <Label>Session ends in</Label>
       <Countdown
         date={sessionData.endTime}
         onComplete={async () => {
-          await getCurrentSessionData(sessionData.address, sessionData.tokenId, sessionData.nonce)  
-          await getUserStatus(sessionData.address, sessionData.tokenId)
+          await getCurrentSessionData(
+            sessionData.address,
+            sessionData.tokenId,
+            sessionData.nonce
+          )
         }}
         renderer={({ hours, minutes, seconds, completed }) => {
           if (completed) {

@@ -126,12 +126,12 @@ const Vote: FunctionComponent = () => {
             onCreateHash={(appraisalValue, password) => {
               let encodedParams = web3.eth.abi.encodeParameters(
                 ["uint", "address", "uint"],
-                [parseEther(''+appraisalValue), account!, password]
+                [parseEther("" + appraisalValue), account! || "", password]
               )
-              encodedParams = encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length)
-              setAppraisalHash(
-                keccak256(encodedParams)
-              )
+              encodedParams =
+                encodedParams.slice(0, 64) +
+                encodedParams.slice(88, encodedParams.length)
+              setAppraisalHash(keccak256(encodedParams))
             }}
           />
           <ListGroupItem>

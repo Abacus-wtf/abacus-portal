@@ -24,10 +24,14 @@ import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import axios from "axios"
+import { useWeb3React } from "@web3-react/core"
 
-const modifyTimeAndSession = (getStatus: string, pricingSessionData: any, stateVals: any) => {
+const modifyTimeAndSession = (
+  getStatus: string,
+  pricingSessionData: any,
+  stateVals: any
+) => {
   let sessionStatus = Number(getStatus)
-  console.log(sessionStatus)
   let endTime = Number(pricingSessionData.endTime) * 1000
   const currentTime = Date.now()
   if (sessionStatus === 3) {
@@ -42,17 +46,15 @@ const modifyTimeAndSession = (getStatus: string, pricingSessionData: any, stateV
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 2 * 1000
   } else if (sessionStatus == 1) {
-    endTime =
-      endTime + Number(pricingSessionData.votingTime) * 1000
+    endTime = endTime + Number(pricingSessionData.votingTime) * 1000
     if (currentTime >= endTime) {
       sessionStatus = 2
     }
   } else if (sessionStatus == 0 && currentTime > endTime) {
     sessionStatus = 1
-    endTime =
-      endTime + Number(pricingSessionData.votingTime) * 1000
+    endTime = endTime + Number(pricingSessionData.votingTime) * 1000
   }
-  return {endTime, sessionStatus}
+  return { endTime, sessionStatus }
 }
 
 export const useGetMultiSessionData = () => {
@@ -133,7 +135,11 @@ export const useGetMultiSessionData = () => {
     const sessionData: SessionData[] = _.map(
       _.range(0, CURRENT_SESSIONS.length),
       i => {
-        const {endTime, sessionStatus} = modifyTimeAndSession(statuses[i], pricingSessionCoreData[i], pricingSessionCheckData[i])
+        const { endTime, sessionStatus } = modifyTimeAndSession(
+          statuses[i],
+          pricingSessionCoreData[i],
+          pricingSessionCheckData[i]
+        )
         return {
           img:
             pricingSessionMetadata[i].image_preview_url ||
@@ -162,6 +168,28 @@ export const useGetMultiSessionData = () => {
     )
     dispatch(getMultipleSessionData(sessionData))
   }, [dispatch])
+}
+
+type GetUserStatusParams = {
+  account: string
+  getPricingSessionContract: ReturnType<typeof useWeb3Contract>
+  address: string
+  tokenId: string
+}
+const getUserStatus = async ({
+  account,
+  getPricingSessionContract,
+  address,
+  tokenId,
+}: GetUserStatusParams) => {
+  let getVoterCheck = -1
+  const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
+  if (account) {
+    getVoterCheck = await pricingSession.methods
+      .getVoterCheck(address, tokenId, account)
+      .call()
+  }
+  return Number(getVoterCheck)
 }
 
 export const useGetCurrentSessionData = () => {
@@ -200,7 +228,11 @@ export const useGetCurrentSessionData = () => {
         ethUsd = 4500
       }
 
-      const {endTime, sessionStatus} = modifyTimeAndSession(getStatus, pricingSessionCore, pricingSessionCheck)
+      const { endTime, sessionStatus } = modifyTimeAndSession(
+        getStatus,
+        pricingSessionCore,
+        pricingSessionCheck
+      )
 
       const sessionData: SessionData = {
         img:
@@ -218,7 +250,9 @@ export const useGetCurrentSessionData = () => {
         tokenId: tokenId,
         nonce: nonce,
         finalAppraisalValue:
-          sessionStatus >= 3 ? Number(formatEther(finalAppraisalValue)) : undefined,
+          sessionStatus >= 3
+            ? Number(formatEther(finalAppraisalValue))
+            : undefined,
         owner:
           pricingSessionMetadata.owner.user &&
           pricingSessionMetadata.owner.user.username
@@ -226,13 +260,21 @@ export const useGetCurrentSessionData = () => {
             : shortenAddress(pricingSessionMetadata.owner.address),
       }
 
+      const userStatus = await getUserStatus({
+        address,
+        account,
+        getPricingSessionContract,
+        tokenId,
+      })
+
       const currentSessionData: CurrentSessionState = {
         sessionData,
+        userStatus,
         sessionStatus: sessionStatus,
       }
       dispatch(getCurrentSessionData(currentSessionData))
     },
-    [dispatch, account]
+    [dispatch, account, getPricingSessionContract]
   )
 }
 
@@ -243,20 +285,15 @@ export const useGetUserStatus = () => {
 
   return useCallback(
     async (address: string, tokenId: string) => {
-      const pricingSession = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS
-      )
-      let getVoterCheck
-      if (account) {
-        getVoterCheck = await pricingSession.methods
-          .getVoterCheck(address, tokenId, account)
-          .call()
-      } else {
-        getVoterCheck = "-1"
-      }
-      dispatch(setUserStatus(Number(getVoterCheck)))
+      const userStatus = await getUserStatus({
+        address,
+        account,
+        getPricingSessionContract,
+        tokenId,
+      })
+      dispatch(setUserStatus(userStatus))
     },
-    [dispatch, getPricingSessionContract, account]
+    [account, dispatch, getPricingSessionContract]
   )
 }
 
@@ -276,6 +313,7 @@ export const useCanUserInteract = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
+
   switch (sessionStatus) {
     case SessionState.Vote:
       return (

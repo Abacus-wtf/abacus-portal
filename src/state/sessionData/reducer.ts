@@ -43,7 +43,7 @@ export interface SessionData {
 export interface CurrentSessionState {
   sessionData: SessionData
   sessionStatus: SessionState
-  userStatus?: UserState
+  userStatus: UserState
 }
 
 interface SessionDataState {

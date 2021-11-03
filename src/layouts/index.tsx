@@ -3,7 +3,7 @@ import Helmet from "react-helmet"
 import { GlobalStyles } from "./styles"
 import Navbar from "@components/Navbar"
 import styled from "styled-components"
-import { Container, Row, Col } from "shards-react"
+import { Container, Row } from "shards-react"
 import Web3Modal from "@components/Web3Modal"
 import Web3 from "web3"
 
