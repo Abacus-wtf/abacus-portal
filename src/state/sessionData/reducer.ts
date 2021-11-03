@@ -29,12 +29,13 @@ export interface SessionData {
   img: any
   endTime: number
   numPpl: number
-  title: string
+  collectionTitle: string
   totalStaked: number
   nftName: string
   address: string
   tokenId: string
   owner: string
+  ownerAddress: string
   nonce: number
   finalAppraisalValue?: number
   totalStakedInUSD?: number

@@ -8,7 +8,13 @@ import { Label } from "@components/global.styles"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 
-const SessionCountdown: FunctionComponent = () => {
+interface SessionCountdownProps {
+  overrideOnComplete?: () => void
+  overrideEndTime?: number
+  overrideTitle?: string
+}
+
+const SessionCountdown = (props: SessionCountdownProps) => {
   const sessionData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
@@ -18,12 +24,16 @@ const SessionCountdown: FunctionComponent = () => {
   const getUserStatus = useGetUserStatus()
   return (
     <ListGroupItem style={{ width: "100%" }}>
-      <Label>Session ends in</Label>
+      <Label>{props.overrideTitle ? props.overrideTitle : 'Session ends in'}</Label>
       <Countdown
-        date={sessionData.endTime}
+        date={props.overrideEndTime ? props.overrideEndTime : sessionData.endTime}
         onComplete={async () => {
-          await getCurrentSessionData(sessionData.address, sessionData.tokenId, sessionData.nonce)  
-          await getUserStatus(sessionData.address, sessionData.tokenId)
+          if (props.overrideOnComplete) {
+            await props.overrideOnComplete()
+          } else {
+            await getCurrentSessionData(sessionData.address, sessionData.tokenId, sessionData.nonce)  
+            await getUserStatus(sessionData.address, sessionData.tokenId)
+          }
         }}
         renderer={({ hours, minutes, seconds, completed }) => {
           if (completed) {

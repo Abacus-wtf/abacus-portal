@@ -4,6 +4,7 @@ import { createAction } from "@reduxjs/toolkit"
 import application from "./application/reducer"
 import sessionData from "./sessionData/reducer"
 import transactions from "./transactions/reducer"
+import auctionData from "./auctionData/reducer"
 
 const PERSISTED_KEYS: string[] = []
 
@@ -14,6 +15,7 @@ const store = configureStore({
     application,
     sessionData,
     transactions,
+    auctionData,
   },
   middleware: getDefaultMiddleware => [
     ...getDefaultMiddleware({

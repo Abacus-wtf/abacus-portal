@@ -116,7 +116,7 @@ export default (props: SessionData) => {
         </TextContainer>
         <TextContainer>
           <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
-            {props.title}
+            {props.collectionTitle}
           </SubText>
           <SubText>Total Staked</SubText>
         </TextContainer>
