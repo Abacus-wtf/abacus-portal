@@ -74,7 +74,7 @@ const CurrentSession = ({ location }) => {
           <ButtonsWhite
             style={{ borderRadius: 8 }}
             target={"_blank"}
-            to={`https://opensea.io/${sessionData.address}/${sessionData.tokenId}`}
+            to={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
             as={Link}
           >
             OpenSea
@@ -88,7 +88,7 @@ const CurrentSession = ({ location }) => {
             </Title>
             <SubText>
               Owned by{" "}
-              <Link to={`https://opensea.io/${sessionData.ownerAddress}`}>
+              <Link to={`https://opensea.io/assets/${sessionData.ownerAddress}`}>
                 {sessionData.owner}
               </Link>
             </SubText>

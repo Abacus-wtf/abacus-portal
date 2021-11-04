@@ -65,7 +65,7 @@ const Auction = () => {
             <ButtonsWhite
               style={{ borderRadius: 8 }}
               target={"_blank"}
-              to={`https://opensea.io/${optionalInfo.highestNftAddress}/${optionalInfo.highestNftTokenId}`}
+              to={`https://opensea.io/assets/${optionalInfo.highestNftAddress}/${optionalInfo.highestNftTokenId}`}
               as={Link}
             >
               OpenSea
@@ -80,7 +80,7 @@ const Auction = () => {
               <SubText>
                 Highest Bid by{" "}
                 <Link
-                  to={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
+                  to={`https://opensea.io/assets/${optionalInfo.highestBidderAddress}`}
                 >
                   {shortenAddress(optionalInfo.highestBidderAddress)}
                 </Link>
