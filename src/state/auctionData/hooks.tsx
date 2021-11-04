@@ -47,12 +47,12 @@ export const useSetAuctionData = () => {
       const nftMetadata = await openseaGet(URL)
 
       optionalInfo = {
-        img: nftMetadata.image_url || nftMetadata.image_preview_url,
+        img: nftMetadata?.image_url || nftMetadata?.image_preview_url,
         highestBidderAddress: highestBidder,
         highestNftAddress: userVote.nftAddress,
         highestNftTokenId: userVote.tokenid,
-        highestNftCollectionTitle: nftMetadata.collection.name,
-        highestNftName: nftMetadata.name,
+        highestNftCollectionTitle: nftMetadata?.collection?.name,
+        highestNftName: nftMetadata?.name,
       }
     }
 

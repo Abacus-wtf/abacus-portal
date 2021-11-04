@@ -40,7 +40,7 @@ export function useWeb3Contract(ABI: any) {
   )
 }
 
-export const useGeneralizedContractCall = () => {
+export const useGeneralizedContractCall = (isAuction?: boolean) => {
   const sessionData = useCurrentSessionData()
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
@@ -54,8 +54,11 @@ export const useGeneralizedContractCall = () => {
     const { address, tokenId, nonce } = sessionData
     if (previousIsPending && !isPending) {
       // re-fetch state
-      getCurrentSessionData(address, tokenId, nonce)
-      setAuctionData()
+      if (isAuction) {
+        setAuctionData()
+      } else {
+        getCurrentSessionData(address, tokenId, nonce)
+      }
     }
   }, [previousIsPending, isPending, sessionData, getCurrentSessionData])
 

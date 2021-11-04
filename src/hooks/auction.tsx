@@ -11,7 +11,9 @@ import { useTransactionAdder } from "@state/transactions/hooks"
 
 export const useOnBid = () => {
   const { account, library } = useActiveWeb3React()
-  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    true
+  )
   const addTransaction = useTransactionAdder()
 
   const onBid = useCallback(
@@ -59,44 +61,42 @@ export const useOnBid = () => {
 
 export const useOnClaim = () => {
   const { account, library } = useActiveWeb3React()
-  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    true
+  )
   const addTransaction = useTransactionAdder()
 
   const onClaim = useCallback(async () => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+    let estimate,
+      method: (...args: any) => Promise<TransactionResponse>,
+      args: Array<BigNumber | number | string>,
+      value: BigNumber | null
 
-      const auctionContract = getContract(
-        ABC_AUCTION_ADDRESS,
-        ABC_AUCTION_ABI,
-        library,
-        account
-      )
-      method = auctionContract.claim
-      estimate = auctionContract.estimateGas.claim
-      args = []
-      value = null
-      const txnCb = async (response: any) => {
-        addTransaction(response, {
-          summary: "Claim Action",
-        })
-      }
-      await generalizedContractCall({
-        method,
-        estimate,
-        args,
-        value,
-        cb: txnCb,
+    const auctionContract = getContract(
+      ABC_AUCTION_ADDRESS,
+      ABC_AUCTION_ABI,
+      library,
+      account
+    )
+    method = auctionContract.claim
+    estimate = auctionContract.estimateGas.claim
+    args = []
+    value = null
+    const txnCb = async (response: any) => {
+      addTransaction(response, {
+        summary: "Claim Action",
       })
-    },
-    [account, library]
-  )
+    }
+    await generalizedContractCall({
+      method,
+      estimate,
+      args,
+      value,
+      cb: txnCb,
+    })
+  }, [account, library])
   return {
     onClaim,
     isPending,
   }
 }
-
-
