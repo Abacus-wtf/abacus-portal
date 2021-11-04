@@ -18,6 +18,7 @@ import {
   SquareImageContainer,
   SubText,
 } from "./CurrentSession.styles"
+import ConnectWalletAlert from "@components/ConnectWalletAlert"
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
@@ -44,6 +45,16 @@ const CurrentSession = ({ location }) => {
       }
     }
   }, [address, tokenId, nonce, account])
+
+  if (!account) {
+    return (
+      <SmallUniversalContainer
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <ConnectWalletAlert />
+      </SmallUniversalContainer>
+    )
+  }
 
   if (isLoading || sessionData === null) {
     return (
