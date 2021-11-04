@@ -56,15 +56,17 @@ const Navbar = ({location}) => {
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
 
+  // @TODO: UPDATE AUCTION HERE
+
   return (
     <RowStyled>
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
+          {/*<HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
             Explore
-          </HeaderLink>
-          <HeaderLink as={Link} to="/auction" isactive={location.pathname === '/auction'}>
+            </HeaderLink>*/}
+          <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
             Auction
           </HeaderLink>
           {/*<HeaderLink as={Link} to="/my-sessions">
