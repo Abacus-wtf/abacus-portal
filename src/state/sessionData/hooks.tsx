@@ -304,6 +304,13 @@ export const useCurrentSessionState = () => {
   >(state => state.sessionData.currentSessionData.sessionStatus)
 }
 
+export const useCurrentSessionData = () => {
+  return useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
+}
+
 export const useCanUserInteract = () => {
   const sessionStatus = useSelector<
     AppState,

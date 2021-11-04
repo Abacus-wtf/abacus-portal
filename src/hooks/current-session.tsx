@@ -10,18 +10,16 @@ import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.j
 import { useGeneralizedContractCall } from "./"
 import { useActiveWeb3React } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
+import { useCurrentSessionData } from "@state/sessionData/hooks"
 
 export const useOnSubmitVote = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const generalizedContractCall = useGeneralizedContractCall()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
-    async (hash: string, stake: string, cb: (hash: string) => void) => {
+  const onSubmitVote = useCallback(
+    async (hash: string, stake: string) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -41,9 +39,6 @@ export const useOnSubmitVote = () => {
         addTransaction(response, {
           summary: "Submit Vote",
         })
-        cb(response.hash)
-        await response.wait()
-        cb("")
       }
       await generalizedContractCall({
         method,
@@ -53,21 +48,22 @@ export const useOnSubmitVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData]
+    [account, library, sessionData, generalizedContractCall, addTransaction]
   )
+  return {
+    onSubmitVote,
+    isPending,
+  }
 }
 
 export const useOnUpdateVote = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const generalizedContractCall = useGeneralizedContractCall()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
-    async (hash: string, cb: (hash: string) => void) => {
+  const onUpdateVote = useCallback(
+    async (hash: string) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -87,9 +83,6 @@ export const useOnUpdateVote = () => {
         addTransaction(response, {
           summary: "Update Vote",
         })
-        cb(response.hash)
-        await response.wait()
-        cb("")
       }
       await generalizedContractCall({
         method,
@@ -99,20 +92,21 @@ export const useOnUpdateVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData]
+    [account, library, sessionData, generalizedContractCall, addTransaction]
   )
+  return {
+    onUpdateVote,
+    isPending,
+  }
 }
 
 export const useOnWeightVote = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const generalizedContractCall = useGeneralizedContractCall()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
+  const onWeightVote = useCallback(
     async (
       appraisalValue: string,
       seed: string,
@@ -143,8 +137,6 @@ export const useOnWeightVote = () => {
           summary: "Weight Vote",
         })
         cb(response.hash)
-        await response.wait()
-        cb("")
       }
       await generalizedContractCall({
         method,
@@ -156,111 +148,102 @@ export const useOnWeightVote = () => {
     },
     [account, library, sessionData]
   )
+  return {
+    onWeightVote,
+    isPending,
+  }
 }
 
 export const useOnSetFinalAppraisal = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const generalizedContractCall = useGeneralizedContractCall()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
-    async (cb: (hash: string) => void) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+  const onSetFinalAppraisal = useCallback(async () => {
+    let estimate,
+      method: (...args: any) => Promise<TransactionResponse>,
+      args: Array<BigNumber | number | string>,
+      value: BigNumber | null
 
-      const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
-        ABC_PRICING_SESSION_ABI,
-        library,
-        account
-      )
-      method = pricingSessionContract.setFinalAppraisal
-      estimate = pricingSessionContract.estimateGas.setFinalAppraisal
-      args = [sessionData.address, Number(sessionData.tokenId)]
-      value = null
-      const txnCb = async (response: any) => {
-        addTransaction(response, {
-          summary: "Set Final Appraisal",
-        })
-        cb(response.hash)
-        await response.wait()
-        cb("")
-      }
-      await generalizedContractCall({
-        method,
-        estimate,
-        args,
-        value,
-        cb: txnCb,
+    const pricingSessionContract = getContract(
+      ABC_PRICING_SESSION_ADDRESS,
+      ABC_PRICING_SESSION_ABI,
+      library,
+      account
+    )
+    method = pricingSessionContract.setFinalAppraisal
+    estimate = pricingSessionContract.estimateGas.setFinalAppraisal
+    args = [sessionData.address, Number(sessionData.tokenId)]
+    value = null
+    const txnCb = async (response: any) => {
+      addTransaction(response, {
+        summary: "Set Final Appraisal",
       })
-    },
-    [account, library, sessionData]
-  )
+    }
+    await generalizedContractCall({
+      method,
+      estimate,
+      args,
+      value,
+      cb: txnCb,
+    })
+  }, [account, library, sessionData])
+  return {
+    onSetFinalAppraisal,
+    isPending,
+  }
 }
 
 export const useOnHarvest = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const generalizedContractCall = useGeneralizedContractCall()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
-    async (cb: (hash: string) => void) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+  const onHarvest = useCallback(async () => {
+    let estimate,
+      method: (...args: any) => Promise<TransactionResponse>,
+      args: Array<BigNumber | number | string>,
+      value: BigNumber | null
 
-      const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
-        ABC_PRICING_SESSION_ABI,
-        library,
-        account
-      )
-      method = pricingSessionContract.harvest
-      estimate = pricingSessionContract.estimateGas.harvest
-      args = [sessionData.address, Number(sessionData.tokenId)]
-      value = null
-      const txnCb = async (response: any) => {
-        addTransaction(response, {
-          summary: "Harvest",
-        })
-        cb(response.hash)
-        await response.wait()
-        cb("")
-      }
-      await generalizedContractCall({
-        method,
-        estimate,
-        args,
-        value,
-        cb: txnCb,
+    const pricingSessionContract = getContract(
+      ABC_PRICING_SESSION_ADDRESS,
+      ABC_PRICING_SESSION_ABI,
+      library,
+      account
+    )
+    method = pricingSessionContract.harvest
+    estimate = pricingSessionContract.estimateGas.harvest
+    args = [sessionData.address, Number(sessionData.tokenId)]
+    value = null
+    const txnCb = async (response: any) => {
+      addTransaction(response, {
+        summary: "Harvest",
       })
-    },
-    [account, library, sessionData]
-  )
+    }
+    await generalizedContractCall({
+      method,
+      estimate,
+      args,
+      value,
+      cb: txnCb,
+    })
+  }, [account, library, sessionData])
+  return {
+    onHarvest,
+    isPending,
+  }
 }
 
 export const useOnClaim = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const generalizedContractCall = useGeneralizedContractCall()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
-    async (isClaimingEth: boolean, cb: (hash: string) => void) => {
+  const onClaim = useCallback(
+    async (isClaimingEth: boolean) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -284,9 +267,6 @@ export const useOnClaim = () => {
         addTransaction(response, {
           summary: "Claim Tokens",
         })
-        cb(response.hash)
-        await response.wait()
-        cb("")
       }
       await generalizedContractCall({
         method,
@@ -298,50 +278,49 @@ export const useOnClaim = () => {
     },
     [account, library, sessionData]
   )
+  return {
+    onClaim,
+    isPending,
+  }
 }
 
 export const useOnEndSession = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const generalizedContractCall = useGeneralizedContractCall()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
-    async (cb: (hash: string) => void) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+  const onEndSession = useCallback(async () => {
+    let estimate,
+      method: (...args: any) => Promise<TransactionResponse>,
+      args: Array<BigNumber | number | string>,
+      value: BigNumber | null
 
-      const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
-        ABC_PRICING_SESSION_ABI,
-        library,
-        account
-      )
-      method = pricingSessionContract.endSession
-      estimate = pricingSessionContract.estimateGas.endSession
-      args = [sessionData.address, Number(sessionData.tokenId)]
-      value = null
-      const txnCb = async (response: any) => {
-        addTransaction(response, {
-          summary: "End Session",
-        })
-        cb(response.hash)
-        await response.wait()
-        cb("")
-      }
-      await generalizedContractCall({
-        method,
-        estimate,
-        args,
-        value,
-        cb: txnCb,
+    const pricingSessionContract = getContract(
+      ABC_PRICING_SESSION_ADDRESS,
+      ABC_PRICING_SESSION_ABI,
+      library,
+      account
+    )
+    method = pricingSessionContract.endSession
+    estimate = pricingSessionContract.estimateGas.endSession
+    args = [sessionData.address, Number(sessionData.tokenId)]
+    value = null
+    const txnCb = async (response: any) => {
+      addTransaction(response, {
+        summary: "End Session",
       })
-    },
-    [account, library, sessionData]
-  )
+    }
+    await generalizedContractCall({
+      method,
+      estimate,
+      args,
+      value,
+      cb: txnCb,
+    })
+  }, [account, library, sessionData])
+  return {
+    onEndSession,
+    isPending,
+  }
 }

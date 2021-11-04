@@ -39,7 +39,7 @@ import { useCanUserInteract } from "@state/sessionData/hooks"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
-  const weightVote = useOnWeightVote()
+  const { onWeightVote, isPending } = useOnWeightVote()
 
   const userStatus = useSelector<
     AppState,
@@ -56,9 +56,6 @@ const Weigh: FunctionComponent = () => {
   const theme = useContext(ThemeContext)
   const [appraisalValue, setAppraisalValue] = useState("")
   const [passwordValue, setPasswordValue] = useState("")
-  const [txHash, setTxHash] = useState("")
-
-  const isTxOccurring = useIsTxOccurring(txHash)
 
   useEffect(() => {
     const hash = web3.eth.abi.encodeParameters(
@@ -95,15 +92,18 @@ const Weigh: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = (hash) => {
-            setTxHash(hash)
+          const cb = hash => {
             const hashedMessage = web3.eth.abi.encodeParameters(
               ["address", "uint256", "uint256"],
-              [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
+              [
+                sessionData.address,
+                Number(sessionData.tokenId),
+                sessionData.nonce,
+              ]
             )
-            localStorage.setItem(hashedMessage, '')
+            localStorage.setItem(hashedMessage, "")
           }
-          await weightVote(appraisalValue, passwordValue, cb)
+          await onWeightVote(appraisalValue, passwordValue, cb)
         }}
       >
         <ListGroup>
@@ -133,7 +133,7 @@ const Weigh: FunctionComponent = () => {
             <Button
               disabled={
                 !canUserInteract ||
-                isTxOccurring ||
+                isPending ||
                 appraisalValue === "" ||
                 passwordValue === "" ||
                 isNaN(Number(appraisalValue)) ||
@@ -144,7 +144,7 @@ const Weigh: FunctionComponent = () => {
               style={{ width: "100%" }}
               type="submit"
             >
-              {isTxOccurring
+              {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedWeigh
                 ? "Vote Weighed"
@@ -154,7 +154,7 @@ const Weigh: FunctionComponent = () => {
           <Tooltip
             open={isToolTipOpen}
             target="#submitWeighButton"
-            disabled={canUserInteract || isTxOccurring}
+            disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
           >

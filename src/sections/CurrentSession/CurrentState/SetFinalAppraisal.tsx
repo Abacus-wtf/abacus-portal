@@ -18,7 +18,10 @@ import { VerticalContainer, SubText } from "../CurrentSession.styles"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import { useCanUserInteract } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useCurrentSessionData,
+} from "@state/sessionData/hooks"
 import { User } from "react-feather"
 import _ from "lodash"
 import { useOnSetFinalAppraisal } from "@hooks/current-session"
@@ -33,17 +36,12 @@ export const CallToActionCopy = styled.p`
 `
 
 const SetFinalAppraisal: FunctionComponent = () => {
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
-  const onSetFinalAppraisal = useOnSetFinalAppraisal()
-  const [txHash, setTxHash] = useState("")
-  const isTxOccurring = useIsTxOccurring(txHash)
+  const { onSetFinalAppraisal, isPending } = useOnSetFinalAppraisal()
 
   const theme = useContext(ThemeContext)
   return (
@@ -67,10 +65,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb: (hash: string) => void = (hash) => {
-            setTxHash(hash)
-          }
-          onSetFinalAppraisal(cb)
+          onSetFinalAppraisal()
         }}
       >
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
@@ -78,16 +73,16 @@ const SetFinalAppraisal: FunctionComponent = () => {
           <div id={"setFinalAppraisalButton"} style={{ width: "100%" }}>
             <Button
               type="submit"
-              disabled={!canUserInteract || isTxOccurring}
+              disabled={!canUserInteract || isPending}
               style={{ width: "100%" }}
             >
-              {isTxOccurring ? 'Pending...' : 'Set Final Appraisal'}
+              {isPending ? "Pending..." : "Set Final Appraisal"}
             </Button>
           </div>
           <Tooltip
             open={isToolTipOpen}
             target="#setFinalAppraisalButton"
-            disabled={canUserInteract || isTxOccurring}
+            disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
           >
             You missed a previous step, so you cannot participate in this part

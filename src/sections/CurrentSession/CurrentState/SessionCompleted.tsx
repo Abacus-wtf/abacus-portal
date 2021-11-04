@@ -7,20 +7,14 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem } from "shards-react"
-import {
-  ListGroupItemMinWidth,
-} from "../CurrentSession.styles"
+import { ListGroupItemMinWidth } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import { InputWithTitle } from "@components/Input"
 import _ from "lodash"
+import { useCurrentSessionData } from "@state/sessionData/hooks"
 
 const SessionCompleted: FunctionComponent = () => {
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
 
   const theme = useContext(ThemeContext)
   return (

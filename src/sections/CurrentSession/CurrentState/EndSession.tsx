@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useState } from "react"
+import React, { FunctionComponent, useContext } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
@@ -14,26 +14,15 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnEndSession } from "@hooks/current-session"
 import _ from "lodash"
-import { useIsTxOccurring } from "@state/transactions/hooks"
+import { useCurrentSessionData } from "@state/sessionData/hooks"
 
 const EndSession: FunctionComponent = () => {
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
-  const endSession = useOnEndSession()
-  const [txHash, setTxHash] = useState("")
-  const isTxOccurring = useIsTxOccurring(txHash)
+  const sessionData = useCurrentSessionData()
+  const { onEndSession, isPending } = useOnEndSession()
 
   const theme = useContext(ThemeContext)
   return (
@@ -66,14 +55,14 @@ const EndSession: FunctionComponent = () => {
       </ListGroupItem>
       <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
         <Button
-          disabled={isTxOccurring}
+          disabled={isPending}
           style={{ width: "100%" }}
           type="button"
           onClick={() => {
-            endSession(hash => setTxHash(hash))
+            onEndSession()
           }}
         >
-          {isTxOccurring ? "Pending..." : "End Session"}
+          {isPending ? "Pending..." : "End Session"}
         </Button>
         <SubText style={{ display: "flex", alignItems: "center" }}>
           <User style={{ height: 14 }} /> {sessionData.numPpl} participants

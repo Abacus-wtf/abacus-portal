@@ -2,12 +2,24 @@ import { Web3Provider } from "@ethersproject/providers"
 import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 import { NetworkContextName } from "@config/constants"
-import { useCallback } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { web3 } from "@config/constants"
 import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { calculateGasMargin } from "@config/utils"
 import { useToggleWalletModal } from "@state/application/hooks"
+import {
+  useCurrentSessionData,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
+
+export function usePrevious<Type>(value: Type) {
+  const ref = useRef<Type>()
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+  return ref.current
+}
 
 export function useActiveWeb3React(): Web3ReactContextInterface<
   Web3Provider
@@ -28,10 +40,23 @@ export function useWeb3Contract(ABI: any) {
 }
 
 export const useGeneralizedContractCall = () => {
+  const sessionData = useCurrentSessionData()
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
 
-  return useCallback(
+  const getCurrentSessionData = useGetCurrentSessionData()
+  const [isPending, setIsPending] = useState(false)
+  const previousIsPending = usePrevious(isPending)
+
+  useEffect(() => {
+    const { address, tokenId, nonce } = sessionData
+    if (previousIsPending && !isPending) {
+      // re-fetch state
+      getCurrentSessionData(address, tokenId, nonce)
+    }
+  }, [previousIsPending, isPending, sessionData, getCurrentSessionData])
+
+  const generalizedContractCall = useCallback(
     async ({
       estimate,
       method,
@@ -65,8 +90,11 @@ export const useGeneralizedContractCall = () => {
           method(...args, {
             ...(value ? { value } : {}),
             gasLimit: calculateGasMargin(estimatedGasLimit),
-          }).then(response => {
+          }).then(async response => {
+            setIsPending(true)
             cb(response)
+            await response.wait()
+            setIsPending(false)
           })
         )
         .catch(error => {
@@ -75,4 +103,9 @@ export const useGeneralizedContractCall = () => {
     },
     [account, chainId, library]
   )
+
+  return {
+    generalizedContractCall,
+    isPending,
+  }
 }

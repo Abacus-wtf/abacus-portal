@@ -60,24 +60,11 @@ const Vote: FunctionComponent = () => {
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
-  const submitVote = useOnSubmitVote()
-  const updateVote = useOnUpdateVote()
+  const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
+  const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
   const [stakeVal, setStakeVal] = useState("")
-  const [txHash, setTxHash] = useState()
-  const isTxOccurring = useIsTxOccurring(txHash)
-  const loadData = async () => {
-    await getCurrentSessionData(
-      sessionData.address,
-      sessionData.tokenId,
-      sessionData.nonce
-    )
-  }
 
-  useEffect(() => {
-    if (!isTxOccurring && sessionData !== null) {
-      //loadData()
-    }
-  }, [isTxOccurring])
+  const isPending = submitVotePending || updateVotePending
 
   const theme = useContext(ThemeContext)
   return (
@@ -102,19 +89,15 @@ const Vote: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = hash => {
-            setTxHash(hash)
-          }
           switch (userStatus) {
             case UserState.NotVoted:
-              await submitVote(
+              await onSubmitVote(
                 e.target["appraise"].value,
-                e.target["stake"].value,
-                cb
+                e.target["stake"].value
               )
               break
             case UserState.CompletedVote:
-              await updateVote(e.target["appraise"].value, cb)
+              await onUpdateVote(e.target["appraise"].value)
               break
             default:
               break
@@ -160,7 +143,7 @@ const Vote: FunctionComponent = () => {
             <Button
               disabled={
                 !canUserInteract ||
-                isTxOccurring ||
+                isPending ||
                 appraisalHash === "" ||
                 (userStatus === UserState.NotVoted &&
                   (isNaN(Number(stakeVal)) || stakeVal === ""))
@@ -168,7 +151,7 @@ const Vote: FunctionComponent = () => {
               style={{ width: "100%" }}
               type="submit"
             >
-              {isTxOccurring
+              {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedVote
                 ? "Update"
@@ -178,7 +161,7 @@ const Vote: FunctionComponent = () => {
           <Tooltip
             open={isToolTipOpen}
             target="#submitVoteButton"
-            disabled={canUserInteract || isTxOccurring}
+            disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
           >
