@@ -22,8 +22,6 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import { web3 } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnWeightVote } from "@hooks/current-session"
@@ -32,16 +30,14 @@ import _ from "lodash"
 import {
   useCanUserInteract,
   useCurrentSessionData,
+  useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const { onWeightVote, isPending } = useOnWeightVote()
 
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
+  const userStatus = useCurrentSessionUserStatus()
   const sessionData = useCurrentSessionData()
 
   const canUserInteract = useCanUserInteract()
@@ -57,11 +53,16 @@ const Weigh: FunctionComponent = () => {
       [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
     )
     const itemsString = localStorage.getItem(hash)
-    //debugger
-    if (itemsString !== null && itemsString !== "" && account) {
-      const items = JSON.parse(itemsString)
-      setPasswordValue(items.password)
-      setAppraisalValue(items.appraisal)
+    if (itemsString && account) {
+      try {
+        const items = JSON.parse(itemsString)
+        setPasswordValue(items.password)
+        setAppraisalValue(items.appraisal)
+      } catch {
+        alert(
+          "We couldn't find your appraisal/seed values. But you can still enter them in the form to weigh your vote!"
+        )
+      }
     }
   }, [account])
 

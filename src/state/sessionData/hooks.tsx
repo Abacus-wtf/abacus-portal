@@ -5,14 +5,14 @@ import {
   getMultipleSessionData,
   getCurrentSessionData,
   setUserStatus,
-  setClaimPosition
+  setClaimPosition,
 } from "./actions"
 import {
   SessionData,
   CurrentSessionState,
   UserState,
   SessionState,
-  ClaimState
+  ClaimState,
 } from "./reducer"
 import { AppDispatch } from "../index"
 import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
@@ -26,7 +26,11 @@ import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import axios from "axios"
-import { useWeb3React } from "@web3-react/core"
+import {
+  currentSessionDataSelector,
+  currentSessionStatusSelector,
+  currentSessionUserStatusSelector,
+} from "./selectors"
 
 const modifyTimeAndSession = (
   getStatus: string,
@@ -65,27 +69,23 @@ export const useRetrieveClaimData = () => {
   const { account } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
 
-  return useCallback(
-    async () => {
-      const pricingSession = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS
-      )
-      const [
-        getEthPayout,
-        ethToAbc
-      ] = await Promise.all([
-        pricingSession.methods.getEthPayout(sessionData.address, sessionData.tokenId).call(),
-        pricingSession.methods.ethToAbc().call(),
-      ])
+  return useCallback(async () => {
+    const pricingSession = getPricingSessionContract(
+      ABC_PRICING_SESSION_ADDRESS
+    )
+    const [getEthPayout, ethToAbc] = await Promise.all([
+      pricingSession.methods
+        .getEthPayout(sessionData.address, sessionData.tokenId)
+        .call(),
+      pricingSession.methods.ethToAbc().call(),
+    ])
 
-      const claimData: ClaimState = {
-        abcClaimAmount:Number(formatEther(getEthPayout*ethToAbc)),
-        ethClaimAmount: Number(formatEther(getEthPayout))
-      }
-      dispatch(setClaimPosition(claimData))
-    },
-    [dispatch, sessionData]
-  )
+    const claimData: ClaimState = {
+      abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
+      ethClaimAmount: Number(formatEther(getEthPayout)),
+    }
+    dispatch(setClaimPosition(claimData))
+  }, [dispatch, sessionData])
 }
 
 export const useGetMultiSessionData = () => {
@@ -332,25 +332,26 @@ export const useGetUserStatus = () => {
   )
 }
 
-export const useCurrentSessionState = () => {
-  return useSelector<
+export const useCurrentSessionStatus = () =>
+  useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionStatus"]
-  >(state => state.sessionData.currentSessionData.sessionStatus)
-}
+  >(currentSessionStatusSelector)
 
-export const useCurrentSessionData = () => {
-  return useSelector<
+export const useCurrentSessionData = () =>
+  useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
-}
+  >(currentSessionDataSelector)
+
+export const useCurrentSessionUserStatus = () =>
+  useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(currentSessionUserStatusSelector)
 
 export const useCanUserInteract = () => {
-  const sessionStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionStatus"]
-  >(state => state.sessionData.currentSessionData.sessionStatus)
+  const sessionStatus = useCurrentSessionStatus()
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]

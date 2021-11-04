@@ -3,7 +3,7 @@ import {
   getMultipleSessionData,
   getCurrentSessionData,
   setUserStatus,
-  setClaimPosition
+  setClaimPosition,
 } from "./actions"
 import _ from "lodash"
 
