@@ -32,23 +32,10 @@ const RightSection: FunctionComponent = () => {
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const { onBid, isPending } = useOnBid()
   const { onClaim, isPending: isPendingClaim } = useOnClaim()
-  const [nftAddress, setNftAddress] = useState(
-    auctionData?.optionalInfo?.highestNftAddress ?? ""
-  )
-  const [tokenId, setTokenId] = useState(
-    auctionData?.optionalInfo?.highestNftTokenId ?? ""
-  )
+  const [nftAddress, setNftAddress] = useState()
+  const [tokenId, setTokenId] = useState()
 
   const setAuctionData = useSetAuctionData()
-
-  useEffect(() => {
-    const newNftAddress = auctionData?.optionalInfo?.highestNftAddress ?? false
-    const newTokenId = auctionData?.optionalInfo?.highestNftTokenId ?? false
-    if (newNftAddress && newTokenId) {
-      setNftAddress(newNftAddress)
-      setTokenId(newTokenId)
-    }
-  }, [auctionData])
 
   const theme = useContext(ThemeContext)
   return (
