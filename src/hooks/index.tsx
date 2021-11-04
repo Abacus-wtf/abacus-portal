@@ -12,6 +12,7 @@ import {
   useCurrentSessionData,
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
+import { useSetAuctionData } from "@state/auctionData/hooks"
 
 export function usePrevious<Type>(value: Type) {
   const ref = useRef<Type>()
@@ -45,6 +46,7 @@ export const useGeneralizedContractCall = () => {
   const toggleWalletModal = useToggleWalletModal()
 
   const getCurrentSessionData = useGetCurrentSessionData()
+  const setAuctionData = useSetAuctionData()
   const [isPending, setIsPending] = useState(false)
   const previousIsPending = usePrevious(isPending)
 
@@ -53,6 +55,7 @@ export const useGeneralizedContractCall = () => {
     if (previousIsPending && !isPending) {
       // re-fetch state
       getCurrentSessionData(address, tokenId, nonce)
+      setAuctionData()
     }
   }, [previousIsPending, isPending, sessionData, getCurrentSessionData])
 

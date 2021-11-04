@@ -2,6 +2,7 @@ import React, {
   FormEvent,
   FunctionComponent,
   useContext,
+  useEffect,
   useState,
 } from "react"
 import { ThemeContext } from "styled-components"
@@ -31,8 +32,23 @@ const RightSection: FunctionComponent = () => {
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const { onBid, isPending } = useOnBid()
   const { onClaim, isPending: isPendingClaim } = useOnClaim()
+  const [nftAddress, setNftAddress] = useState(
+    auctionData?.optionalInfo?.highestNftAddress ?? ""
+  )
+  const [tokenId, setTokenId] = useState(
+    auctionData?.optionalInfo?.highestNftTokenId ?? ""
+  )
 
   const setAuctionData = useSetAuctionData()
+
+  useEffect(() => {
+    const newNftAddress = auctionData?.optionalInfo?.highestNftAddress ?? false
+    const newTokenId = auctionData?.optionalInfo?.highestNftTokenId ?? false
+    if (newNftAddress && newTokenId) {
+      setNftAddress(newNftAddress)
+      setTokenId(newTokenId)
+    }
+  }, [auctionData])
 
   const theme = useContext(ThemeContext)
   return (
@@ -65,7 +81,9 @@ const RightSection: FunctionComponent = () => {
           e.preventDefault()
 
           if (Number(e.target["bid"].value) <= auctionData.highestBid) {
-            alert(`You tried to bid lower than or the same as the highest bid. Please bid higher than ${auctionData.highestBid} Ether.`)
+            alert(
+              `You tried to bid lower than or the same as the highest bid. Please bid higher than ${auctionData.highestBid} Ether.`
+            )
             return
           }
 
@@ -93,14 +111,25 @@ const RightSection: FunctionComponent = () => {
               title={"NFT Address"}
               id={"nftAddress"}
               placeholder={ZERO_ADDRESS}
+              value={nftAddress}
+              onChange={e => setNftAddress(e.target.value)}
             />
           </ListGroupItem>
           <ListGroupItem>
-            <InputWithTitle title={"Token ID"} id={"tokenId"} placeholder="1" />
+            <InputWithTitle
+              title={"Token ID"}
+              id={"tokenId"}
+              placeholder="1"
+              value={tokenId}
+              onChange={e => setTokenId(e.target.value)}
+            />
           </ListGroupItem>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <div style={{ width: "100%", display: 'flex', gridGap: 15 }} id={"submitBidButton"}>
+          <div
+            style={{ width: "100%", display: "flex", gridGap: 15 }}
+            id={"submitBidButton"}
+          >
             <Button
               disabled={!account || isPending}
               style={{ width: "100%" }}
