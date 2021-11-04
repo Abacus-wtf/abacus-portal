@@ -11,16 +11,15 @@ import { useTransactionAdder } from "@state/transactions/hooks"
 
 export const useOnBid = () => {
   const { account, library } = useActiveWeb3React()
-  const generalizedContractCall = useGeneralizedContractCall()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
 
-  return useCallback(
+  const onBid = useCallback(
     async (
       bid: string,
       initAppraisal: string,
       nftAddress: string,
-      tokenId: string,
-      cb: (hash: string) => void
+      tokenId: string
     ) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
@@ -41,9 +40,6 @@ export const useOnBid = () => {
         addTransaction(response, {
           summary: "Bid Action",
         })
-        cb(response.hash)
-        await response.wait()
-        cb("")
       }
       await generalizedContractCall({
         method,
@@ -55,4 +51,8 @@ export const useOnBid = () => {
     },
     [account, library]
   )
+  return {
+    onBid,
+    isPending,
+  }
 }

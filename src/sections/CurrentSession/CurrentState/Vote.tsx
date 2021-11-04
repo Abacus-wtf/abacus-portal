@@ -3,8 +3,6 @@ import React, {
   FunctionComponent,
   useContext,
   useState,
-  useMemo,
-  useEffect,
 } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
@@ -26,6 +24,7 @@ import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
+  useCurrentSessionData,
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
@@ -35,23 +34,14 @@ import { useActiveWeb3React } from "@hooks/index"
 import { web3 } from "@config/constants"
 import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
 import { keccak256 } from "@ethersproject/keccak256"
-import {
-  useAllTransactions,
-  isTransactionRecent,
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
 import _ from "lodash"
 import { parseEther } from "ethers/lib/utils"
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
-  const { account, chainId, library } = useActiveWeb3React()
-  const getCurrentSessionData = useGetCurrentSessionData()
+  const { account } = useActiveWeb3React()
 
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]

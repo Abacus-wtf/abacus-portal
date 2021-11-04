@@ -15,9 +15,6 @@ import {
 } from "@components/ListGroupMods"
 import { ListGroupItem, Form, Tooltip } from "shards-react"
 import { VerticalContainer, SubText } from "../CurrentSession.styles"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
-import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
@@ -25,7 +22,6 @@ import {
 import { User } from "react-feather"
 import _ from "lodash"
 import { useOnSetFinalAppraisal } from "@hooks/current-session"
-import { useIsTxOccurring } from "@state/transactions/hooks"
 
 export const CallToActionCopy = styled.p`
   margin: 0;

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react"
-import { Title, SmallUniversalContainer, Text } from "@components/global.styles"
-import styled from "styled-components"
+import { Title, SmallUniversalContainer } from "@components/global.styles"
 import * as queryString from "query-string"
 import { navigate } from "gatsby"
-import { ImageContainer } from "@components/global.styles"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
-import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCurrentSessionData,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
 import { ButtonsWhite } from "@components/Button"
 import Link from "gatsby-link"
 import _ from "lodash"
@@ -18,17 +19,12 @@ import {
   VerticalSmallGapContainer,
   SquareImageContainer,
   SubText,
-  HorizontalListGroupModified,
-  ListGroupItemMinWidth
-} from './CurrentSession.styles'
+} from "./CurrentSession.styles"
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
   const { account } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
 
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const [isLoading, setIsLoading] = useState(true)

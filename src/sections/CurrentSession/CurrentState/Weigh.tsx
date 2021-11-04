@@ -4,7 +4,6 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useMemo,
 } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
@@ -28,14 +27,12 @@ import { AppState } from "@state/index"
 import { web3 } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnWeightVote } from "@hooks/current-session"
-import {
-  useAllTransactions,
-  isTransactionRecent,
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
 import { UserState } from "@state/sessionData/reducer"
 import _ from "lodash"
-import { useCanUserInteract } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useCurrentSessionData,
+} from "@state/sessionData/hooks"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
@@ -45,10 +42,7 @@ const Weigh: FunctionComponent = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)

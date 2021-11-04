@@ -3,7 +3,6 @@ import React, {
   FunctionComponent,
   useContext,
   useState,
-  useEffect,
 } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
@@ -19,36 +18,21 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession/CurrentSession.styles"
 import SessionCountdown from "../CurrentSession/CurrentState/SessionCountdown"
-import {useSetAuctionData} from '@state/auctionData/hooks'
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
+import { useAuctionData, useSetAuctionData } from "@state/auctionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { useActiveWeb3React } from "@hooks/index"
-import { web3, ZERO_ADDRESS } from "@config/constants"
-import {
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
+import { ZERO_ADDRESS } from "@config/constants"
 import _ from "lodash"
 import { useOnBid } from "@hooks/auction"
 
 const RightSection: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
-  const auctionData = useSelector<
-    AppState,
-    AppState["auctionData"]["auctionData"]
-  >(state => state.auctionData.auctionData)
+  const auctionData = useAuctionData()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
-  const bid = useOnBid()
+  const { onBid, isPending } = useOnBid()
 
-  const [txHash, setTxHash] = useState()
-  const isTxOccurring = useIsTxOccurring(txHash)
   const setAuctionData = useSetAuctionData()
 
-  useEffect(() => {
-    if (!isTxOccurring && auctionData !== null) {
-      //loadData()
-    }
-  }, [isTxOccurring])
   const theme = useContext(ThemeContext)
   return (
     <>
@@ -72,31 +56,23 @@ const RightSection: FunctionComponent = () => {
           overrideOnComplete={async () => {
             await setAuctionData()
           }}
-          overrideTitle={'Bidding Ends In'}
+          overrideTitle={"Bidding Ends In"}
         />
       </HorizontalListGroup>
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = hash => {
-            setTxHash(hash)
-          }
-          await bid(
+          await onBid(
             e.target["bid"].value,
             e.target["initAppraisal"].value,
             e.target["nftAddress"].value,
-            e.target["tokenId"].value,
-            cb
+            e.target["tokenId"].value
           )
         }}
       >
         <ListGroup>
           <ListGroupItem>
-            <InputWithTitle
-              title={"Bid"}
-              id={"bid"}
-              placeholder="0"
-            />
+            <InputWithTitle title={"Bid"} id={"bid"} placeholder="0" />
           </ListGroupItem>
           <ListGroupItem>
             <InputWithTitle
@@ -113,32 +89,23 @@ const RightSection: FunctionComponent = () => {
             />
           </ListGroupItem>
           <ListGroupItem>
-            <InputWithTitle
-              title={"Token ID"}
-              id={"tokenId"}
-              placeholder="1"
-            />
+            <InputWithTitle title={"Token ID"} id={"tokenId"} placeholder="1" />
           </ListGroupItem>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <div style={{ width: "100%" }} id={"submitVoteButton"}>
             <Button
-              disabled={
-                !account ||
-                isTxOccurring
-              }
+              disabled={!account || isPending}
               style={{ width: "100%" }}
               type="submit"
             >
-              {isTxOccurring
-                ? "Pending..."
-                : "Bid"}
+              {isPending ? "Pending..." : "Bid"}
             </Button>
           </div>
           <Tooltip
             open={isToolTipOpen}
             target="#submitVoteButton"
-            disabled={(account !== null && account !== undefined) || isTxOccurring}
+            disabled={(account !== null && account !== undefined) || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
           >
