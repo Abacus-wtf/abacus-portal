@@ -12,42 +12,15 @@ import Link from "gatsby-link"
 import _ from "lodash"
 import CurrentState from "./CurrentState"
 import { useActiveWeb3React } from "@hooks/index"
-
-const SplitContainer = styled.div`
-  display: grid;
-  grid-template-columns: 4fr 3fr;
-  grid-gap: 40px;
-  width: 100%;
-
-  @media ${({ theme }) => theme.media.splitCenter} {
-    grid-template-columns: 1fr;
-  }
-`
-
-const VerticalContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  grid-gap: 15px;
-`
-
-const VerticalSmallGapContainer = styled(VerticalContainer)`
-  grid-gap: 2px;
-`
-
-const SquareImageContainer = styled(ImageContainer)`
-  max-height: 450px;
-  &:after {
-    content: "";
-    display: block;
-    padding-bottom: 100%;
-  }
-`
-
-const SubText = styled(Text)`
-  color: ${({ theme }) => theme.colors.text2};
-  text-align: left;
-`
+import {
+  SplitContainer,
+  VerticalContainer,
+  VerticalSmallGapContainer,
+  SquareImageContainer,
+  SubText,
+  HorizontalListGroupModified,
+  ListGroupItemMinWidth
+} from './CurrentSession.styles'
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
@@ -104,13 +77,13 @@ const CurrentSession = ({ location }) => {
         </VerticalContainer>
         <VerticalContainer>
           <VerticalSmallGapContainer>
-            <SubText>{sessionData.title}</SubText>
+            <SubText>{sessionData.collectionTitle}</SubText>
             <Title>
               {sessionData.nftName} #{sessionData.tokenId}
             </Title>
             <SubText>
               Owned by{" "}
-              <Link to={`https://opensea.io/${sessionData.owner}`}>
+              <Link to={`https://opensea.io/${sessionData.ownerAddress}`}>
                 {sessionData.owner}
               </Link>
             </SubText>

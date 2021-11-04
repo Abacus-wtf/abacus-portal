@@ -146,7 +146,7 @@ export const useGetMultiSessionData = () => {
             pricingSessionMetadata[i].image_url,
           endTime: endTime,
           numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
-          title: pricingSessionMetadata[i].collection.name,
+          collectionTitle: pricingSessionMetadata[i].collection.name,
           totalStaked: Number(
             formatEther(pricingSessionCoreData[i].totalSessionStake)
           ),
@@ -158,6 +158,7 @@ export const useGetMultiSessionData = () => {
           address: CURRENT_SESSIONS[i].address,
           tokenId: CURRENT_SESSIONS[i].tokenId,
           nonce: Number(pricingSessionNonce[i]),
+          ownerAddress: pricingSessionMetadata[i].owner.address,
           owner:
             pricingSessionMetadata[i].owner.user &&
             pricingSessionMetadata[i].owner.user.username
@@ -240,7 +241,7 @@ export const useGetCurrentSessionData = () => {
           pricingSessionMetadata.image_preview_url,
         endTime,
         numPpl: Number(pricingSessionCore.uniqueVoters),
-        title: pricingSessionMetadata.collection.name,
+        collectionTitle: pricingSessionMetadata.collection.name,
         totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
         totalStakedInUSD:
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
@@ -258,6 +259,7 @@ export const useGetCurrentSessionData = () => {
           pricingSessionMetadata.owner.user.username
             ? pricingSessionMetadata.owner.user.username
             : shortenAddress(pricingSessionMetadata.owner.address),
+        ownerAddress: pricingSessionMetadata.owner.address
       }
 
       const userStatus = await getUserStatus({

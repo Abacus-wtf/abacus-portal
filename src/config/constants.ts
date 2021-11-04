@@ -32,6 +32,8 @@ export const ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? ""
   : "0x81e956EeAc2422b6cD528A060dA886ecd55577C3"
 
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 interface NetworkInfo {
   rpc: any
   chainId: number

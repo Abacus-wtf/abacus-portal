@@ -48,7 +48,7 @@ const GlobalLayout: React.FC = (props: any) => {
       <GlobalStyles />
       <Helmet title={"Abacus Protocol"} />
       <StyledContainer>
-        <Navbar />
+        <Navbar location={props.location}/>
         <RowContainer>
           <Web3Modal />
           {props.children}
