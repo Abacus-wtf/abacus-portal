@@ -195,7 +195,7 @@ export const useGetMultiSessionData = () => {
             pricingSessionMetadata[i].owner.user.username
               ? pricingSessionMetadata[i].owner.user.username
               : shortenAddress(pricingSessionMetadata[i].owner.address),
-          maxAppraisal: Number(formatEther(pricingSessionCoreData[i].maxAppraisal))
+          maxAppraisal: Number(pricingSessionCoreData[i].maxAppraisal)
         }
       }
     )
@@ -266,7 +266,7 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         pricingSessionCheck
       )
-
+      console.log(pricingSessionCore)
       const sessionData: SessionData = {
         img:
           pricingSessionMetadata.image_url ||
@@ -292,7 +292,7 @@ export const useGetCurrentSessionData = () => {
             ? pricingSessionMetadata.owner.user.username
             : shortenAddress(pricingSessionMetadata.owner.address),
         ownerAddress: pricingSessionMetadata.owner.address,
-        maxAppraisal: Number(formatEther(pricingSessionCore.maxAppraisal))
+        maxAppraisal: Number(pricingSessionCore.maxAppraisal)
       }
 
       const userStatus = await getUserStatus({
