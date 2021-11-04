@@ -2,6 +2,7 @@ import React, {
   FormEvent,
   FunctionComponent,
   useContext,
+  useEffect,
   useState,
 } from "react"
 import { ThemeContext } from "styled-components"
@@ -76,9 +77,21 @@ const Vote: FunctionComponent = () => {
         </ListGroupItemMinWidth>
         <SessionCountdown />
       </HorizontalListGroup>
+      <Label>NOTE: Your browser will store your seed number and appraisal number for a given pricing session. However, if you are using a private browser, please ensure that you save your values elsewhere.</Label>
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
+
+          if (Number(e.target["appraisalValue"].value) >= sessionData.maxAppraisal) {
+            alert(`The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${e.target["appraisalValue"].value} Ether.`)
+            return
+          }
+
+          if (Number(e.target["stake"].value) < .005) {
+            alert(`The min amount of eth you can stake is .005 Ether. You tried staking ${Number(e.target["stake"].value)} Ether.`)
+            return
+          }
+
           switch (userStatus) {
             case UserState.NotVoted:
               await onSubmitVote(
