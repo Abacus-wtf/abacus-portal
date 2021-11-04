@@ -1,18 +1,16 @@
-import { useGetCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCurrentSessionData,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
 import React, { FunctionComponent, useContext } from "react"
 import Countdown from "react-countdown"
 import { ThemeContext } from "styled-components"
 import { ListGroupItem } from "shards-react"
 import { ListGroupHeader, ListGroupSubtext } from "@components/ListGroupMods"
 import { Label } from "@components/global.styles"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 
 const SessionCountdown: FunctionComponent = () => {
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
   const theme = useContext(ThemeContext)
   const getCurrentSessionData = useGetCurrentSessionData()
   return (
