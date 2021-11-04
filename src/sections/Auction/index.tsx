@@ -13,8 +13,11 @@ import {
 } from "../CurrentSession/CurrentSession.styles"
 import RightSection from "./RightSection"
 import { shortenAddress } from "@config/utils"
+import { useActiveWeb3React } from "@hooks/index"
+import ConnectWalletAlert from "@components/ConnectWalletAlert"
 
 const Auction = () => {
+  const { account } = useActiveWeb3React()
   const [isLoading, setIsLoading] = useState(true)
   const setAuctionData = useSetAuctionData()
   const auctionData = useAuctionData()
@@ -32,6 +35,16 @@ const Auction = () => {
 
     loadUserData()
   }, [])
+
+  if (!account) {
+    return (
+      <SmallUniversalContainer
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <ConnectWalletAlert />
+      </SmallUniversalContainer>
+    )
+  }
 
   if (isLoading || auctionData === null) {
     return (
