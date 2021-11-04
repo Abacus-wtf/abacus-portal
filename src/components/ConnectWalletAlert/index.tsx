@@ -17,7 +17,7 @@ const AlertCopy = styled.div`
 const ConnectWalletAlert: FunctionComponent = () => {
   const toggleWalletModal = useToggleWalletModal()
   return (
-    <Alert theme="light">
+    <Alert theme="light" style={{backgroundColor: 'white'}}>
       <FlexContainer style={{ alignItems: "center" }}>
         <AlertCopy>
           You can't participate until you connect your wallet
