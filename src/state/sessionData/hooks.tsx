@@ -173,15 +173,15 @@ export const useGetMultiSessionData = () => {
         )
         return {
           img:
-            pricingSessionMetadata[i].image_preview_url ||
-            pricingSessionMetadata[i].image_url,
+            pricingSessionMetadata?.[i]?.image_preview_url ||
+            pricingSessionMetadata?.[i]?.image_url,
           endTime: endTime,
           numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
-          collectionTitle: pricingSessionMetadata[i].collection.name,
+          collectionTitle: pricingSessionMetadata?.[i]?.collection?.name,
           totalStaked: Number(
             formatEther(pricingSessionCoreData[i].totalSessionStake)
           ),
-          nftName: pricingSessionMetadata[i].name,
+          nftName: pricingSessionMetadata?.[i]?.name,
           finalAppraisalValue:
             sessionStatus >= 3
               ? Number(formatEther(finalAppraisalValues[i]))
@@ -189,15 +189,13 @@ export const useGetMultiSessionData = () => {
           address: CURRENT_SESSIONS[i].address,
           tokenId: CURRENT_SESSIONS[i].tokenId,
           nonce: Number(pricingSessionNonce[i]),
-          ownerAddress: pricingSessionMetadata[i].owner.address,
+          ownerAddress: pricingSessionMetadata?.[i]?.owner?.address,
           owner:
-            pricingSessionMetadata[i].owner.user &&
-            pricingSessionMetadata[i].owner.user.username
-              ? pricingSessionMetadata[i].owner.user.username
-              : shortenAddress(pricingSessionMetadata[i].owner.address),
-          maxAppraisal: Number(
-            formatEther(pricingSessionCoreData[i].maxAppraisal)
-          ),
+            pricingSessionMetadata?.[i]?.owner?.user &&
+            pricingSessionMetadata?.[i]?.owner?.user?.username
+              ? pricingSessionMetadata?.[i]?.owner?.user?.username
+              : shortenAddress(pricingSessionMetadata?.[i]?.owner?.address),
+          maxAppraisal: Number(pricingSessionCoreData[i].maxAppraisal),
         }
       }
     )
@@ -268,19 +266,18 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         pricingSessionCheck
       )
-
       const sessionData: SessionData = {
         img:
-          pricingSessionMetadata.image_url ||
-          pricingSessionMetadata.image_preview_url,
+          pricingSessionMetadata?.image_url ||
+          pricingSessionMetadata?.image_preview_url,
         endTime,
         numPpl: Number(pricingSessionCore.uniqueVoters),
-        collectionTitle: pricingSessionMetadata.collection.name,
+        collectionTitle: pricingSessionMetadata?.collection?.name,
         totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
         totalStakedInUSD:
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
           Number(ethUsd),
-        nftName: pricingSessionMetadata.name,
+        nftName: pricingSessionMetadata?.name,
         address: address,
         tokenId: tokenId,
         nonce: nonce,
@@ -289,12 +286,12 @@ export const useGetCurrentSessionData = () => {
             ? Number(formatEther(finalAppraisalValue))
             : undefined,
         owner:
-          pricingSessionMetadata.owner.user &&
-          pricingSessionMetadata.owner.user.username
-            ? pricingSessionMetadata.owner.user.username
-            : shortenAddress(pricingSessionMetadata.owner.address),
-        ownerAddress: pricingSessionMetadata.owner.address,
-        maxAppraisal: Number(formatEther(pricingSessionCore.maxAppraisal)),
+          pricingSessionMetadata?.owner?.user &&
+          pricingSessionMetadata?.owner?.user?.username
+            ? pricingSessionMetadata?.owner?.user?.username
+            : shortenAddress(pricingSessionMetadata?.owner?.address),
+        ownerAddress: pricingSessionMetadata?.owner?.address,
+        maxAppraisal: Number(pricingSessionCore.maxAppraisal),
       }
 
       const userStatus = await getUserStatus({

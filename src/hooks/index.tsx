@@ -12,6 +12,7 @@ import {
   useCurrentSessionData,
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
+import { useSetAuctionData } from "@state/auctionData/hooks"
 
 export function usePrevious<Type>(value: Type) {
   const ref = useRef<Type>()
@@ -39,12 +40,13 @@ export function useWeb3Contract(ABI: any) {
   )
 }
 
-export const useGeneralizedContractCall = () => {
+export const useGeneralizedContractCall = (isAuction?: boolean) => {
   const sessionData = useCurrentSessionData()
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
 
   const getCurrentSessionData = useGetCurrentSessionData()
+  const setAuctionData = useSetAuctionData()
   const [isPending, setIsPending] = useState(false)
   const previousIsPending = usePrevious(isPending)
 
@@ -52,7 +54,11 @@ export const useGeneralizedContractCall = () => {
     const { address, tokenId, nonce } = sessionData
     if (previousIsPending && !isPending) {
       // re-fetch state
-      getCurrentSessionData(address, tokenId, nonce)
+      if (isAuction) {
+        setAuctionData()
+      } else {
+        getCurrentSessionData(address, tokenId, nonce)
+      }
     }
   }, [previousIsPending, isPending, sessionData, getCurrentSessionData])
 

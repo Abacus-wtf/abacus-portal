@@ -2,6 +2,7 @@ import React, {
   FormEvent,
   FunctionComponent,
   useContext,
+  useEffect,
   useState,
 } from "react"
 import { ThemeContext } from "styled-components"
@@ -23,13 +24,16 @@ import { InputWithTitle } from "@components/Input"
 import { useActiveWeb3React } from "@hooks/index"
 import { ZERO_ADDRESS } from "@config/constants"
 import _ from "lodash"
-import { useOnBid } from "@hooks/auction"
+import { useOnBid, useOnClaim } from "@hooks/auction"
 
 const RightSection: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const auctionData = useAuctionData()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const { onBid, isPending } = useOnBid()
+  const { onClaim, isPending: isPendingClaim } = useOnClaim()
+  const [nftAddress, setNftAddress] = useState()
+  const [tokenId, setTokenId] = useState()
 
   const setAuctionData = useSetAuctionData()
 
@@ -64,7 +68,9 @@ const RightSection: FunctionComponent = () => {
           e.preventDefault()
 
           if (Number(e.target["bid"].value) <= auctionData.highestBid) {
-            alert(`You tried to bid lower than or the same as the highest bid. Please bid higher than ${auctionData.highestBid} Ether.`)
+            alert(
+              `You tried to bid lower than or the same as the highest bid. Please bid higher than ${auctionData.highestBid} Ether.`
+            )
             return
           }
 
@@ -92,14 +98,25 @@ const RightSection: FunctionComponent = () => {
               title={"NFT Address"}
               id={"nftAddress"}
               placeholder={ZERO_ADDRESS}
+              value={nftAddress}
+              onChange={e => setNftAddress(e.target.value)}
             />
           </ListGroupItem>
           <ListGroupItem>
-            <InputWithTitle title={"Token ID"} id={"tokenId"} placeholder="1" />
+            <InputWithTitle
+              title={"Token ID"}
+              id={"tokenId"}
+              placeholder="1"
+              value={tokenId}
+              onChange={e => setTokenId(e.target.value)}
+            />
           </ListGroupItem>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <div style={{ width: "100%" }} id={"submitVoteButton"}>
+          <div
+            style={{ width: "100%", display: "flex", gridGap: 15 }}
+            id={"submitBidButton"}
+          >
             <Button
               disabled={!account || isPending}
               style={{ width: "100%" }}
@@ -107,10 +124,19 @@ const RightSection: FunctionComponent = () => {
             >
               {isPending ? "Pending..." : "Bid"}
             </Button>
+            <Button
+              disabled={!account || isPendingClaim}
+              style={{ width: "100%" }}
+              onClick={async () => {
+                await onClaim()
+              }}
+            >
+              {isPendingClaim ? "Pending..." : "Claim Previous Bid"}
+            </Button>
           </div>
           <Tooltip
             open={isToolTipOpen}
-            target="#submitVoteButton"
+            target="#submitBidButton"
             disabled={(account !== null && account !== undefined) || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
