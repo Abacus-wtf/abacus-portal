@@ -13,8 +13,11 @@ import {
 } from "../CurrentSession/CurrentSession.styles"
 import RightSection from "./RightSection"
 import { shortenAddress } from "@config/utils"
+import { useActiveWeb3React } from "@hooks/index"
+import ConnectWalletAlert from "@components/ConnectWalletAlert"
 
 const Auction = () => {
+  const { account } = useActiveWeb3React()
   const [isLoading, setIsLoading] = useState(true)
   const setAuctionData = useSetAuctionData()
   const auctionData = useAuctionData()
@@ -32,6 +35,16 @@ const Auction = () => {
 
     loadUserData()
   }, [])
+
+  if (!account) {
+    return (
+      <SmallUniversalContainer
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <ConnectWalletAlert />
+      </SmallUniversalContainer>
+    )
+  }
 
   if (isLoading || auctionData === null) {
     return (
@@ -52,7 +65,7 @@ const Auction = () => {
             <ButtonsWhite
               style={{ borderRadius: 8 }}
               target={"_blank"}
-              to={`https://opensea.io/${optionalInfo.highestNftAddress}/${optionalInfo.highestNftTokenId}`}
+              to={`https://opensea.io/assets/${optionalInfo.highestNftAddress}/${optionalInfo.highestNftTokenId}`}
               as={Link}
             >
               OpenSea
@@ -67,7 +80,7 @@ const Auction = () => {
               <SubText>
                 Highest Bid by{" "}
                 <Link
-                  to={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
+                  to={`https://opensea.io/assets/${optionalInfo.highestBidderAddress}`}
                 >
                   {shortenAddress(optionalInfo.highestBidderAddress)}
                 </Link>

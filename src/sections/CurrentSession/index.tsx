@@ -18,6 +18,7 @@ import {
   SquareImageContainer,
   SubText,
 } from "./CurrentSession.styles"
+import ConnectWalletAlert from "@components/ConnectWalletAlert"
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
@@ -45,6 +46,16 @@ const CurrentSession = ({ location }) => {
     }
   }, [address, tokenId, nonce, account])
 
+  if (!account) {
+    return (
+      <SmallUniversalContainer
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <ConnectWalletAlert />
+      </SmallUniversalContainer>
+    )
+  }
+
   if (isLoading || sessionData === null) {
     return (
       <SmallUniversalContainer
@@ -63,7 +74,7 @@ const CurrentSession = ({ location }) => {
           <ButtonsWhite
             style={{ borderRadius: 8 }}
             target={"_blank"}
-            to={`https://opensea.io/${sessionData.address}/${sessionData.tokenId}`}
+            to={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
             as={Link}
           >
             OpenSea
@@ -77,7 +88,7 @@ const CurrentSession = ({ location }) => {
             </Title>
             <SubText>
               Owned by{" "}
-              <Link to={`https://opensea.io/${sessionData.ownerAddress}`}>
+              <Link to={`https://opensea.io/assets/${sessionData.ownerAddress}`}>
                 {sessionData.owner}
               </Link>
             </SubText>
