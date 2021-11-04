@@ -1,29 +1,43 @@
-import { useGetCurrentSessionData, useGetUserStatus } from "@state/sessionData/hooks"
-import React, { FunctionComponent, useContext } from "react"
+import {
+  useCurrentSessionData,
+  useGetCurrentSessionData,
+} from "@state/sessionData/hooks"
+import React, { useContext } from "react"
 import Countdown from "react-countdown"
 import { ThemeContext } from "styled-components"
 import { ListGroupItem } from "shards-react"
 import { ListGroupHeader, ListGroupSubtext } from "@components/ListGroupMods"
 import { Label } from "@components/global.styles"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 
-const SessionCountdown: FunctionComponent = () => {
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+interface SessionCountdownProps {
+  overrideOnComplete?: () => void
+  overrideEndTime?: number
+  overrideTitle?: string
+}
+
+const SessionCountdown = (props: SessionCountdownProps) => {
+  const sessionData = useCurrentSessionData()
   const theme = useContext(ThemeContext)
   const getCurrentSessionData = useGetCurrentSessionData()
-  const getUserStatus = useGetUserStatus()
   return (
     <ListGroupItem style={{ width: "100%" }}>
-      <Label>Session ends in</Label>
+      <Label>
+        {props.overrideTitle ? props.overrideTitle : "Session ends in"}
+      </Label>
       <Countdown
-        date={sessionData.endTime}
+        date={
+          props.overrideEndTime ? props.overrideEndTime : sessionData.endTime
+        }
         onComplete={async () => {
-          await getCurrentSessionData(sessionData.address, sessionData.tokenId, sessionData.nonce)  
-          await getUserStatus(sessionData.address, sessionData.tokenId)
+          if (props.overrideOnComplete) {
+            await props.overrideOnComplete()
+          } else {
+            await getCurrentSessionData(
+              sessionData.address,
+              sessionData.tokenId,
+              sessionData.nonce
+            )
+          }
         }}
         renderer={({ hours, minutes, seconds, completed }) => {
           if (completed) {

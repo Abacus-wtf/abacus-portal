@@ -3,7 +3,7 @@ import Helmet from "react-helmet"
 import { GlobalStyles } from "./styles"
 import Navbar from "@components/Navbar"
 import styled from "styled-components"
-import { Container, Row, Col } from "shards-react"
+import { Container, Row } from "shards-react"
 import Web3Modal from "@components/Web3Modal"
 import Web3 from "web3"
 
@@ -48,7 +48,7 @@ const GlobalLayout: React.FC = (props: any) => {
       <GlobalStyles />
       <Helmet title={"Abacus Protocol"} />
       <StyledContainer>
-        <Navbar />
+        <Navbar location={props.location}/>
         <RowContainer>
           <Web3Modal />
           {props.children}

@@ -26,17 +26,19 @@ const LinkList = styled.div`
   grid-gap: 40px;
 `
 
-const HeaderLink = styled(ButtonClear).attrs(props => ({
-  activeClassName,
-}))`
+const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
   font-size: 1rem;
 
-  &.${activeClassName} {
+  &:hover {
     opacity: 1;
   }
+
+  ${({isactive}) => isactive && `
+    opacity: 1;
+  `}
 `
 
 const NavbarContainer = styled.div`
@@ -50,7 +52,7 @@ const NavbarContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.bg1};
 `
 
-const Navbar = () => {
+const Navbar = ({location}) => {
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
 
@@ -59,8 +61,11 @@ const Navbar = () => {
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          <HeaderLink as={Link} to="/">
-            Home
+          <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
+            Explore
+          </HeaderLink>
+          <HeaderLink as={Link} to="/auction" isactive={location.pathname === '/auction'}>
+            Auction
           </HeaderLink>
           {/*<HeaderLink as={Link} to="/my-sessions">
             My Sessions

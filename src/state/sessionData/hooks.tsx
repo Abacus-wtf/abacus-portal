@@ -5,12 +5,14 @@ import {
   getMultipleSessionData,
   getCurrentSessionData,
   setUserStatus,
+  setClaimPosition
 } from "./actions"
 import {
   SessionData,
   CurrentSessionState,
   UserState,
   SessionState,
+  ClaimState
 } from "./reducer"
 import { AppDispatch } from "../index"
 import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
@@ -24,10 +26,14 @@ import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import axios from "axios"
+import { useWeb3React } from "@web3-react/core"
 
-const modifyTimeAndSession = (getStatus: string, pricingSessionData: any, stateVals: any) => {
+const modifyTimeAndSession = (
+  getStatus: string,
+  pricingSessionData: any,
+  stateVals: any
+) => {
   let sessionStatus = Number(getStatus)
-  console.log(sessionStatus)
   let endTime = Number(pricingSessionData.endTime) * 1000
   const currentTime = Date.now()
   if (sessionStatus === 3) {
@@ -42,17 +48,44 @@ const modifyTimeAndSession = (getStatus: string, pricingSessionData: any, stateV
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 2 * 1000
   } else if (sessionStatus == 1) {
-    endTime =
-      endTime + Number(pricingSessionData.votingTime) * 1000
+    endTime = endTime + Number(pricingSessionData.votingTime) * 1000
     if (currentTime >= endTime) {
       sessionStatus = 2
     }
   } else if (sessionStatus == 0 && currentTime > endTime) {
     sessionStatus = 1
-    endTime =
-      endTime + Number(pricingSessionData.votingTime) * 1000
+    endTime = endTime + Number(pricingSessionData.votingTime) * 1000
   }
-  return {endTime, sessionStatus}
+  return { endTime, sessionStatus }
+}
+
+export const useRetrieveClaimData = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const { account } = useActiveWeb3React()
+  const sessionData = useCurrentSessionData()
+
+  return useCallback(
+    async () => {
+      const pricingSession = getPricingSessionContract(
+        ABC_PRICING_SESSION_ADDRESS
+      )
+      const [
+        getEthPayout,
+        ethToAbc
+      ] = await Promise.all([
+        pricingSession.methods.getEthPayout(sessionData.address, sessionData.tokenId).call(),
+        pricingSession.methods.ethToAbc().call(),
+      ])
+
+      const claimData: ClaimState = {
+        abcClaimAmount:Number(formatEther(getEthPayout*ethToAbc)),
+        ethClaimAmount: Number(formatEther(getEthPayout))
+      }
+      dispatch(setClaimPosition(claimData))
+    },
+    [dispatch, sessionData]
+  )
 }
 
 export const useGetMultiSessionData = () => {
@@ -133,14 +166,18 @@ export const useGetMultiSessionData = () => {
     const sessionData: SessionData[] = _.map(
       _.range(0, CURRENT_SESSIONS.length),
       i => {
-        const {endTime, sessionStatus} = modifyTimeAndSession(statuses[i], pricingSessionCoreData[i], pricingSessionCheckData[i])
+        const { endTime, sessionStatus } = modifyTimeAndSession(
+          statuses[i],
+          pricingSessionCoreData[i],
+          pricingSessionCheckData[i]
+        )
         return {
           img:
             pricingSessionMetadata[i].image_preview_url ||
             pricingSessionMetadata[i].image_url,
           endTime: endTime,
           numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
-          title: pricingSessionMetadata[i].collection.name,
+          collectionTitle: pricingSessionMetadata[i].collection.name,
           totalStaked: Number(
             formatEther(pricingSessionCoreData[i].totalSessionStake)
           ),
@@ -152,16 +189,40 @@ export const useGetMultiSessionData = () => {
           address: CURRENT_SESSIONS[i].address,
           tokenId: CURRENT_SESSIONS[i].tokenId,
           nonce: Number(pricingSessionNonce[i]),
+          ownerAddress: pricingSessionMetadata[i].owner.address,
           owner:
             pricingSessionMetadata[i].owner.user &&
             pricingSessionMetadata[i].owner.user.username
               ? pricingSessionMetadata[i].owner.user.username
               : shortenAddress(pricingSessionMetadata[i].owner.address),
+          maxAppraisal: Number(formatEther(pricingSessionCoreData[i].maxAppraisal))
         }
       }
     )
     dispatch(getMultipleSessionData(sessionData))
   }, [dispatch])
+}
+
+type GetUserStatusParams = {
+  account: string
+  getPricingSessionContract: ReturnType<typeof useWeb3Contract>
+  address: string
+  tokenId: string
+}
+const getUserStatus = async ({
+  account,
+  getPricingSessionContract,
+  address,
+  tokenId,
+}: GetUserStatusParams) => {
+  let getVoterCheck = -1
+  const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
+  if (account) {
+    getVoterCheck = await pricingSession.methods
+      .getVoterCheck(address, tokenId, account)
+      .call()
+  }
+  return Number(getVoterCheck)
 }
 
 export const useGetCurrentSessionData = () => {
@@ -200,7 +261,11 @@ export const useGetCurrentSessionData = () => {
         ethUsd = 4500
       }
 
-      const {endTime, sessionStatus} = modifyTimeAndSession(getStatus, pricingSessionCore, pricingSessionCheck)
+      const { endTime, sessionStatus } = modifyTimeAndSession(
+        getStatus,
+        pricingSessionCore,
+        pricingSessionCheck
+      )
 
       const sessionData: SessionData = {
         img:
@@ -208,7 +273,7 @@ export const useGetCurrentSessionData = () => {
           pricingSessionMetadata.image_preview_url,
         endTime,
         numPpl: Number(pricingSessionCore.uniqueVoters),
-        title: pricingSessionMetadata.collection.name,
+        collectionTitle: pricingSessionMetadata.collection.name,
         totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
         totalStakedInUSD:
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
@@ -218,21 +283,33 @@ export const useGetCurrentSessionData = () => {
         tokenId: tokenId,
         nonce: nonce,
         finalAppraisalValue:
-          sessionStatus >= 3 ? Number(formatEther(finalAppraisalValue)) : undefined,
+          sessionStatus >= 3
+            ? Number(formatEther(finalAppraisalValue))
+            : undefined,
         owner:
           pricingSessionMetadata.owner.user &&
           pricingSessionMetadata.owner.user.username
             ? pricingSessionMetadata.owner.user.username
             : shortenAddress(pricingSessionMetadata.owner.address),
+        ownerAddress: pricingSessionMetadata.owner.address,
+        maxAppraisal: Number(formatEther(pricingSessionCore.maxAppraisal))
       }
+
+      const userStatus = await getUserStatus({
+        address,
+        account,
+        getPricingSessionContract,
+        tokenId,
+      })
 
       const currentSessionData: CurrentSessionState = {
         sessionData,
+        userStatus,
         sessionStatus: sessionStatus,
       }
       dispatch(getCurrentSessionData(currentSessionData))
     },
-    [dispatch, account]
+    [dispatch, account, getPricingSessionContract]
   )
 }
 
@@ -243,20 +320,15 @@ export const useGetUserStatus = () => {
 
   return useCallback(
     async (address: string, tokenId: string) => {
-      const pricingSession = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS
-      )
-      let getVoterCheck
-      if (account) {
-        getVoterCheck = await pricingSession.methods
-          .getVoterCheck(address, tokenId, account)
-          .call()
-      } else {
-        getVoterCheck = "-1"
-      }
-      dispatch(setUserStatus(Number(getVoterCheck)))
+      const userStatus = await getUserStatus({
+        address,
+        account,
+        getPricingSessionContract,
+        tokenId,
+      })
+      dispatch(setUserStatus(userStatus))
     },
-    [dispatch, getPricingSessionContract, account]
+    [account, dispatch, getPricingSessionContract]
   )
 }
 
@@ -265,6 +337,13 @@ export const useCurrentSessionState = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionStatus"]
   >(state => state.sessionData.currentSessionData.sessionStatus)
+}
+
+export const useCurrentSessionData = () => {
+  return useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(state => state.sessionData.currentSessionData.sessionData)
 }
 
 export const useCanUserInteract = () => {
@@ -276,6 +355,7 @@ export const useCanUserInteract = () => {
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
+
   switch (sessionStatus) {
     case SessionState.Vote:
       return (

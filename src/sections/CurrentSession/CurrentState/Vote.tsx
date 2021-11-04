@@ -2,9 +2,8 @@ import React, {
   FormEvent,
   FunctionComponent,
   useContext,
-  useState,
-  useMemo,
   useEffect,
+  useState,
 } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
@@ -26,6 +25,7 @@ import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
+  useCurrentSessionData,
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
@@ -35,23 +35,14 @@ import { useActiveWeb3React } from "@hooks/index"
 import { web3 } from "@config/constants"
 import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
 import { keccak256 } from "@ethersproject/keccak256"
-import {
-  useAllTransactions,
-  isTransactionRecent,
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
 import _ from "lodash"
 import { parseEther } from "ethers/lib/utils"
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
-  const { account, chainId, library } = useActiveWeb3React()
-  const getCurrentSessionData = useGetCurrentSessionData()
+  const { account } = useActiveWeb3React()
 
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
@@ -60,24 +51,11 @@ const Vote: FunctionComponent = () => {
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
-  const submitVote = useOnSubmitVote()
-  const updateVote = useOnUpdateVote()
+  const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
+  const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
   const [stakeVal, setStakeVal] = useState("")
-  const [txHash, setTxHash] = useState()
-  const isTxOccurring = useIsTxOccurring(txHash)
-  const loadData = async () => {
-    await getCurrentSessionData(
-      sessionData.address,
-      sessionData.tokenId,
-      sessionData.nonce
-    )
-  }
 
-  useEffect(() => {
-    if (!isTxOccurring && sessionData !== null) {
-      //loadData()
-    }
-  }, [isTxOccurring])
+  const isPending = submitVotePending || updateVotePending
 
   const theme = useContext(ThemeContext)
   return (
@@ -99,22 +77,30 @@ const Vote: FunctionComponent = () => {
         </ListGroupItemMinWidth>
         <SessionCountdown />
       </HorizontalListGroup>
+      <Label>NOTE: Your browser will store your seed number and appraisal number for a given pricing session. However, if you are using a private browser, please ensure that you save your values elsewhere.</Label>
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = hash => {
-            setTxHash(hash)
+
+          if (Number(e.target["appraisalValue"].value) >= sessionData.maxAppraisal) {
+            alert(`The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${e.target["appraisalValue"].value} Ether.`)
+            return
           }
+
+          if (Number(e.target["stake"].value) < .005) {
+            alert(`The min amount of eth you can stake is .005 Ether. You tried staking ${Number(e.target["stake"].value)} Ether.`)
+            return
+          }
+
           switch (userStatus) {
             case UserState.NotVoted:
-              await submitVote(
+              await onSubmitVote(
                 e.target["appraise"].value,
-                e.target["stake"].value,
-                cb
+                e.target["stake"].value
               )
               break
             case UserState.CompletedVote:
-              await updateVote(e.target["appraise"].value, cb)
+              await onUpdateVote(e.target["appraise"].value)
               break
             default:
               break
@@ -126,12 +112,12 @@ const Vote: FunctionComponent = () => {
             onCreateHash={(appraisalValue, password) => {
               let encodedParams = web3.eth.abi.encodeParameters(
                 ["uint", "address", "uint"],
-                [parseEther(''+appraisalValue), account!, password]
+                [parseEther("" + appraisalValue), account! || "", password]
               )
-              encodedParams = encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length)
-              setAppraisalHash(
-                keccak256(encodedParams)
-              )
+              encodedParams =
+                encodedParams.slice(0, 64) +
+                encodedParams.slice(88, encodedParams.length)
+              setAppraisalHash(keccak256(encodedParams))
             }}
           />
           <ListGroupItem>
@@ -160,7 +146,7 @@ const Vote: FunctionComponent = () => {
             <Button
               disabled={
                 !canUserInteract ||
-                isTxOccurring ||
+                isPending ||
                 appraisalHash === "" ||
                 (userStatus === UserState.NotVoted &&
                   (isNaN(Number(stakeVal)) || stakeVal === ""))
@@ -168,7 +154,7 @@ const Vote: FunctionComponent = () => {
               style={{ width: "100%" }}
               type="submit"
             >
-              {isTxOccurring
+              {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedVote
                 ? "Update"
@@ -178,7 +164,7 @@ const Vote: FunctionComponent = () => {
           <Tooltip
             open={isToolTipOpen}
             target="#submitVoteButton"
-            disabled={canUserInteract || isTxOccurring}
+            disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
           >

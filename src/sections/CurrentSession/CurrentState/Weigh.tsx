@@ -4,7 +4,6 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useMemo,
 } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
@@ -28,27 +27,22 @@ import { AppState } from "@state/index"
 import { web3 } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnWeightVote } from "@hooks/current-session"
-import {
-  useAllTransactions,
-  isTransactionRecent,
-  useIsTxOccurring,
-} from "@state/transactions/hooks"
 import { UserState } from "@state/sessionData/reducer"
 import _ from "lodash"
-import { useCanUserInteract } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useCurrentSessionData,
+} from "@state/sessionData/hooks"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
-  const weightVote = useOnWeightVote()
+  const { onWeightVote, isPending } = useOnWeightVote()
 
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -56,9 +50,6 @@ const Weigh: FunctionComponent = () => {
   const theme = useContext(ThemeContext)
   const [appraisalValue, setAppraisalValue] = useState("")
   const [passwordValue, setPasswordValue] = useState("")
-  const [txHash, setTxHash] = useState("")
-
-  const isTxOccurring = useIsTxOccurring(txHash)
 
   useEffect(() => {
     const hash = web3.eth.abi.encodeParameters(
@@ -66,7 +57,8 @@ const Weigh: FunctionComponent = () => {
       [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
     )
     const itemsString = localStorage.getItem(hash)
-    if (itemsString !== null && account) {
+    //debugger
+    if (itemsString !== null && itemsString !== "" && account) {
       const items = JSON.parse(itemsString)
       setPasswordValue(items.password)
       setAppraisalValue(items.appraisal)
@@ -95,15 +87,18 @@ const Weigh: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = (hash) => {
-            setTxHash(hash)
+          const cb = hash => {
             const hashedMessage = web3.eth.abi.encodeParameters(
               ["address", "uint256", "uint256"],
-              [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
+              [
+                sessionData.address,
+                Number(sessionData.tokenId),
+                sessionData.nonce,
+              ]
             )
-            localStorage.setItem(hashedMessage, '')
+            localStorage.setItem(hashedMessage, "")
           }
-          await weightVote(appraisalValue, passwordValue, cb)
+          await onWeightVote(appraisalValue, passwordValue, cb)
         }}
       >
         <ListGroup>
@@ -133,7 +128,7 @@ const Weigh: FunctionComponent = () => {
             <Button
               disabled={
                 !canUserInteract ||
-                isTxOccurring ||
+                isPending ||
                 appraisalValue === "" ||
                 passwordValue === "" ||
                 isNaN(Number(appraisalValue)) ||
@@ -144,7 +139,7 @@ const Weigh: FunctionComponent = () => {
               style={{ width: "100%" }}
               type="submit"
             >
-              {isTxOccurring
+              {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedWeigh
                 ? "Vote Weighed"
@@ -154,7 +149,7 @@ const Weigh: FunctionComponent = () => {
           <Tooltip
             open={isToolTipOpen}
             target="#submitWeighButton"
-            disabled={canUserInteract || isTxOccurring}
+            disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
           >

@@ -27,13 +27,13 @@ export default ({ onCreateHash }: HashSystem) => {
   const onSubmit = () => {
     if (!account) return
 
-    if (isNaN(Number(appraisalValue))) {
+    if (isNaN(Number(appraisalValue)) || appraisalValue === '') {
       setIsAppraisalValid(false)
       return
     }
 
-    if (isNaN(Number(passwordValue))) {
-      setIsPasswordValid(true)
+    if (isNaN(Number(passwordValue)) || appraisalValue === '') {
+      setIsPasswordValid(false)
       return
     }
     setIsAppraisalValid(true)
@@ -63,6 +63,13 @@ export default ({ onCreateHash }: HashSystem) => {
       const items = JSON.parse(itemsString)
       setPasswordValue(items.password)
       setAppraisalValue(items.appraisal)
+      onCreateHash(Number(appraisalValue), Number(passwordValue))
+    } else if (
+      !isNaN(Number(passwordValue)) &&
+      !isNaN(Number(appraisalValue)) &&
+      appraisalValue !== '' &&
+      passwordValue !== ''
+    ) {
       onCreateHash(Number(appraisalValue), Number(passwordValue))
     }
   }, [account])

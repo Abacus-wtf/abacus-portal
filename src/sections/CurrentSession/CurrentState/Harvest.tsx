@@ -22,18 +22,17 @@ import SessionCountdown from "./SessionCountdown"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import { useCanUserInteract } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useCurrentSessionData,
+} from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnHarvest } from "@hooks/current-session"
-import { useIsTxOccurring } from "@state/transactions/hooks"
 import _ from "lodash"
 
 const Harvest: FunctionComponent = () => {
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
@@ -42,9 +41,7 @@ const Harvest: FunctionComponent = () => {
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
-  const onHarvest = useOnHarvest()
-  const [txHash, setTxHash] = useState("")
-  const isTxOccurring = useIsTxOccurring(txHash)
+  const { onHarvest, isPending } = useOnHarvest()
 
   const theme = useContext(ThemeContext)
   return (
@@ -69,7 +66,7 @@ const Harvest: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          onHarvest(hash => setTxHash(hash))
+          onHarvest()
         }}
       >
         <ListGroupItem>
@@ -83,17 +80,17 @@ const Harvest: FunctionComponent = () => {
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <div style={{ width: "100%" }} id={"submitHarvestButton"}>
             <Button
-              disabled={!canUserInteract || isTxOccurring}
+              disabled={!canUserInteract || isPending}
               style={{ width: "100%" }}
               type="submit"
             >
-              {isTxOccurring ? "Pending..." : "Harvest"}
+              {isPending ? "Pending..." : userStatus === UserState.CompletedHarvest ? "Harvested" : "Harvest"}
             </Button>
           </div>
           <Tooltip
             open={isToolTipOpen}
             target="#submitHarvestButton"
-            disabled={canUserInteract || isTxOccurring}
+            disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
           >

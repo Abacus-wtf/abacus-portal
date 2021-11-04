@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useState } from "react"
+import React, { FunctionComponent, useContext, useState, useEffect } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
@@ -17,32 +17,38 @@ import SessionCountdown from "./SessionCountdown"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
-import { useCanUserInteract } from "@state/sessionData/hooks"
+import {
+  useCanUserInteract,
+  useCurrentSessionData,
+  useRetrieveClaimData
+} from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnClaim } from "@hooks/current-session"
-import { useIsTxOccurring } from "@state/transactions/hooks"
 import _ from "lodash"
 
 const Claim: FunctionComponent = () => {
-  const [ethPayout, setEthPayout] = useState(0)
-  const [abcPayout, setAbcPayout] = useState(0)
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
+  const claimData = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["claimPositions"]
+  >(state => state.sessionData.currentSessionData.claimPositions)
+
+  const retrieveClaimData = useRetrieveClaimData()
 
   const canUserInteract = useCanUserInteract()
   const [isEthToolTipOpen, setIsEthToolTipOpen] = useState(false)
   const [isAbcToolTipOpen, setIsAbcToolTipOpen] = useState(false)
 
-  const onClaim = useOnClaim()
-  const [txHash, setTxHash] = useState("")
-  const isTxOccurring = useIsTxOccurring(txHash)
+  const { onClaim, isPending } = useOnClaim()
+
+  useEffect(() => {
+    retrieveClaimData()
+  })
 
   const theme = useContext(ThemeContext)
   return (
@@ -79,8 +85,8 @@ const Claim: FunctionComponent = () => {
             title={"ETH Payout"}
             id={"ethPayout"}
             placeholder="0"
-            value={ethPayout}
-            onChange={setEthPayout}
+            value={claimData ? claimData.ethClaimAmount : '-'}
+            disabled
           />
         </ListGroupItem>
         <ListGroupItem>
@@ -88,8 +94,8 @@ const Claim: FunctionComponent = () => {
             title={"ABC Payout"}
             id={"password"}
             placeholder="0"
-            value={abcPayout}
-            onChange={setAbcPayout}
+            value={claimData ? claimData.abcClaimAmount : '-'}
+            disabled
           />
         </ListGroupItem>
       </HorizontalListGroup>
@@ -100,22 +106,19 @@ const Claim: FunctionComponent = () => {
             id={"claimEthButton"}
           >
             <Button
-              disabled={!canUserInteract || isTxOccurring}
+              disabled={!canUserInteract || isPending}
               style={{ width: "100%" }}
               type="button"
               onClick={() => {
-                const cb = (hash: string) => {
-                  setTxHash(hash)
-                }
-                onClaim(true, cb)
+                onClaim(true)
               }}
             >
-              {isTxOccurring ? "Pending..." : "Claim ETH"}
+              {isPending ? "Pending..." : "Claim ETH"}
             </Button>
             <Tooltip
               open={isEthToolTipOpen}
               target="#claimEthButton"
-              disabled={canUserInteract || isTxOccurring}
+              disabled={canUserInteract || isPending}
               toggle={() => setIsEthToolTipOpen(!isEthToolTipOpen)}
               placement={"right"}
             >
@@ -129,22 +132,19 @@ const Claim: FunctionComponent = () => {
             id={"claimAbcButton"}
           >
             <Button
-              disabled={!canUserInteract || isTxOccurring}
+              disabled={!canUserInteract || isPending}
               style={{ width: "100%" }}
               type="button"
               onClick={() => {
-                const cb = (hash: string) => {
-                  setTxHash(hash)
-                }
-                onClaim(false, cb)
+                onClaim(false)
               }}
             >
-              {isTxOccurring ? "Pending..." : "Claim ABC"}
+              {isPending ? "Pending..." : "Claim ABC"}
             </Button>
             <Tooltip
               open={isAbcToolTipOpen}
               target="#claimAbcButton"
-              disabled={canUserInteract || isTxOccurring}
+              disabled={canUserInteract || isPending}
               toggle={() => setIsAbcToolTipOpen(!isAbcToolTipOpen)}
               placement={"right"}
             >
