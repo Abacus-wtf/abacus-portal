@@ -62,6 +62,12 @@ const RightSection: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
+
+          if (Number(e.target["bid"].value) <= auctionData.highestBid) {
+            alert(`You tried to bid lower than or the same as the highest bid. Please bid higher than ${auctionData.highestBid} Ether.`)
+            return
+          }
+
           await onBid(
             e.target["bid"].value,
             e.target["initAppraisal"].value,
