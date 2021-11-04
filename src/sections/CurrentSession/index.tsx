@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react"
 import { Title, SmallUniversalContainer } from "@components/global.styles"
 import * as queryString from "query-string"
 import { navigate } from "gatsby"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import {
   useCurrentSessionData,
   useGetCurrentSessionData,

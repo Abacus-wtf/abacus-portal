@@ -2,7 +2,6 @@ import React, {
   FormEvent,
   FunctionComponent,
   useContext,
-  useEffect,
   useState,
 } from "react"
 import { ThemeContext } from "styled-components"
@@ -20,13 +19,11 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
-  useGetCurrentSessionData,
+  useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
@@ -43,10 +40,7 @@ const Vote: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
 
   const sessionData = useCurrentSessionData()
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
+  const userStatus = useCurrentSessionUserStatus()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -77,18 +71,31 @@ const Vote: FunctionComponent = () => {
         </ListGroupItemMinWidth>
         <SessionCountdown />
       </HorizontalListGroup>
-      <Label>NOTE: Your browser will store your seed number and appraisal number for a given pricing session. However, if you are using a private browser, please ensure that you save your values elsewhere.</Label>
+      <Label>
+        NOTE: Your browser will store your seed number and appraisal number for
+        a given pricing session. However, if you are using a private browser,
+        please ensure that you save your values elsewhere.
+      </Label>
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
 
-          if (Number(e.target["appraisalValue"].value) >= sessionData.maxAppraisal) {
-            alert(`The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${e.target["appraisalValue"].value} Ether.`)
+          if (
+            Number(e.target["appraisalValue"]?.value) >=
+            sessionData.maxAppraisal
+          ) {
+            alert(
+              `The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${e.target["appraisalValue"].value} Ether.`
+            )
             return
           }
 
-          if (Number(e.target["stake"].value) < .005) {
-            alert(`The min amount of eth you can stake is .005 Ether. You tried staking ${Number(e.target["stake"].value)} Ether.`)
+          if (Number(e.target["stake"]?.value) < 0.005) {
+            alert(
+              `The min amount of eth you can stake is .005 Ether. You tried staking ${Number(
+                e.target["stake"].value
+              )} Ether.`
+            )
             return
           }
 

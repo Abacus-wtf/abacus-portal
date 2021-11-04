@@ -19,12 +19,11 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
+  useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
@@ -33,10 +32,7 @@ import _ from "lodash"
 
 const Harvest: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
+  const userStatus = useCurrentSessionUserStatus()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -84,7 +80,11 @@ const Harvest: FunctionComponent = () => {
               style={{ width: "100%" }}
               type="submit"
             >
-              {isPending ? "Pending..." : userStatus === UserState.CompletedHarvest ? "Harvested" : "Harvest"}
+              {isPending
+                ? "Pending..."
+                : userStatus === UserState.CompletedHarvest
+                ? "Harvested"
+                : "Harvest"}
             </Button>
           </div>
           <Tooltip

@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useContext, useState, useEffect } from "react"
+import React, {
+  FunctionComponent,
+  useContext,
+  useState,
+  useEffect,
+} from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
@@ -20,7 +25,8 @@ import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
-  useRetrieveClaimData
+  useCurrentSessionUserStatus,
+  useRetrieveClaimData,
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
@@ -29,10 +35,7 @@ import _ from "lodash"
 
 const Claim: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
+  const userStatus = useCurrentSessionUserStatus()
   const claimData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["claimPositions"]
@@ -85,7 +88,7 @@ const Claim: FunctionComponent = () => {
             title={"ETH Payout"}
             id={"ethPayout"}
             placeholder="0"
-            value={claimData ? claimData.ethClaimAmount : '-'}
+            value={claimData ? claimData.ethClaimAmount : "-"}
             disabled
           />
         </ListGroupItem>
@@ -94,7 +97,7 @@ const Claim: FunctionComponent = () => {
             title={"ABC Payout"}
             id={"password"}
             placeholder="0"
-            value={claimData ? claimData.abcClaimAmount : '-'}
+            value={claimData ? claimData.abcClaimAmount : "-"}
             disabled
           />
         </ListGroupItem>
