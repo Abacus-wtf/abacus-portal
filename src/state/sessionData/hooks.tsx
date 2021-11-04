@@ -266,7 +266,6 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         pricingSessionCheck
       )
-      console.log(pricingSessionCore)
       const sessionData: SessionData = {
         img:
           pricingSessionMetadata.image_url ||

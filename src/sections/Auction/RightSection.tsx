@@ -23,13 +23,14 @@ import { InputWithTitle } from "@components/Input"
 import { useActiveWeb3React } from "@hooks/index"
 import { ZERO_ADDRESS } from "@config/constants"
 import _ from "lodash"
-import { useOnBid } from "@hooks/auction"
+import { useOnBid, useOnClaim } from "@hooks/auction"
 
 const RightSection: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const auctionData = useAuctionData()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const { onBid, isPending } = useOnBid()
+  const { onClaim, isPending: isPendingClaim } = useOnClaim()
 
   const setAuctionData = useSetAuctionData()
 
@@ -99,7 +100,7 @@ const RightSection: FunctionComponent = () => {
           </ListGroupItem>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <div style={{ width: "100%" }} id={"submitVoteButton"}>
+          <div style={{ width: "100%", display: 'flex', gridGap: 15 }} id={"submitBidButton"}>
             <Button
               disabled={!account || isPending}
               style={{ width: "100%" }}
@@ -107,10 +108,19 @@ const RightSection: FunctionComponent = () => {
             >
               {isPending ? "Pending..." : "Bid"}
             </Button>
+            <Button
+              disabled={!account || isPendingClaim}
+              style={{ width: "100%" }}
+              onClick={async () => {
+                await onClaim()
+              }}
+            >
+              {isPendingClaim ? "Pending..." : "Claim Previous Bid"}
+            </Button>
           </div>
           <Tooltip
             open={isToolTipOpen}
-            target="#submitVoteButton"
+            target="#submitBidButton"
             disabled={(account !== null && account !== undefined) || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement={"right"}
