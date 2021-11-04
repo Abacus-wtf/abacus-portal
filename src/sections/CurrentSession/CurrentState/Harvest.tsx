@@ -84,7 +84,7 @@ const Harvest: FunctionComponent = () => {
               style={{ width: "100%" }}
               type="submit"
             >
-              {isPending ? "Pending..." : "Harvest"}
+              {isPending ? "Pending..." : userStatus === UserState.CompletedHarvest ? "Harvested" : "Harvest"}
             </Button>
           </div>
           <Tooltip

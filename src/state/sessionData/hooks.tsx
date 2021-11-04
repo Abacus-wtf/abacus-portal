@@ -5,12 +5,14 @@ import {
   getMultipleSessionData,
   getCurrentSessionData,
   setUserStatus,
+  setClaimPosition
 } from "./actions"
 import {
   SessionData,
   CurrentSessionState,
   UserState,
   SessionState,
+  ClaimState
 } from "./reducer"
 import { AppDispatch } from "../index"
 import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
@@ -55,6 +57,35 @@ const modifyTimeAndSession = (
     endTime = endTime + Number(pricingSessionData.votingTime) * 1000
   }
   return { endTime, sessionStatus }
+}
+
+export const useRetrieveClaimData = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const { account } = useActiveWeb3React()
+  const sessionData = useCurrentSessionData()
+
+  return useCallback(
+    async () => {
+      const pricingSession = getPricingSessionContract(
+        ABC_PRICING_SESSION_ADDRESS
+      )
+      const [
+        getEthPayout,
+        ethToAbc
+      ] = await Promise.all([
+        pricingSession.methods.getEthPayout(sessionData.address, sessionData.tokenId).call(),
+        pricingSession.methods.ethToAbc().call(),
+      ])
+
+      const claimData: ClaimState = {
+        abcClaimAmount:Number(formatEther(getEthPayout*ethToAbc)),
+        ethClaimAmount: Number(formatEther(getEthPayout))
+      }
+      dispatch(setClaimPosition(claimData))
+    },
+    [dispatch, sessionData]
+  )
 }
 
 export const useGetMultiSessionData = () => {

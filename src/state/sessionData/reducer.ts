@@ -3,6 +3,7 @@ import {
   getMultipleSessionData,
   getCurrentSessionData,
   setUserStatus,
+  setClaimPosition
 } from "./actions"
 import _ from "lodash"
 
@@ -42,10 +43,16 @@ export interface SessionData {
   totalStakedInUSD?: number
 }
 
+export interface ClaimState {
+  ethClaimAmount: number
+  abcClaimAmount: number
+}
+
 export interface CurrentSessionState {
   sessionData: SessionData
   sessionStatus: SessionState
   userStatus: UserState
+  claimPositions?: ClaimState
 }
 
 interface SessionDataState {
@@ -68,5 +75,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setUserStatus, (state, action) => {
       state.currentSessionData.userStatus = action.payload
+    })
+    .addCase(setClaimPosition, (state, action) => {
+      state.currentSessionData.claimPositions = action.payload
     })
 )

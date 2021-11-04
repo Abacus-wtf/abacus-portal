@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useState } from "react"
+import React, { FunctionComponent, useContext, useState, useEffect } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
@@ -20,6 +20,7 @@ import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
+  useRetrieveClaimData
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
@@ -27,19 +28,27 @@ import { useOnClaim } from "@hooks/current-session"
 import _ from "lodash"
 
 const Claim: FunctionComponent = () => {
-  const [ethPayout, setEthPayout] = useState(0)
-  const [abcPayout, setAbcPayout] = useState(0)
   const sessionData = useCurrentSessionData()
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
   >(state => state.sessionData.currentSessionData.userStatus)
+  const claimData = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["claimPositions"]
+  >(state => state.sessionData.currentSessionData.claimPositions)
+
+  const retrieveClaimData = useRetrieveClaimData()
 
   const canUserInteract = useCanUserInteract()
   const [isEthToolTipOpen, setIsEthToolTipOpen] = useState(false)
   const [isAbcToolTipOpen, setIsAbcToolTipOpen] = useState(false)
 
   const { onClaim, isPending } = useOnClaim()
+
+  useEffect(() => {
+    retrieveClaimData()
+  })
 
   const theme = useContext(ThemeContext)
   return (
@@ -76,8 +85,8 @@ const Claim: FunctionComponent = () => {
             title={"ETH Payout"}
             id={"ethPayout"}
             placeholder="0"
-            value={ethPayout}
-            onChange={setEthPayout}
+            value={claimData ? claimData.ethClaimAmount : '-'}
+            disabled
           />
         </ListGroupItem>
         <ListGroupItem>
@@ -85,8 +94,8 @@ const Claim: FunctionComponent = () => {
             title={"ABC Payout"}
             id={"password"}
             placeholder="0"
-            value={abcPayout}
-            onChange={setAbcPayout}
+            value={claimData ? claimData.abcClaimAmount : '-'}
+            disabled
           />
         </ListGroupItem>
       </HorizontalListGroup>
