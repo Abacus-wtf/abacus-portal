@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { useCurrentSessionState } from "@state/sessionData/hooks"
+import { useCurrentSessionStatus } from "@state/sessionData/hooks"
 import { SessionState } from "@state/sessionData/reducer"
 import Vote from "./Vote"
 import Weigh from "./Weigh"
@@ -10,9 +10,9 @@ import EndSession from "./EndSession"
 import SessionCompleted from "./SessionCompleted"
 
 const CurrentState: FunctionComponent = () => {
-  const state = useCurrentSessionState()
-  console.log(state)
-  switch (state) {
+  const status = useCurrentSessionStatus()
+
+  switch (status) {
     case SessionState.Vote:
       return <Vote />
     case SessionState.Weigh:

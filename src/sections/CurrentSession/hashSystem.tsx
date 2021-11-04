@@ -4,9 +4,8 @@ import { ListGroupItem, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { HorizontalListGroupModified } from "./CurrentSession.styles"
 import { useActiveWeb3React } from "@hooks/index"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import { web3 } from "@config/constants"
+import { useCurrentSessionData } from "@state/sessionData/hooks"
 
 interface HashSystem {
   onCreateHash: (appraisalValue: number, password: number) => void
@@ -19,20 +18,17 @@ export default ({ onCreateHash }: HashSystem) => {
   const [appraisalValue, setAppraisalValue] = useState("")
   const [passwordValue, setPasswordValue] = useState("")
   const { account } = useActiveWeb3React()
-  const sessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(state => state.sessionData.currentSessionData.sessionData)
+  const sessionData = useCurrentSessionData()
 
   const onSubmit = () => {
     if (!account) return
 
-    if (isNaN(Number(appraisalValue)) || appraisalValue === '') {
+    if (isNaN(Number(appraisalValue)) || appraisalValue === "") {
       setIsAppraisalValid(false)
       return
     }
 
-    if (isNaN(Number(passwordValue)) || appraisalValue === '') {
+    if (isNaN(Number(passwordValue)) || appraisalValue === "") {
       setIsPasswordValid(false)
       return
     }
@@ -67,8 +63,8 @@ export default ({ onCreateHash }: HashSystem) => {
     } else if (
       !isNaN(Number(passwordValue)) &&
       !isNaN(Number(appraisalValue)) &&
-      appraisalValue !== '' &&
-      passwordValue !== ''
+      appraisalValue !== "" &&
+      passwordValue !== ""
     ) {
       onCreateHash(Number(appraisalValue), Number(passwordValue))
     }
