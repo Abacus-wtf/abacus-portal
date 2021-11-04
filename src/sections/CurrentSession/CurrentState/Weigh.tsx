@@ -57,7 +57,8 @@ const Weigh: FunctionComponent = () => {
       [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
     )
     const itemsString = localStorage.getItem(hash)
-    if (itemsString !== null && account) {
+    //debugger
+    if (itemsString !== null && itemsString !== "" && account) {
       const items = JSON.parse(itemsString)
       setPasswordValue(items.password)
       setAppraisalValue(items.appraisal)
