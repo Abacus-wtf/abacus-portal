@@ -69,12 +69,13 @@ const Navbar = ({location}) => {
           <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
             Auction
           </HeaderLink>
+          <HeaderLink as={Link} to="/claim-pool" isactive={location.pathname === '/claim-pool'}>
+            Claim Pool
+          </HeaderLink>
           {/*<HeaderLink as={Link} to="/my-sessions">
             My Sessions
           </HeaderLink>
-          <HeaderLink as={Link} to="/claim-pool">
-            Claim Pool
-          </HeaderLink>*/}
+          */}
         </LinkList>
         <Button onClick={() => toggleWalletModal()}>
           {account ? shortenAddress(account) : "Connect Wallet"}

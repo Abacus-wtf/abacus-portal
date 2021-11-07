@@ -241,7 +241,7 @@ export const useOnClaim = () => {
   const addTransaction = useTransactionAdder()
 
   const onClaim = useCallback(
-    async (isClaimingEth: boolean) => {
+    async () => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -257,8 +257,7 @@ export const useOnClaim = () => {
       estimate = pricingSessionContract.estimateGas.claim
       args = [
         sessionData.address,
-        Number(sessionData.tokenId),
-        isClaimingEth ? 1 : 2,
+        Number(sessionData.tokenId)
       ]
       value = null
       const txnCb = async (response: any) => {

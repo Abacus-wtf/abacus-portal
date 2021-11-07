@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Title, SmallUniversalContainer } from "@components/global.styles"
-import { useAuctionData, useSetAuctionData } from "@state/auctionData/hooks"
+import { useAuctionData, useSetAuctionData } from "@state/miscData/hooks"
 import { ButtonsWhite } from "@components/Button"
 import Link from "gatsby-link"
 import _ from "lodash"

@@ -5,14 +5,14 @@ import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
 import { ABC_AUCTION_ADDRESS } from "@config/constants"
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
-import { useGeneralizedContractCall } from "./"
+import { ReloadDataType, useGeneralizedContractCall } from "./"
 import { useActiveWeb3React } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 
 export const useOnBid = () => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
-    true
+    ReloadDataType.Auction
   )
   const addTransaction = useTransactionAdder()
 
@@ -62,7 +62,7 @@ export const useOnBid = () => {
 export const useOnClaim = () => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
-    true
+    ReloadDataType.Auction
   )
   const addTransaction = useTransactionAdder()
 

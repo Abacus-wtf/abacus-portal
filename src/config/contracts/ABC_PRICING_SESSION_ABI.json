@@ -26,12 +26,6 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "DaoTokenContract",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
         "name": "creator_",
         "type": "address"
       },
@@ -294,11 +288,6 @@
     "name": "NftSessionCore",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "Dao",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "endTime",
         "type": "uint256"
@@ -357,7 +346,7 @@
     "name": "Treasury",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract ABCTreasury",
         "name": "",
         "type": "address"
       }
@@ -407,6 +396,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "admin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -416,11 +418,6 @@
       {
         "internalType": "uint256",
         "name": "tokenid",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "trigger",
         "type": "uint256"
       }
     ],
@@ -432,6 +429,24 @@
         "type": "uint256"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "trigger",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimProfitsEarned",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -456,11 +471,6 @@
         "internalType": "uint256",
         "name": "_votingTime",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_dao",
-        "type": "address"
       }
     ],
     "name": "createNewSession",
@@ -651,6 +661,25 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "payoutStored",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_auction",
         "type": "address"
       }
@@ -705,7 +734,7 @@
       },
       {
         "internalType": "bytes32",
-        "name": "concealedBid",
+        "name": "concealedAppraisal",
         "type": "bytes32"
       }
     ],
@@ -728,7 +757,7 @@
       },
       {
         "internalType": "bytes32",
-        "name": "concealedBid",
+        "name": "concealedAppraisal",
         "type": "bytes32"
       }
     ],
