@@ -31,11 +31,12 @@ export async function openseaGet(input: string) {
     result = await axios.get(OPENSEA_LINK + input, {
       decompress: false,
     })
+    return result.data
   } catch (e) {
     console.log("e")
     console.log(e)
+    return null
   }
-  return result.data
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {

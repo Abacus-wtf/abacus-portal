@@ -12,6 +12,13 @@ import {
   useCurrentSessionData,
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
+import { useSetAuctionData, useSetPayoutData } from "@state/miscData/hooks"
+
+export enum ReloadDataType {
+  Auction,
+  Session,
+  ClaimPool
+}
 
 export function usePrevious<Type>(value: Type) {
   const ref = useRef<Type>()
@@ -39,12 +46,14 @@ export function useWeb3Contract(ABI: any) {
   )
 }
 
-export const useGeneralizedContractCall = () => {
+export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
   const sessionData = useCurrentSessionData()
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
 
   const getCurrentSessionData = useGetCurrentSessionData()
+  const setPayoutData = useSetPayoutData()
+  const setAuctionData = useSetAuctionData()
   const [isPending, setIsPending] = useState(false)
   const previousIsPending = usePrevious(isPending)
 
@@ -52,7 +61,13 @@ export const useGeneralizedContractCall = () => {
     const { address, tokenId, nonce } = sessionData
     if (previousIsPending && !isPending) {
       // re-fetch state
-      getCurrentSessionData(address, tokenId, nonce)
+      if (reloadType === ReloadDataType.Auction) {
+        setAuctionData()
+      } else if (reloadType === ReloadDataType.ClaimPool) {
+        setPayoutData(account)
+      } else {
+        getCurrentSessionData(address, tokenId, nonce)
+      }
     }
   }, [previousIsPending, isPending, sessionData, getCurrentSessionData])
 

@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { setAuctionData } from "./actions"
+import { setAuctionData, setClaimData } from "./actions"
 import _ from "lodash"
 
 interface OptionalAuctionInfo {
@@ -18,16 +18,27 @@ export interface AuctionData {
   optionalInfo?: OptionalAuctionInfo
 }
 
+export interface ClaimData {
+  ethPayout: number
+  abcPayout: number
+}
+
 interface AuctionState {
   auctionData: AuctionData | null
+  claimPayoutData: ClaimData | null
 }
 
 export const initialState: AuctionState = {
   auctionData: null,
+  claimPayoutData: null
 }
 
 export default createReducer(initialState, builder =>
-  builder.addCase(setAuctionData, (state, action) => {
-    state.auctionData = action.payload
-  })
+  builder
+    .addCase(setAuctionData, (state, action) => {
+      state.auctionData = action.payload
+    })
+    .addCase(setClaimData, (state, action) => {
+      state.claimPayoutData = action.payload
+    })
 )
