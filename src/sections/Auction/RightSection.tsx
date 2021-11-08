@@ -19,7 +19,7 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession/CurrentSession.styles"
 import SessionCountdown from "../CurrentSession/CurrentState/SessionCountdown"
-import { useAuctionData, useSetAuctionData } from "@state/auctionData/hooks"
+import { useAuctionData, useSetAuctionData } from "@state/miscData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { useActiveWeb3React } from "@hooks/index"
 import { ZERO_ADDRESS } from "@config/constants"

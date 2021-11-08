@@ -44,8 +44,7 @@ const Claim: FunctionComponent = () => {
   const retrieveClaimData = useRetrieveClaimData()
 
   const canUserInteract = useCanUserInteract()
-  const [isEthToolTipOpen, setIsEthToolTipOpen] = useState(false)
-  const [isAbcToolTipOpen, setIsAbcToolTipOpen] = useState(false)
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
   const { onClaim, isPending } = useOnClaim()
 
@@ -106,49 +105,23 @@ const Claim: FunctionComponent = () => {
         <HorizontalListGroup>
           <div
             style={{ padding: "0 8px", width: "100%" }}
-            id={"claimEthButton"}
+            id={"claimButton"}
           >
             <Button
               disabled={!canUserInteract || isPending}
               style={{ width: "100%" }}
               type="button"
               onClick={() => {
-                onClaim(true)
+                onClaim()
               }}
             >
-              {isPending ? "Pending..." : "Claim ETH"}
+              {isPending ? "Pending..." : "Claim Reward"}
             </Button>
             <Tooltip
-              open={isEthToolTipOpen}
-              target="#claimEthButton"
+              open={isToolTipOpen}
+              target="#claimButton"
               disabled={canUserInteract || isPending}
-              toggle={() => setIsEthToolTipOpen(!isEthToolTipOpen)}
-              placement={"right"}
-            >
-              {userStatus === UserState.CompletedClaim
-                ? "You already claimed"
-                : "You missed a previous step so you cannot participate in this part of the session"}
-            </Tooltip>
-          </div>
-          <div
-            style={{ padding: "0 8px", width: "100%" }}
-            id={"claimAbcButton"}
-          >
-            <Button
-              disabled={!canUserInteract || isPending}
-              style={{ width: "100%" }}
-              type="button"
-              onClick={() => {
-                onClaim(false)
-              }}
-            >
-              {isPending ? "Pending..." : "Claim ABC"}
-            </Button>
-            <Tooltip
-              open={isAbcToolTipOpen}
-              target="#claimAbcButton"
-              disabled={canUserInteract || isPending}
-              toggle={() => setIsAbcToolTipOpen(!isAbcToolTipOpen)}
+              toggle={() => setIsToolTipOpen(!isToolTipOpen)}
               placement={"right"}
             >
               {userStatus === UserState.CompletedClaim

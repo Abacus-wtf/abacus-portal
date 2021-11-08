@@ -51,6 +51,9 @@ const modifyTimeAndSession = (
     endTime =
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 2 * 1000
+    if (currentTime >= endTime) {
+      sessionStatus = 4.5
+    }
   } else if (sessionStatus == 1) {
     endTime = endTime + Number(pricingSessionData.votingTime) * 1000
     if (currentTime >= endTime) {
@@ -66,7 +69,6 @@ const modifyTimeAndSession = (
 export const useRetrieveClaimData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
-  const { account } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
 
   return useCallback(async () => {
