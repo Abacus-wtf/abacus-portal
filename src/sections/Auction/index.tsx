@@ -80,7 +80,8 @@ const Auction = () => {
               <SubText>
                 Highest Bid by{" "}
                 <Link
-                  to={`https://opensea.io/assets/${optionalInfo.highestBidderAddress}`}
+                  target={'_blank'}
+                  to={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
                 >
                   {shortenAddress(optionalInfo.highestBidderAddress)}
                 </Link>
