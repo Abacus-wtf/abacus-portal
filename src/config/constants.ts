@@ -32,7 +32,7 @@ export const ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? ""
   : "0x34F282d640AB5769bd1D868A7425ad9e48B0e10f"
 
-export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 interface NetworkInfo {
   rpc: any
@@ -86,4 +86,8 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: "#E8831D",
   },
+}
+
+export const DISCORD_WEBHOOK_URL = {
+  NEW_BID: `https://discord.com/api/webhooks/907310849281101834/lzZaPwL0IoPKyRgP7NBqVmufGHs23jMAIncuHlsU6zcZPDjFnryELIpbTZVDae--TcK2`,
 }
