@@ -78,7 +78,7 @@ const Auction = () => {
                 {optionalInfo.highestNftName} #{optionalInfo.highestNftTokenId}
               </Title>
               <SubText>
-                Highest Bid by{" "}
+                Highest Bounty by{" "}
                 <Link
                   target={'_blank'}
                   to={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
