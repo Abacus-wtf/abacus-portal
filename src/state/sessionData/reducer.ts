@@ -13,7 +13,6 @@ export enum SessionState {
   SetFinalAppraisal = 2,
   Harvest = 3,
   Claim = 4,
-  EndSession = 4.5,
   Complete = 5,
 }
 
