@@ -63,10 +63,10 @@ const Navbar = ({location}) => {
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          {/*<HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
-            Explore
-            </HeaderLink>*/}
           <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
+            Explore
+          </HeaderLink>
+          <HeaderLink as={Link} to="/auction" isactive={location.pathname === '/auction'}>
             Auction
           </HeaderLink>
           <HeaderLink as={Link} to="/claim-pool" isactive={location.pathname === '/claim-pool'}>
