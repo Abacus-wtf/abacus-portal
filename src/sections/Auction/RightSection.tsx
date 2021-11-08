@@ -42,7 +42,7 @@ const RightSection: FunctionComponent = () => {
     <>
       <HorizontalListGroup>
         <ListGroupItemMinWidth>
-          <Label>Highest Bid</Label>
+          <Label>Highest Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
             {auctionData.highestBid} ETH
           </ListGroupHeader>
@@ -60,7 +60,7 @@ const RightSection: FunctionComponent = () => {
           overrideOnComplete={async () => {
             await setAuctionData()
           }}
-          overrideTitle={"Bidding Ends In"}
+          overrideTitle={"Bounty Auction Ends In"}
         />
       </HorizontalListGroup>
       <Form
@@ -84,7 +84,7 @@ const RightSection: FunctionComponent = () => {
       >
         <ListGroup>
           <ListGroupItem>
-            <InputWithTitle title={"Bid"} id={"bid"} placeholder="0" />
+            <InputWithTitle title={"Bounty"} id={"bid"} placeholder="0" />
           </ListGroupItem>
           <ListGroupItem>
             <InputWithTitle
