@@ -23,8 +23,6 @@ const CurrentState: FunctionComponent = () => {
       return <Harvest />
     case SessionState.Claim:
       return <Claim />
-    case SessionState.EndSession:
-      return <EndSession />
     case SessionState.Complete:
       return <SessionCompleted />
     default:
