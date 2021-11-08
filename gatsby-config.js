@@ -16,6 +16,14 @@ module.exports = {
   },
   pathPrefix: "__PATH_PREFIX__",
   plugins: [
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: "G-0NEGLJHXHQ",
+        head: true,
+        anonymize: true,
+      },
+    },
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-lodash`,
     {
@@ -29,14 +37,6 @@ module.exports = {
       resolve: "gatsby-plugin-generate-types",
       options: {
         inProduction: true,
-      },
-    },
-    {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: "G-0NEGLJHXHQ",
-        head: true,
-        anonymize: true,
       },
     },
     {
