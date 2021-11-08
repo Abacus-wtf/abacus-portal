@@ -51,7 +51,8 @@
     "shards-react": "^1.0.3",
     "styled-components": "^5.0.1",
     "web3": "^1.6.0",
-    "web3-react": "^5.0.5"
+    "web3-react": "^5.0.5",
+    "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
     "@types/react-helmet": "^5.0.15",

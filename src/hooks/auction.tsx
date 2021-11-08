@@ -2,12 +2,14 @@ import { useCallback } from "react"
 import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { parseEther } from "ethers/lib/utils"
-import { getContract } from "@config/utils"
+import { getContract, openseaGet } from "@config/utils"
 import { ABC_AUCTION_ADDRESS } from "@config/constants"
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
 import { ReloadDataType, useGeneralizedContractCall } from "./"
 import { useActiveWeb3React } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
+import { sendDiscordMessage } from "utils/discord"
+import { DISCORD_WEBHOOK_URL } from "@config/constants"
 
 export const useOnBid = () => {
   const { account, library } = useActiveWeb3React()
@@ -42,6 +44,14 @@ export const useOnBid = () => {
         addTransaction(response, {
           summary: "Bid Action",
         })
+        await response.wait()
+        setTimeout(async () => {
+          const meta = await openseaGet(`asset/${nftAddress}/${tokenId}`)
+          await sendDiscordMessage({
+            webhookUrl: DISCORD_WEBHOOK_URL.NEW_BID,
+            message: `<------------->\nNew bid sent by ${account} !\nBid amount: ${bid} ETH\nNFT Link: ${nftAddress}\nToken ID: ${tokenId}\nOpenSea Link: ${meta?.permalink}\nImage: ${meta?.image_url}`,
+          })
+        }, 3000)
       }
       await generalizedContractCall({
         method,
