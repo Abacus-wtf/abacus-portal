@@ -36,6 +36,7 @@ module.exports = {
       options: {
         trackingId: "G-0NEGLJHXHQ",
         head: true,
+        anonymize: true,
       },
     },
     {
