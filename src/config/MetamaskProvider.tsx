@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { injected } from "@config/constants"
+import { injected } from "@config/connectors"
 import { useWeb3React } from "@web3-react/core"
 
 function MetamaskProvider({
