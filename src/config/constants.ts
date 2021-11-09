@@ -1,6 +1,16 @@
-import { InjectedConnector } from "@web3-react/injected-connector"
 import { AbstractConnector } from "@web3-react/abstract-connector"
 import Web3 from "web3"
+import {fortmatic, portis, walletconnect, walletlink, injected} from './connectors'
+
+export declare enum ChainId {
+  MAINNET = 1,
+  ROPSTEN = 3,
+  RINKEBY = 4,
+  GÖRLI = 5,
+  KOVAN = 42,
+  MATIC = 137,
+  MUMBAI = 80001
+}
 
 export const COINGECKO_ETH_USD =
   "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
@@ -64,10 +74,6 @@ export interface WalletInfo {
   mobileOnly?: true
 }
 
-export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 56, 137, 80001],
-})
-
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   /*INJECTED: {
     connector: injected,
@@ -86,6 +92,41 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: "#E8831D",
   },
+  WALLET_CONNECT: {
+    connector: walletconnect,
+    name: 'WalletConnect',
+    iconName: 'walletConnectIcon.svg',
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+    href: null,
+    color: '#4196FC',
+    mobile: true
+  },
+  WALLET_LINK: {
+    connector: walletlink,
+    name: 'Wallet Link',
+    iconName: 'coinbaseWalletIcon.svg',
+    description: 'Use Coinbase Wallet app on mobile device',
+    href: null,
+    color: '#315CF5'
+  },
+  FORTMATIC: {
+    connector: fortmatic,
+    name: 'Fortmatic',
+    iconName: 'fortmaticIcon.png',
+    description: 'Login using Fortmatic hosted wallet',
+    href: null,
+    color: '#6748FF',
+    mobile: true
+  },
+  Portis: {
+    connector: portis,
+    name: 'Portis',
+    iconName: 'portisIcon.png',
+    description: 'Login using Portis hosted wallet',
+    href: null,
+    color: '#4A6C9B',
+    mobile: true
+  }
 }
 
 export const DISCORD_WEBHOOK_URL = {

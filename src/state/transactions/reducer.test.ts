@@ -1,4 +1,4 @@
-import { ChainId } from "@unicly/sdk"
+import { ChainId } from "@config/constants"
 import { createStore, Store } from "redux"
 import {
   addTransaction,

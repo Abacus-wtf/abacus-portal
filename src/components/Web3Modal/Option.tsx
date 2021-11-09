@@ -81,8 +81,8 @@ const IconWrapper = styled.div<{ size?: number | null }>`
   justify-content: center;
   & > img,
   span {
-    height: 120px;
-    width: 120px;
+    height: 80px;
+    width: 80px;
   }
 `
 
