@@ -30,7 +30,7 @@ import { User } from "react-feather"
 import HashSystem from "../hashSystem"
 import { useActiveWeb3React } from "@hooks/index"
 import { web3 } from "@config/constants"
-import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
+import { useOnSubmitVote, useOnUpdateVote, useOnAddToBountyVote } from "@hooks/current-session"
 import { keccak256 } from "@ethersproject/keccak256"
 import _ from "lodash"
 import { parseEther } from "ethers/lib/utils"
@@ -47,7 +47,9 @@ const Vote: FunctionComponent = () => {
 
   const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
+  const { onAddToBounty, isPending: addToBountyPending } = useOnAddToBountyVote()
   const [stakeVal, setStakeVal] = useState("")
+  const [bountyAddition, setBountyAddition] = useState('')
 
   const isPending = submitVotePending || updateVotePending
 
@@ -164,8 +166,8 @@ const Vote: FunctionComponent = () => {
               {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedVote
-                ? "Update"
-                : "Submit"}
+                  ? "Update"
+                  : "Submit"}
             </Button>
           </div>
           <Tooltip
@@ -177,10 +179,34 @@ const Vote: FunctionComponent = () => {
           >
             It seems you've already voted, or you're not logged in
           </Tooltip>
+        </VerticalContainer>
+        <ListGroup style={{marginTop: 35}}>
+          <ListGroupItem>
+            <InputWithTitle
+              title={"Add to Bounty"}
+              id={"bountyAddition"}
+              placeholder="0"
+              value={bountyAddition}
+              onChange={(e) => setBountyAddition(e.target.value)}
+            />
+          </ListGroupItem>
+          <div style={{ width: "100%", margin: '35px 0px 10px 0px' }} id={"addToBountyButton"}>
+            <Button
+              disabled={addToBountyPending || isNaN(Number(bountyAddition)) || bountyAddition === ''}
+              style={{ width: "100%" }}
+              onClick={async () => await onAddToBounty(bountyAddition)}
+            >
+              {addToBountyPending
+                ? "Pending..."
+                : "Add to Bounty"}
+            </Button>
+          </div>
+        </ListGroup>
+        <div style={{ width: "100%", display: 'flex', justifyContent: 'center' }}>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>
-        </VerticalContainer>
+        </div>
       </Form>
     </>
   )

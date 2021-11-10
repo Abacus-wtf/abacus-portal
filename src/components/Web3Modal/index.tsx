@@ -49,7 +49,6 @@ export default () => {
       <ModalBody style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: 10}}>
         {_.map(_.keys(SUPPORTED_WALLETS), key => {
           const option = SUPPORTED_WALLETS[key]
-          console.log(option)
           return (
             <Option
               onClick={() => {
