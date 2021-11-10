@@ -21,7 +21,12 @@ export const NETWORK_CHAIN_ID = Number(process.env.GATSBY_CHAIN_ID as string)
 export const IS_PRODUCTION = process.env.GATSBY_IS_PRODUCTION === "true"
 export const OPENSEA_LINK = process.env.GATSBY_OPENSEA_API as string
 export const CURRENT_SESSIONS = IS_PRODUCTION
-  ? []
+  ? [
+    {
+      address: '0x251b5f14a825c537ff788604ea1b58e49b70726f',
+      tokenId: '7274'
+    }
+  ]
   : [
       {
         address: "0x38ec00f7a966ece849f796d1d71aae2eb4c41c2d",
