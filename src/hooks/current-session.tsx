@@ -10,6 +10,51 @@ import { useActiveWeb3React } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
 
+
+export const useOnAddToBountyVote = () => {
+  const { account, library } = useActiveWeb3React()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
+  const addTransaction = useTransactionAdder()
+
+  const onAddToBounty = useCallback(
+    async (amount: string) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const pricingSessionContract = getContract(
+        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ABI,
+        library,
+        account
+      )
+      method = pricingSessionContract.addToBounty
+      estimate = pricingSessionContract.estimateGas.addToBounty
+      args = [sessionData.address, Number(sessionData.tokenId)]
+      value = parseEther(amount)
+      const txnCb = async (response: any) => {
+        addTransaction(response, {
+          summary: "Add to Bounty",
+        })
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        cb: txnCb,
+      })
+    },
+    [account, library, sessionData, generalizedContractCall, addTransaction]
+  )
+  return {
+    onAddToBounty,
+    isPending,
+  }
+}
+
 export const useOnSubmitVote = () => {
   const { account, library } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
