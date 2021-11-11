@@ -2,7 +2,9 @@ import { useCallback } from "react"
 import { AppState } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
 import {
-  getMultipleSessionData,
+  setMultipleSessionData,
+  setMultipleSessionFetchStatus,
+  setMultipleSessionErrorMessage,
   getCurrentSessionData,
   setUserStatus,
   setClaimPosition,
@@ -19,19 +21,23 @@ import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
 import {
   ABC_PRICING_SESSION_ADDRESS,
   CURRENT_SESSIONS,
-  ETH_USD_ORACLE_ADDRESS
+  ETH_USD_ORACLE_ADDRESS,
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import {
   currentSessionDataSelector,
   currentSessionStatusSelector,
   currentSessionUserStatusSelector,
+  multiSessionStateSelector,
 } from "./selectors"
+import { PromiseStatus } from "@models/PromiseStatus"
+
+const GRAPHQL_ENDPOINT = process.env.SUBGRAPH_ENDPOINT
 
 const modifyTimeAndSession = (
   getStatus: string,
@@ -90,116 +96,91 @@ export const useRetrieveClaimData = () => {
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
 
   return useCallback(async () => {
-    const pricingSession = getPricingSessionContract(
-      ABC_PRICING_SESSION_ADDRESS
-    )
+    dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
 
-    // TODO: Make sure API works for more than 20 contracts
-    let URL =
-      `assets?` +
-      _.map(CURRENT_SESSIONS, i => {
-        return `asset_contract_addresses=${i.address}&token_ids=${Number(
-          i.tokenId
-        )}&`
-      })
-    URL = URL.replaceAll(",", "")
-    let pricingSessionMetadata = await openseaGet(URL)
-    pricingSessionMetadata = pricingSessionMetadata.assets
-
-    if (!_.get(pricingSession, "currentProvider")) {
-      return
-    }
-
-    const pricingSessionNonce = await Promise.all(
-      _.map(CURRENT_SESSIONS, session =>
-        pricingSession.methods.nftNonce(session.address, session.tokenId).call()
-      )
-    )
-
-    const statuses = await Promise.all(
-      _.map(CURRENT_SESSIONS, session =>
-        pricingSession.methods
-          .getStatus(session.address, session.tokenId)
-          .call()
-      )
-    )
-
-    const finalAppraisalValues = await Promise.all(
-      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
-        pricingSession.methods
-          .finalAppraisalValue(
-            Number(pricingSessionNonce[i]),
-            CURRENT_SESSIONS[i].address,
-            CURRENT_SESSIONS[i].tokenId
-          )
-          .call()
-      )
-    )
-
-    const pricingSessionCoreData = await Promise.all(
-      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
-        pricingSession.methods
-          .NftSessionCore(
-            pricingSessionNonce[i],
-            CURRENT_SESSIONS[i].address,
-            CURRENT_SESSIONS[i].tokenId
-          )
-          .call()
-      )
-    )
-
-    const pricingSessionCheckData = await Promise.all(
-      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
-        pricingSession.methods
-          .NftSessionCheck(
-            pricingSessionNonce[i],
-            CURRENT_SESSIONS[i].address,
-            CURRENT_SESSIONS[i].tokenId
-          )
-          .call()
-      )
-    )
-
-    const sessionData: SessionData[] = _.map(
-      _.range(0, CURRENT_SESSIONS.length),
-      i => {
-        const { endTime, sessionStatus } = modifyTimeAndSession(
-          statuses[i],
-          pricingSessionCoreData[i],
-          pricingSessionCheckData[i]
-        )
-        return {
-          img:
-            pricingSessionMetadata?.[i]?.image_preview_url ||
-            pricingSessionMetadata?.[i]?.image_url,
-          endTime: endTime,
-          numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
-          collectionTitle: pricingSessionMetadata?.[i]?.collection?.name,
-          totalStaked: Number(
-            formatEther(pricingSessionCoreData[i].totalSessionStake)
-          ),
-          nftName: pricingSessionMetadata?.[i]?.name,
-          finalAppraisalValue:
-            sessionStatus >= 3
-              ? Number(formatEther(finalAppraisalValues[i]))
-              : undefined,
-          address: CURRENT_SESSIONS[i].address,
-          tokenId: CURRENT_SESSIONS[i].tokenId,
-          nonce: Number(pricingSessionNonce[i]),
-          ownerAddress: pricingSessionMetadata?.[i]?.owner?.address,
-          owner:
-            pricingSessionMetadata?.[i]?.owner?.user &&
-            pricingSessionMetadata?.[i]?.owner?.user?.username
-              ? pricingSessionMetadata?.[i]?.owner?.user?.username
-              : shortenAddress(pricingSessionMetadata?.[i]?.owner?.address),
-          maxAppraisal: Number(pricingSessionCoreData[i].maxAppraisal),
+    const multiSessionsQuery = `
+      query () {
+        pricingSessions(first: 5) {
+          id
+          nftAddress
+          tokenId
+          nonce
+          finalAppraisalValue
+          totalStaked
+          bounty
+          votingTime
+          endTime
+          sessionStatus
+          numParticipants
         }
       }
-    )
-    dispatch(getMultipleSessionData(sessionData))
+    `
+    try {
+      const { data } = await axios.post(GRAPHQL_ENDPOINT, {
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          query: multiSessionsQuery,
+        }),
+      })
+      console.log(data)
+    } catch (e) {
+      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
+      dispatch(setMultipleSessionErrorMessage("Failed to get Session Data"))
+    }
+
+    // TODO: Make sure API works for more than 20 contracts
+    // let URL =
+    //   `assets?` +
+    //   _.map(CURRENT_SESSIONS, i => {
+    //     return `asset_contract_addresses=${i.address}&token_ids=${Number(
+    //       i.tokenId
+    //     )}&`
+    //   })
+    // URL = URL.replaceAll(",", "")
+    // let pricingSessionMetadata = await openseaGet(URL)
+    // pricingSessionMetadata = pricingSessionMetadata.assets
+
+    // const sessionData: SessionData[] = _.map(
+    //   _.range(0, CURRENT_SESSIONS.length),
+    //   i => {
+    //     const { endTime, sessionStatus } = modifyTimeAndSession(
+    //       statuses[i],
+    //       pricingSessionCoreData[i],
+    //       pricingSessionCheckData[i]
+    //     )
+    //     return {
+    //       img:
+    //         pricingSessionMetadata?.[i]?.image_preview_url ||
+    //         pricingSessionMetadata?.[i]?.image_url,
+    //       endTime: endTime,
+    //       numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
+    //       collectionTitle: pricingSessionMetadata?.[i]?.collection?.name,
+    //       totalStaked: Number(
+    //         formatEther(pricingSessionCoreData[i].totalSessionStake)
+    //       ),
+    //       nftName: pricingSessionMetadata?.[i]?.name,
+    //       finalAppraisalValue:
+    //         sessionStatus >= 3
+    //           ? Number(formatEther(finalAppraisalValues[i]))
+    //           : undefined,
+    //       address: CURRENT_SESSIONS[i].address,
+    //       tokenId: CURRENT_SESSIONS[i].tokenId,
+    //       nonce: Number(pricingSessionNonce[i]),
+    //       ownerAddress: pricingSessionMetadata?.[i]?.owner?.address,
+    //       owner:
+    //         pricingSessionMetadata?.[i]?.owner?.user &&
+    //         pricingSessionMetadata?.[i]?.owner?.user?.username
+    //           ? pricingSessionMetadata?.[i]?.owner?.user?.username
+    //           : shortenAddress(pricingSessionMetadata?.[i]?.owner?.address),
+    //       maxAppraisal: Number(pricingSessionCoreData[i].maxAppraisal),
+    //     }
+    //   }
+    // )
+    // dispatch(getMultipleSessionData(sessionData))
   }, [dispatch])
 }
 
@@ -236,9 +217,7 @@ export const useGetCurrentSessionData = () => {
       const pricingSession = getPricingSessionContract(
         ABC_PRICING_SESSION_ADDRESS
       )
-      const ethUsdOracle = getEthUsdContract(
-        ETH_USD_ORACLE_ADDRESS
-      )
+      const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
 
       let URL = `asset/${address}/${tokenId}`
       const [
@@ -254,17 +233,17 @@ export const useGetCurrentSessionData = () => {
         pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
         pricingSession.methods
           .finalAppraisalValue(nonce, address, tokenId)
-          .call()
+          .call(),
       ])
 
       let ethUsd
       try {
         ethUsd = await ethUsdOracle.methods.latestRoundData().call()
-        ethUsd = Number(ethUsd.answer)/100000000
+        ethUsd = Number(ethUsd.answer) / 100000000
       } catch (e) {
         ethUsd = 4500
       }
-      
+
       const { endTime, sessionStatus } = modifyTimeAndSession(
         getStatus,
         pricingSessionCore,
@@ -348,6 +327,17 @@ export const useCurrentSessionData = () =>
     AppState,
     AppState["sessionData"]["currentSessionData"]["sessionData"]
   >(currentSessionDataSelector)
+
+export const useMultiSessionState = () =>
+  useSelector<AppState, AppState["sessionData"]["multiSessionState"]>(
+    multiSessionStateSelector
+  )
+
+export const useMultiSessionData = () =>
+  useSelector<
+    AppState,
+    AppState["sessionData"]["multiSessionState"]["multiSessionData"]
+  >(state => state.sessionData.multiSessionState.multiSessionData)
 
 export const useCurrentSessionUserStatus = () =>
   useSelector<

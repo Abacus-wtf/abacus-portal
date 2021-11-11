@@ -1,8 +1,15 @@
+import { PromiseStatus } from "@models/PromiseStatus"
 import { createAction } from "@reduxjs/toolkit"
 import { SessionData, CurrentSessionState, ClaimState } from "./reducer"
 
-export const getMultipleSessionData = createAction<SessionData[]>(
-  "sessionData/getMultipleSessionData"
+export const setMultipleSessionData = createAction<SessionData[]>(
+  "sessionData/setMultipleSessionData"
+)
+export const setMultipleSessionFetchStatus = createAction<PromiseStatus>(
+  "sessionData/setMultipleSessionFetchStatus"
+)
+export const setMultipleSessionErrorMessage = createAction<string>(
+  "sessionData/setMultipleSessionErrorMessage"
 )
 export const getCurrentSessionData = createAction<CurrentSessionState>(
   "sessionData/getCurrentSessionData"

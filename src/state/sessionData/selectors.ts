@@ -1,3 +1,4 @@
+import { initialState } from "@state/sessionData/reducer"
 import { AppState } from "@state/index"
 
 const defaultSessionData: AppState["sessionData"]["currentSessionData"]["sessionData"] = {
@@ -14,6 +15,11 @@ const defaultSessionData: AppState["sessionData"]["currentSessionData"]["session
   nonce: 0,
   maxAppraisal: 0,
 }
+
+export const multiSessionStateSelector = (
+  state: AppState
+): AppState["sessionData"]["multiSessionState"] =>
+  state?.sessionData?.multiSessionState ?? initialState.multiSessionState
 
 export const currentSessionDataSelector = (
   state: AppState

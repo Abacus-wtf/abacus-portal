@@ -5,11 +5,15 @@ import BackgroundSource from "@images/title_bg.png"
 import Button, { ButtonsWhite } from "@components/Button"
 import SearchBar from "@components/SeachBar"
 import Card from "@components/Card"
-import { useGetMultiSessionData } from "@state/sessionData/hooks"
+import {
+  useGetMultiSessionData,
+  useMultiSessionState,
+} from "@state/sessionData/hooks"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import _ from "lodash"
 import Link from "gatsby-link"
+import { PromiseStatus } from "@models/PromiseStatus"
 
 const BackgroundIMG = styled.img.attrs({
   src: BackgroundSource,
@@ -47,18 +51,9 @@ const CardContainer = styled.div`
 
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
-  const multiSessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["multiSessionData"]
-  >(state => state.sessionData.multiSessionData)
+  const { multiSessionData, fetchStatus, errorMessage } = useMultiSessionState()
   const [searchValue, setSearchValue] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    if (multiSessionData !== null) {
-      setIsLoading(false)
-    }
-  }, [multiSessionData])
+  const isLoading = fetchStatus === PromiseStatus.Pending
 
   useEffect(() => {
     getMultiSessionData()

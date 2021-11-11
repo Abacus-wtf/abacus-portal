@@ -1,11 +1,14 @@
 import { createReducer } from "@reduxjs/toolkit"
 import {
-  getMultipleSessionData,
   getCurrentSessionData,
   setUserStatus,
   setClaimPosition,
+  setMultipleSessionData,
+  setMultipleSessionFetchStatus,
+  setMultipleSessionErrorMessage,
 } from "./actions"
 import _ from "lodash"
+import { PromiseStatus } from "@models/PromiseStatus"
 
 export enum SessionState {
   Vote = 0,
@@ -54,21 +57,28 @@ export interface CurrentSessionState {
   claimPositions?: ClaimState
 }
 
-interface SessionDataState {
+export interface MultiSessionState {
   multiSessionData: SessionData[] | null
+  fetchStatus: PromiseStatus
+  errorMessage: string | null
+}
+
+interface SessionDataState {
+  multiSessionState: MultiSessionState
   currentSessionData: CurrentSessionState | null
 }
 
-export const initialState: SessionDataState = {
-  multiSessionData: null,
+export const initialState = {
   currentSessionData: null,
-}
+  multiSessionState: {
+    multiSessionData: [],
+    fetchStatus: PromiseStatus.Idle,
+    errorMessage: null,
+  },
+} as SessionDataState
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(getMultipleSessionData, (state, action) => {
-      state.multiSessionData = action.payload
-    })
     .addCase(getCurrentSessionData, (state, action) => {
       state.currentSessionData = action.payload
     })
@@ -77,5 +87,14 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setClaimPosition, (state, action) => {
       state.currentSessionData.claimPositions = action.payload
+    })
+    .addCase(setMultipleSessionData, (state, action) => {
+      state.multiSessionState.multiSessionData = action.payload
+    })
+    .addCase(setMultipleSessionFetchStatus, (state, action) => {
+      state.multiSessionState.fetchStatus = action.payload
+    })
+    .addCase(setMultipleSessionErrorMessage, (state, action) => {
+      state.multiSessionState.errorMessage = action.payload
     })
 )
