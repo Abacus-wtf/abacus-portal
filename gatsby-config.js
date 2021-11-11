@@ -69,5 +69,11 @@ module.exports = {
     `gatsby-plugin-sharp`,
     `gatsby-plugin-typescript`,
     `gatsby-plugin-styled-components`,
+    {
+      resolve: "gatsby-plugin-apollo",
+      options: {
+        uri: process.env.SUBGRAPH_ENDPOINT,
+      },
+    },
   ],
 }

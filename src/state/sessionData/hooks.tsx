@@ -1,6 +1,7 @@
-import { useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import { AppState } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
+import { useQuery } from "@apollo/client"
 import {
   setMultipleSessionData,
   setMultipleSessionFetchStatus,
@@ -36,6 +37,7 @@ import {
   multiSessionStateSelector,
 } from "./selectors"
 import { PromiseStatus } from "@models/PromiseStatus"
+import { GET_PRICING_SESSIONS } from "./queries"
 
 const GRAPHQL_ENDPOINT = process.env.SUBGRAPH_ENDPOINT
 
@@ -94,94 +96,75 @@ export const useRetrieveClaimData = () => {
   }, [dispatch, sessionData])
 }
 
+const findAsset = (assets: any[], session: any) => {
+  const ret = assets.find(
+    asset =>
+      asset.asset_contract.address === session.nftAddress &&
+      asset.token_id === String(session.tokenId)
+  )
+
+  return ret
+}
+
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const { error, data, loading } = useQuery(GET_PRICING_SESSIONS)
 
-  return useCallback(async () => {
-    dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
+  useEffect(() => {
+    if (loading) {
+      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
+    }
+  }, [loading])
 
-    const multiSessionsQuery = `
-      query () {
-        pricingSessions(first: 5) {
-          id
-          nftAddress
-          tokenId
-          nonce
-          finalAppraisalValue
-          totalStaked
-          bounty
-          votingTime
-          endTime
-          sessionStatus
-          numParticipants
-        }
-      }
-    `
-    try {
-      const { data } = await axios.post(GRAPHQL_ENDPOINT, {
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify({
-          query: multiSessionsQuery,
-        }),
-      })
-      console.log(data)
-    } catch (e) {
+  useEffect(() => {
+    if (error) {
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
       dispatch(setMultipleSessionErrorMessage("Failed to get Session Data"))
     }
+  }, [error])
 
-    // TODO: Make sure API works for more than 20 contracts
-    // let URL =
-    //   `assets?` +
-    //   _.map(CURRENT_SESSIONS, i => {
-    //     return `asset_contract_addresses=${i.address}&token_ids=${Number(
-    //       i.tokenId
-    //     )}&`
-    //   })
-    // URL = URL.replaceAll(",", "")
-    // let pricingSessionMetadata = await openseaGet(URL)
-    // pricingSessionMetadata = pricingSessionMetadata.assets
+  useEffect(() => {
+    const handleResolvedSessions = async ({ pricingSessions }) => {
+      //   // TODO: Make sure API works for more than 20 contracts
+      let URL = `assets?${pricingSessions
+        .map(session => `asset_contract_addresses=${session.nftAddress}&`)
+        .toString()}${pricingSessions
+        .map(session => `token_ids=${session.tokenId}&`)
+        .toString()}`
+      URL = URL.replaceAll(",", "")
+      const { assets } = await openseaGet(URL)
 
-    // const sessionData: SessionData[] = _.map(
-    //   _.range(0, CURRENT_SESSIONS.length),
-    //   i => {
-    //     const { endTime, sessionStatus } = modifyTimeAndSession(
-    //       statuses[i],
-    //       pricingSessionCoreData[i],
-    //       pricingSessionCheckData[i]
-    //     )
-    //     return {
-    //       img:
-    //         pricingSessionMetadata?.[i]?.image_preview_url ||
-    //         pricingSessionMetadata?.[i]?.image_url,
-    //       endTime: endTime,
-    //       numPpl: Number(pricingSessionCoreData[i].uniqueVoters),
-    //       collectionTitle: pricingSessionMetadata?.[i]?.collection?.name,
-    //       totalStaked: Number(
-    //         formatEther(pricingSessionCoreData[i].totalSessionStake)
-    //       ),
-    //       nftName: pricingSessionMetadata?.[i]?.name,
-    //       finalAppraisalValue:
-    //         sessionStatus >= 3
-    //           ? Number(formatEther(finalAppraisalValues[i]))
-    //           : undefined,
-    //       address: CURRENT_SESSIONS[i].address,
-    //       tokenId: CURRENT_SESSIONS[i].tokenId,
-    //       nonce: Number(pricingSessionNonce[i]),
-    //       ownerAddress: pricingSessionMetadata?.[i]?.owner?.address,
-    //       owner:
-    //         pricingSessionMetadata?.[i]?.owner?.user &&
-    //         pricingSessionMetadata?.[i]?.owner?.user?.username
-    //           ? pricingSessionMetadata?.[i]?.owner?.user?.username
-    //           : shortenAddress(pricingSessionMetadata?.[i]?.owner?.address),
-    //       maxAppraisal: Number(pricingSessionCoreData[i].maxAppraisal),
-    //     }
-    //   }
-    // )
-    // dispatch(getMultipleSessionData(sessionData))
-  }, [dispatch])
+      const sessionData: SessionData[] = _.map(pricingSessions, session => {
+        const asset = findAsset(assets, session)
+        return {
+          img: asset.image_preview_url || asset.image_url,
+          endTime: session.endTime,
+          numPpl: session.numParticipants,
+          collectionTitle: asset.asset_contract.name,
+          totalStaked: Number(formatEther(session.totalStaked)),
+          nftName: asset.name,
+          finalAppraisalValue:
+            session.sessionStatus >= 3
+              ? Number(formatEther(session.finalAppraisalValue))
+              : undefined,
+          address: session.nftAddress,
+          tokenId: session.tokenId,
+          nonce: Number(session.nonce),
+          ownerAddress: asset.owner?.address,
+          owner:
+            asset?.owner?.user && asset?.owner?.user?.username
+              ? asset?.owner?.user?.username
+              : shortenAddress(asset?.owner?.address),
+          maxAppraisal: Number(session?.maxAppraisal),
+        }
+      })
+      dispatch(setMultipleSessionData(sessionData))
+      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
+    }
+    if (data) {
+      handleResolvedSessions(data)
+    }
+  }, [data])
 }
 
 type GetUserStatusParams = {
