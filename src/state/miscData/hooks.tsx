@@ -4,7 +4,7 @@ import { setAuctionData, setClaimData } from "./actions"
 import { AuctionData } from "./reducer"
 import { AppDispatch, AppState } from "../index"
 import {
-  COINGECKO_ETH_USD,
+  ETH_USD_ORACLE_ADDRESS,
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
 } from "@config/constants"
@@ -16,13 +16,19 @@ import axios from "axios"
 import { formatEther } from "ethers/lib/utils"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
+import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 
 export const useSetAuctionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
+  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
 
   return useCallback(async () => {
     const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS)
+    const ethUsdOracle = getEthUsdContract(
+      ETH_USD_ORACLE_ADDRESS
+    )
+
     let nonce = await auctionContract.methods.nonce().call()
     nonce = Number(nonce)
 
@@ -34,8 +40,8 @@ export const useSetAuctionData = () => {
 
     let ethUsd
     try {
-      ethUsd = await axios.get(COINGECKO_ETH_USD)
-      ethUsd = ethUsd.data.ethereum.usd
+      ethUsd = await ethUsdOracle.methods.latestRoundData().call()
+      ethUsd = Number(ethUsd.answer)/100000000
     } catch (e) {
       ethUsd = 4500
     }

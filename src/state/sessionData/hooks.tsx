@@ -19,9 +19,10 @@ import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
 import {
   ABC_PRICING_SESSION_ADDRESS,
   CURRENT_SESSIONS,
-  COINGECKO_ETH_USD,
+  ETH_USD_ORACLE_ADDRESS
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
+import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
@@ -227,12 +228,16 @@ const getUserStatus = async ({
 export const useGetCurrentSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
   const { account } = useActiveWeb3React()
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
       const pricingSession = getPricingSessionContract(
         ABC_PRICING_SESSION_ADDRESS
+      )
+      const ethUsdOracle = getEthUsdContract(
+        ETH_USD_ORACLE_ADDRESS
       )
 
       let URL = `asset/${address}/${tokenId}`
@@ -249,17 +254,17 @@ export const useGetCurrentSessionData = () => {
         pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
         pricingSession.methods
           .finalAppraisalValue(nonce, address, tokenId)
-          .call(),
+          .call()
       ])
 
       let ethUsd
       try {
-        ethUsd = await axios.get(COINGECKO_ETH_USD)
-        ethUsd = ethUsd.data.ethereum.usd
+        ethUsd = await ethUsdOracle.methods.latestRoundData().call()
+        ethUsd = Number(ethUsd.answer)/100000000
       } catch (e) {
         ethUsd = 4500
       }
-
+      
       const { endTime, sessionStatus } = modifyTimeAndSession(
         getStatus,
         pricingSessionCore,
@@ -292,6 +297,8 @@ export const useGetCurrentSessionData = () => {
         ownerAddress: pricingSessionMetadata?.owner?.address,
         maxAppraisal: Number(pricingSessionCore.maxAppraisal),
       }
+
+      console.log(sessionData)
 
       const userStatus = await getUserStatus({
         address,
