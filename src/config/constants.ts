@@ -14,6 +14,8 @@ export declare enum ChainId {
 
 export const NetworkContextName = "NETWORK"
 export const ETH_RPC = process.env.GATSBY_NETWORK_URL as string
+export const ARBITRUM_ETH_RPC = process.env.GATSBY_ARBITRUM_NETWORK_URL as string
+export const ARBITRUM_NETWORK_CHAIN_ID = Number(process.env.GATSBY_ARBITRUM_CHAIN_ID as string)
 export const NETWORK_CHAIN_ID = Number(process.env.GATSBY_CHAIN_ID as string)
 export const IS_PRODUCTION = process.env.GATSBY_IS_PRODUCTION === "true"
 export const OPENSEA_LINK = process.env.GATSBY_OPENSEA_API as string
@@ -48,22 +50,46 @@ export const ETH_USD_ORACLE_ADDRESS = '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b841
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-interface NetworkInfo {
+export interface NetworkInfo {
   rpc: any
   chainId: number
   symbol: string
   network: string
   logo: string
+  blockExplorer: string
 }
 
 export const web3 = new Web3(ETH_RPC)
 
-export const NetworkInfoMap: NetworkInfo = {
-  rpc: ETH_RPC,
-  chainId: NETWORK_CHAIN_ID,
-  symbol: "ETH",
-  network: IS_PRODUCTION ? "mainnet" : "rinkeby",
-  logo: "/ETH.svg",
+export type NetworkSymbol = "ETH" | "AETH";
+
+export enum NetworkSymbolEnum  {
+  ETH = 'ETH',
+  ARBITRUM = 'AETH'
+}
+
+export const NetworkInfoMap: NetworkInfo[] = [
+  {
+    rpc: ETH_RPC,
+    chainId: NETWORK_CHAIN_ID,
+    symbol: 'ETH',
+    network: IS_PRODUCTION ? 'Ethereum Mainnet' : "Rinkeby Test Network",
+    logo: 'ETH.svg',
+    blockExplorer: IS_PRODUCTION ? 'https://etherscan.io/#/' : 'https://rinkeby.etherscan.io/#/'
+  },
+  {
+    rpc: ARBITRUM_ETH_RPC,
+    chainId: ARBITRUM_NETWORK_CHAIN_ID,
+    symbol: 'AETH',
+    network: IS_PRODUCTION ? 'Arbitrum Mainnet' : 'Arbitrum Testnet Rinkeby',
+    logo: 'AETH.svg',
+    blockExplorer: IS_PRODUCTION ? 'https://explorer.arbitrum.io/#/' : 'https://rinkeby.explorer.arbitrum.io/#/'
+  }
+]
+
+export const NetworkSymbolAndId = {
+  [NETWORK_CHAIN_ID]: NetworkSymbolEnum.ETH,
+  [ARBITRUM_NETWORK_CHAIN_ID]: NetworkSymbolEnum.ARBITRUM,
 }
 
 export interface WalletInfo {
