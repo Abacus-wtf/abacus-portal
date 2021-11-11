@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit"
-import { save, load } from "redux-localstorage-simple"
 import { createAction } from "@reduxjs/toolkit"
 import application from "./application/reducer"
 import sessionData from "./sessionData/reducer"
@@ -15,7 +14,7 @@ const store = configureStore({
     application,
     sessionData,
     transactions,
-    miscData
+    miscData,
   },
   middleware: getDefaultMiddleware => [
     ...getDefaultMiddleware({
@@ -23,9 +22,7 @@ const store = configureStore({
       immutableCheck: false,
       serializableCheck: false,
     }),
-    save({ states: PERSISTED_KEYS }),
   ],
-  preloadedState: load({ states: PERSISTED_KEYS }),
 })
 
 export default store
