@@ -26,7 +26,7 @@ const LinkList = styled.div`
   grid-gap: 40px;
 `
 
-const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
+const HeaderLink = styled(ButtonClear)<{ isactive: boolean }>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
@@ -36,7 +36,9 @@ const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
     opacity: 1;
   }
 
-  ${({isactive}) => isactive && `
+  ${({ isactive }) =>
+    isactive &&
+    `
     opacity: 1;
   `}
 `
@@ -52,7 +54,7 @@ const NavbarContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.bg1};
 `
 
-const Navbar = ({location}) => {
+const Navbar = ({ location }) => {
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
 
@@ -63,13 +65,25 @@ const Navbar = ({location}) => {
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
+          <HeaderLink
+            as={Link}
+            to="/"
+            isactive={(location.pathname === "/").toString()}
+          >
             Explore
           </HeaderLink>
-          <HeaderLink as={Link} to="/auction" isactive={location.pathname === '/auction'}>
+          <HeaderLink
+            as={Link}
+            to="/auction"
+            isactive={(location.pathname === "/auction").toString()}
+          >
             Auction
           </HeaderLink>
-          <HeaderLink as={Link} to="/claim-pool" isactive={location.pathname === '/claim-pool'}>
+          <HeaderLink
+            as={Link}
+            to="/claim-pool"
+            isactive={(location.pathname === "/claim-pool").toString()}
+          >
             Claim Pool
           </HeaderLink>
           {/*<HeaderLink as={Link} to="/my-sessions">
