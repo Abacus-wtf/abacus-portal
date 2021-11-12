@@ -24,7 +24,7 @@ export const useSetAuctionData = () => {
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
   const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
-  const {chainId} = useActiveWeb3React()
+  const {chainId, account} = useActiveWeb3React()
 
   return useCallback(async () => {
     const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS(networkSymbol))
@@ -84,7 +84,7 @@ export const useSetAuctionData = () => {
       }  : undefined
     }
     dispatch(setAuctionData(auctionData))
-  }, [dispatch, networkSymbol, chainId])
+  }, [dispatch, networkSymbol, chainId, account])
 }
 
 export const useSetPayoutData = () => {

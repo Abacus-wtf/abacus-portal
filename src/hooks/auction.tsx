@@ -78,6 +78,7 @@ export const useOnAddToBid = () => {
     ReloadDataType.Auction
   )
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onAddToBid = useCallback(
     async (
@@ -91,7 +92,7 @@ export const useOnAddToBid = () => {
         value: BigNumber | null
 
       const auctionContract = getContract(
-        ABC_AUCTION_ADDRESS,
+        ABC_AUCTION_ADDRESS(networkSymbol),
         ABC_AUCTION_ABI,
         library,
         account
@@ -121,7 +122,7 @@ export const useOnAddToBid = () => {
         cb: txnCb,
       })
     },
-    [account, library]
+    [account, library, networkSymbol]
   )
   return {
     onAddToBid,
