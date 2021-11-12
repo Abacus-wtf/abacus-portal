@@ -3,7 +3,7 @@ import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 import { NetworkContextName } from "@config/constants"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { web3 } from "@config/constants"
+import { web3, web3Eth } from "@config/constants"
 import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { calculateGasMargin } from "@config/utils"
@@ -45,6 +45,16 @@ export function useWeb3Contract(ABI: any) {
       return contract
     },
     [ABI, networkSymbol]
+  )
+}
+
+export function useWeb3EthContract(ABI: any) {
+  return useCallback(
+    (address: string) => {
+      const contract = new web3Eth.eth.Contract(ABI, address)
+      return contract
+    },
+    [ABI]
   )
 }
 

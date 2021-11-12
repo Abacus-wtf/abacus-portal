@@ -8,7 +8,7 @@ import {
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
 } from "@config/constants"
-import { useActiveWeb3React, useWeb3Contract } from "@hooks/index"
+import { useActiveWeb3React, useWeb3Contract, useWeb3EthContract } from "@hooks/index"
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
 import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
@@ -22,7 +22,7 @@ import { useGetCurrentNetwork } from "@state/application/hooks"
 export const useSetAuctionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
-  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
+  const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
   const {chainId} = useActiveWeb3React()
 

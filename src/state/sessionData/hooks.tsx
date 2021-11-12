@@ -15,7 +15,7 @@ import {
   ClaimState,
 } from "./reducer"
 import { AppDispatch } from "../index"
-import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
+import { useWeb3Contract, useActiveWeb3React, useWeb3EthContract } from "@hooks/index"
 import {
   ABC_PRICING_SESSION_ADDRESS,
   CURRENT_SESSIONS as CURRENT_SESSIONS_NETWORK,
@@ -235,7 +235,7 @@ const getUserStatus = async ({
 export const useGetCurrentSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
-  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
+  const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
   const { account, chainId } = useActiveWeb3React()
 
