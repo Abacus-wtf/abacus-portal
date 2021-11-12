@@ -7,8 +7,8 @@ import { Container, Row } from "shards-react"
 import Web3Modal from "@components/Web3Modal"
 import Web3 from "web3"
 import { useActiveWeb3React } from "@hooks/index"
-import {useSelectNetwork } from '@state/application/hooks'
-import {NetworkSymbolEnum, NetworkSymbolAndId, ARBITRUM_ETH_RPC} from '@config/constants'
+import { useSelectNetwork } from "@state/application/hooks"
+import { NetworkSymbolEnum, NetworkSymbolAndId } from "@config/constants"
 
 const StyledContainer = styled(Container)`
   width: 100%;
@@ -50,24 +50,37 @@ const GlobalLayout: React.FC = (props: any) => {
   }, [])
 
   useEffect(() => {
-    if(chainId) {
+    if (chainId) {
       selectNetwork(NetworkSymbolAndId[chainId!])
     } else {
       selectNetwork(NetworkSymbolEnum.ETH)
     }
-  }, [chainId])
+  }, [chainId, selectNetwork])
 
   return (
     <React.Fragment>
       <GlobalStyles />
       <Helmet title={"Abacus Protocol"} />
       <StyledContainer>
-        <Navbar location={props.location}/>
+        <Navbar location={props.location} />
         <RowContainer>
           <Web3Modal />
-          {NetworkSymbolAndId[chainId!] !== NetworkSymbolEnum.ARBITRUM ? 
-            <div style={{textAlign: 'center', maxWidth: '600px', lineHeight: 1.8}}>We currently only support Arbitrum. Please change to the Arbitrum network by clicking on the 'ETH' label in your Navigation Bar to access Abacus' features. We will be porting to your favorite chain shortly!</div>
-          : props.children}
+          {NetworkSymbolAndId[chainId!] !== NetworkSymbolEnum.ARBITRUM ? (
+            <div
+              style={{
+                textAlign: "center",
+                maxWidth: "600px",
+                lineHeight: 1.8,
+              }}
+            >
+              We currently only support Arbitrum. Please change to the Arbitrum
+              network by clicking on the 'ETH' label in your Navigation Bar to
+              access Abacus' features. We will be porting to your favorite chain
+              shortly!
+            </div>
+          ) : (
+            props.children
+          )}
         </RowContainer>
       </StyledContainer>
     </React.Fragment>

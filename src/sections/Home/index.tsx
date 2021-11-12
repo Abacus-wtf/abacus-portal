@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
 import BackgroundSource from "@images/title_bg.png"
@@ -11,6 +11,7 @@ import { AppState } from "@state/index"
 import _ from "lodash"
 import Link from "gatsby-link"
 import { useGetCurrentNetwork } from "@state/application/hooks"
+import { useActiveWeb3React } from "@hooks/index"
 
 const BackgroundIMG = styled.img.attrs({
   src: BackgroundSource,
@@ -55,6 +56,7 @@ const Home: React.FC = () => {
   const [searchValue, setSearchValue] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const networkSymbol = useGetCurrentNetwork()
+  const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
     if (multiSessionData !== null) {
@@ -63,8 +65,10 @@ const Home: React.FC = () => {
   }, [multiSessionData])
 
   useEffect(() => {
-    getMultiSessionData()
-  }, [networkSymbol])
+    if (networkSymbol && chainId) {
+      getMultiSessionData()
+    }
+  }, [networkSymbol, chainId])
 
   return (
     <UniversalContainer>
