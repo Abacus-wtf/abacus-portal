@@ -19,7 +19,8 @@ import { useWeb3Contract, useActiveWeb3React, useWeb3EthContract } from "@hooks/
 import {
   ABC_PRICING_SESSION_ADDRESS,
   CURRENT_SESSIONS as CURRENT_SESSIONS_NETWORK,
-  ETH_USD_ORACLE_ADDRESS
+  ETH_USD_ORACLE_ADDRESS,
+  NetworkSymbolEnum
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
@@ -111,7 +112,13 @@ export const useGetMultiSessionData = () => {
         )}&`
       })
     URL = URL.replaceAll(",", "")
-    let pricingSessionMetadata = await openseaGet(URL)
+    let pricingSessionMetadata
+    try {
+      pricingSessionMetadata = await openseaGet(URL)
+    } catch(e) {
+      console.error(e)
+      return
+    }
     pricingSessionMetadata = pricingSessionMetadata.assets
 
     if (!_.get(pricingSession, "currentProvider")) {
@@ -170,7 +177,7 @@ export const useGetMultiSessionData = () => {
     )
 
     const sessionData: SessionData[] = _.map(
-      _.range(0, length),
+      _.range(0, CURRENT_SESSIONS.length),
       i => {
         const { endTime, sessionStatus } = modifyTimeAndSession(
           statuses[i],
@@ -214,15 +221,16 @@ type GetUserStatusParams = {
   getPricingSessionContract: ReturnType<typeof useWeb3Contract>
   address: string
   tokenId: string
+  networkSymbol: NetworkSymbolEnum
 }
 const getUserStatus = async ({
   account,
   getPricingSessionContract,
   address,
   tokenId,
+  networkSymbol
 }: GetUserStatusParams) => {
   let getVoterCheck = -1
-  const networkSymbol = useGetCurrentNetwork()
   const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
   if (account) {
     getVoterCheck = await pricingSession.methods
@@ -264,6 +272,7 @@ export const useGetCurrentSessionData = () => {
           .finalAppraisalValue(nonce, address, tokenId)
           .call()
       ])
+      console.log('pricingSessionCheck', pricingSessionCheck)
 
       let ethUsd
       try {
@@ -313,6 +322,7 @@ export const useGetCurrentSessionData = () => {
         account,
         getPricingSessionContract,
         tokenId,
+        networkSymbol
       })
 
       const currentSessionData: CurrentSessionState = {
@@ -330,6 +340,7 @@ export const useGetUserStatus = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const { account } = useActiveWeb3React()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(
     async (address: string, tokenId: string) => {
@@ -338,10 +349,11 @@ export const useGetUserStatus = () => {
         account,
         getPricingSessionContract,
         tokenId,
+        networkSymbol
       })
       dispatch(setUserStatus(userStatus))
     },
-    [account, dispatch, getPricingSessionContract]
+    [account, dispatch, getPricingSessionContract, networkSymbol]
   )
 }
 

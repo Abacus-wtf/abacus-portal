@@ -31,7 +31,10 @@ const ARB_CURRENT_SESSIONS = IS_PRODUCTION
   ? [
   ]
   : [
-
+    {
+      address: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
+      tokenId: '5770'
+    }
     ]
 
 const ETH_CURRENT_SESSIONS = IS_PRODUCTION

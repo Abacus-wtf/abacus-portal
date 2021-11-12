@@ -19,6 +19,7 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
+import {useGetCurrentNetwork} from '@state/application/hooks'
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
@@ -27,6 +28,7 @@ const CurrentSession = ({ location }) => {
 
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const [isLoading, setIsLoading] = useState(true)
+  const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,12 +41,10 @@ const CurrentSession = ({ location }) => {
     if (!address || !tokenId || !nonce) {
       alert("This is a broken link, we are redirecting you to the home page.")
       navigate("/")
-    } else {
-      if (account) {
-        loadData()
-      }
+    } else if (account) {
+      loadData()
     }
-  }, [address, tokenId, nonce, account])
+  }, [address, tokenId, nonce, account, networkSymbol])
 
   if (!account) {
     return (

@@ -10,6 +10,7 @@ import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import _ from "lodash"
 import Link from "gatsby-link"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 const BackgroundIMG = styled.img.attrs({
   src: BackgroundSource,
@@ -53,6 +54,7 @@ const Home: React.FC = () => {
   >(state => state.sessionData.multiSessionData)
   const [searchValue, setSearchValue] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
     if (multiSessionData !== null) {
@@ -62,7 +64,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     getMultiSessionData()
-  }, [])
+  }, [networkSymbol])
 
   return (
     <UniversalContainer>
