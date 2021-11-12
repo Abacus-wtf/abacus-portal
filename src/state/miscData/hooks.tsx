@@ -8,7 +8,7 @@ import {
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
 } from "@config/constants"
-import { useWeb3Contract } from "@hooks/index"
+import { useActiveWeb3React, useWeb3Contract } from "@hooks/index"
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
 import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
@@ -24,6 +24,7 @@ export const useSetAuctionData = () => {
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
+  const {chainId} = useActiveWeb3React()
 
   return useCallback(async () => {
     const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS(networkSymbol))
@@ -73,13 +74,14 @@ export const useSetAuctionData = () => {
       optionalInfo,
     }
     dispatch(setAuctionData(auctionData))
-  }, [dispatch, networkSymbol])
+  }, [dispatch, networkSymbol, chainId])
 }
 
 export const useSetPayoutData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const networkSymbol = useGetCurrentNetwork()
+  const {chainId} = useActiveWeb3React()
 
   return useCallback(async (account: string) => {
     const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
@@ -90,7 +92,7 @@ export const useSetPayoutData = () => {
     const eth = Number(formatEther(ethPayout))
     const abc = Number(formatEther(ethToAbc * ethPayout))
     dispatch(setClaimData({ethPayout: eth, abcPayout: abc}))
-  }, [dispatch, networkSymbol])
+  }, [dispatch, networkSymbol, chainId])
 }
 
 export const useAuctionData = () => {

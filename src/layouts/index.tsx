@@ -65,7 +65,9 @@ const GlobalLayout: React.FC = (props: any) => {
         <Navbar location={props.location}/>
         <RowContainer>
           <Web3Modal />
-          {props.children}
+          {NetworkSymbolAndId[chainId!] !== NetworkSymbolEnum.ARBITRUM ? 
+            <div style={{textAlign: 'center', maxWidth: '600px', lineHeight: 1.8}}>We currently only support Arbitrum. Please change to the Arbitrum network by clicking on the 'ETH' label in your Navigation Bar to access Abacus' features. We will be porting to your favorite chain shortly!</div>
+          : props.children}
         </RowContainer>
       </StyledContainer>
     </React.Fragment>

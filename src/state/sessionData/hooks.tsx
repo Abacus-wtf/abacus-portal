@@ -94,6 +94,7 @@ export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const networkSymbol = useGetCurrentNetwork()
+  const {chainId} = useActiveWeb3React()
 
   return useCallback(async () => {
     const pricingSession = getPricingSessionContract(
@@ -205,7 +206,7 @@ export const useGetMultiSessionData = () => {
       }
     )
     dispatch(getMultipleSessionData(sessionData))
-  }, [dispatch, networkSymbol])
+  }, [dispatch, networkSymbol, chainId])
 }
 
 type GetUserStatusParams = {
@@ -236,7 +237,7 @@ export const useGetCurrentSessionData = () => {
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
@@ -321,7 +322,7 @@ export const useGetCurrentSessionData = () => {
       }
       dispatch(getCurrentSessionData(currentSessionData))
     },
-    [dispatch, account, getPricingSessionContract, networkSymbol]
+    [dispatch, account, getPricingSessionContract, networkSymbol, chainId]
   )
 }
 

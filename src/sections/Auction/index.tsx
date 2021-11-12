@@ -15,6 +15,7 @@ import RightSection from "./RightSection"
 import { shortenAddress } from "@config/utils"
 import { useActiveWeb3React } from "@hooks/index"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
+import {useSelectNetwork} from '@state/application/hooks'
 
 const Auction = () => {
   const { account } = useActiveWeb3React()
@@ -25,6 +26,7 @@ const Auction = () => {
     auctionData && auctionData.optionalInfo
       ? auctionData.optionalInfo
       : undefined
+  const selectNetwork = useSelectNetwork()
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -32,9 +34,8 @@ const Auction = () => {
       await setAuctionData()
       setIsLoading(false)
     }
-
     loadUserData()
-  }, [])
+  }, [selectNetwork])
 
   if (!account) {
     return (

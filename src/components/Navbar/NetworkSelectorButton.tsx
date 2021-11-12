@@ -75,6 +75,7 @@ const NetworkSelectorButton = () => {
   const { ethereum } = window as any
 
   const MetamaskRequest = async (network: NetworkInfo) => {
+    console.log('chainidd', network.chainId)
     if (network.chainId === 1) {
       try {
         await ethereum.request({
@@ -92,6 +93,32 @@ const NetworkSelectorButton = () => {
                 chainId: '0x1',
                 rpcUrl: [ETH_RPC],
                 chainName: 'Ethereum Mainnet',
+                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+              }],
+            })
+            setShowModal(false)
+          } catch (err) {
+            console.log(err, 'error on add eth chain')
+          }
+        }
+      }
+    } else if (network.chainId === 4) {
+      try {
+        await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x4' }],
+        });
+        setShowModal(false)
+
+      } catch (error) {
+        if (error.code === 4902) {
+          try {
+            await ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x4',
+                rpcUrl: [ETH_RPC],
+                chainName: 'Rinkeby Test Network',
                 nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
               }],
             })
