@@ -22,7 +22,7 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
-import { web3 } from "@config/constants"
+import web3 from "web3"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnWeightVote } from "@hooks/current-session"
 import { UserState } from "@state/sessionData/reducer"

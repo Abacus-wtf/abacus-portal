@@ -4,7 +4,7 @@ import { ListGroupItem, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { HorizontalListGroupModified } from "./CurrentSession.styles"
 import { useActiveWeb3React } from "@hooks/index"
-import { web3 } from "@config/constants"
+import web3 from "Web3"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
 
 interface HashSystem {

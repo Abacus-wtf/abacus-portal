@@ -31,10 +31,8 @@ export const useSetAuctionData = () => {
       ETH_USD_ORACLE_ADDRESS
     )
 
-    console.log('got here')
     let nonce = await auctionContract.methods.nonce().call()
     nonce = Number(nonce)
-    console.log(nonce, 'nonce')
 
     const [highestBid, highestBidder, endTime] = await Promise.all([
       auctionContract.methods.highestBid(nonce).call(),

@@ -114,7 +114,12 @@ export interface NetworkInfo {
   blockExplorer: string
 }
 
-export const web3 = new Web3(ETH_RPC)
+const NETWORK_ADDRESSES = {
+  [NetworkSymbolEnum.ETH]: ETH_RPC,
+  [NetworkSymbolEnum.ARBITRUM]: ARBITRUM_ETH_RPC,
+}
+
+export const web3 = (networkSymbol: NetworkSymbolEnum) => new Web3(NETWORK_ADDRESSES[networkSymbol])
 
 export const NetworkInfoMap: NetworkInfo[] = [
   {
