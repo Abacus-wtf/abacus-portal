@@ -1,6 +1,6 @@
 import { getAddress } from "@ethersproject/address"
 import { OPENSEA_LINK } from "@config/constants"
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import axiosRetry from "axios-retry"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Web3Provider, JsonRpcSigner } from "@ethersproject/providers"
@@ -25,10 +25,34 @@ export function shortenAddress(address: string, chars = 4): string {
   return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`
 }
 
-export async function openseaGet(input: string) {
-  let result: any
+export type OpenSeaAsset = {
+  image_preview_url?: string
+  image_url: string
+  asset_contract: {
+    name: string
+    address: string
+  }
+  collection: {
+    name: string
+  }
+  token_id: string
+  name: string
+  owner?: {
+    address: string
+    user?: {
+      username: string
+    }
+  }
+}
+
+export type OpenSeaGetResponse = {
+  assets: OpenSeaAsset[]
+}
+
+export async function openseaGet<T = OpenSeaAsset>(input: string) {
+  let result: AxiosResponse<T>
   try {
-    result = await axios.get(OPENSEA_LINK + input, {
+    result = await axios.get<T>(OPENSEA_LINK + input, {
       decompress: false,
     })
     return result.data
@@ -37,6 +61,11 @@ export async function openseaGet(input: string) {
     console.log(e)
     return null
   }
+}
+
+export async function openseaGetMany(input: string) {
+  const result = await openseaGet<OpenSeaGetResponse>(input)
+  return result
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {

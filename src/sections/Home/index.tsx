@@ -50,10 +50,14 @@ const CardContainer = styled.div`
 `
 
 const Home: React.FC = () => {
-  useGetMultiSessionData()
+  const getMultiSessionData = useGetMultiSessionData()
   const { multiSessionData, fetchStatus, errorMessage } = useMultiSessionState()
   const [searchValue, setSearchValue] = useState("")
   const isLoading = fetchStatus === PromiseStatus.Pending
+
+  useEffect(() => {
+    getMultiSessionData()
+  }, [])
 
   return (
     <UniversalContainer>

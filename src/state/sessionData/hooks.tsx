@@ -1,7 +1,7 @@
-import { useCallback, useEffect } from "react"
+import { useCallback } from "react"
 import { AppState } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
-import { useQuery } from "@apollo/client"
+import axios from "axios"
 import {
   setMultipleSessionData,
   setMultipleSessionFetchStatus,
@@ -27,9 +27,13 @@ import {
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 import _ from "lodash"
-import { openseaGet, shortenAddress } from "@config/utils"
+import {
+  openseaGet,
+  openseaGetMany,
+  OpenSeaGetResponse,
+  shortenAddress,
+} from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
-import axios, { AxiosError } from "axios"
 import {
   currentSessionDataSelector,
   currentSessionStatusSelector,
@@ -37,7 +41,11 @@ import {
   multiSessionStateSelector,
 } from "./selectors"
 import { PromiseStatus } from "@models/PromiseStatus"
-import { GET_PRICING_SESSIONS } from "./queries"
+import {
+  GET_PRICING_SESSIONS,
+  GetPricingSessionsQueryResponse,
+  SubgraphPricingSession,
+} from "./queries"
 
 const GRAPHQL_ENDPOINT = process.env.SUBGRAPH_ENDPOINT
 
@@ -96,7 +104,10 @@ export const useRetrieveClaimData = () => {
   }, [dispatch, sessionData])
 }
 
-const findAsset = (assets: any[], session: any) => {
+const findAsset = (
+  assets: OpenSeaGetResponse["assets"],
+  session: SubgraphPricingSession
+) => {
   const ret = assets.find(
     asset =>
       asset.asset_contract.address === session.nftAddress &&
@@ -108,23 +119,26 @@ const findAsset = (assets: any[], session: any) => {
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const { error, data, loading } = useQuery(GET_PRICING_SESSIONS)
 
-  useEffect(() => {
-    if (loading) {
-      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
-    }
-  }, [loading])
+  return useCallback(async () => {
+    dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
 
-  useEffect(() => {
-    if (error) {
-      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
-      dispatch(setMultipleSessionErrorMessage("Failed to get Session Data"))
-    }
-  }, [error])
-
-  useEffect(() => {
-    const handleResolvedSessions = async ({ pricingSessions }) => {
+    try {
+      const {
+        data: {
+          data: { pricingSessions },
+        },
+      } = await axios.post<GetPricingSessionsQueryResponse>(
+        GRAPHQL_ENDPOINT,
+        {
+          query: GET_PRICING_SESSIONS,
+        },
+        {
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      )
       //   // TODO: Make sure API works for more than 20 contracts
       let URL = `assets?${pricingSessions
         .map(session => `asset_contract_addresses=${session.nftAddress}&`)
@@ -132,39 +146,42 @@ export const useGetMultiSessionData = () => {
         .map(session => `token_ids=${session.tokenId}&`)
         .toString()}`
       URL = URL.replaceAll(",", "")
-      const { assets } = await openseaGet(URL)
+      const { assets } = await openseaGetMany(URL)
 
-      const sessionData: SessionData[] = _.map(pricingSessions, session => {
-        const asset = findAsset(assets, session)
-        return {
-          img: asset.image_preview_url || asset.image_url,
-          endTime: session.endTime,
-          numPpl: session.numParticipants,
-          collectionTitle: asset.asset_contract.name,
-          totalStaked: Number(formatEther(session.totalStaked)),
-          nftName: asset.name,
-          finalAppraisalValue:
-            session.sessionStatus >= 3
-              ? Number(formatEther(session.finalAppraisalValue))
-              : undefined,
-          address: session.nftAddress,
-          tokenId: session.tokenId,
-          nonce: Number(session.nonce),
-          ownerAddress: asset.owner?.address,
-          owner:
-            asset?.owner?.user && asset?.owner?.user?.username
-              ? asset?.owner?.user?.username
-              : shortenAddress(asset?.owner?.address),
-          maxAppraisal: Number(session?.maxAppraisal),
+      const sessionData: SessionData[] = _.map(
+        pricingSessions,
+        (session): SessionData => {
+          const asset = findAsset(assets, session)
+          return {
+            img: asset.image_preview_url || asset.image_url,
+            endTime: Number(session.endTime),
+            numPpl: Number(session.numParticipants),
+            collectionTitle: asset.asset_contract.name,
+            totalStaked: Number(formatEther(session.totalStaked)),
+            nftName: asset.name,
+            finalAppraisalValue:
+              session.sessionStatus >= 3
+                ? Number(formatEther(session.finalAppraisalValue))
+                : undefined,
+            address: session.nftAddress,
+            tokenId: session.tokenId,
+            nonce: Number(session.nonce),
+            ownerAddress: asset.owner?.address,
+            owner:
+              asset?.owner?.user && asset?.owner?.user?.username
+                ? asset?.owner?.user?.username
+                : shortenAddress(asset?.owner?.address),
+            maxAppraisal: Number(session?.maxAppraisal),
+          }
         }
-      })
+      )
       dispatch(setMultipleSessionData(sessionData))
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
+    } catch {
+      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
+      dispatch(setMultipleSessionErrorMessage("Failed to get Session Data"))
     }
-    if (data) {
-      handleResolvedSessions(data)
-    }
-  }, [data])
+  }, [dispatch])
 }
 
 type GetUserStatusParams = {
