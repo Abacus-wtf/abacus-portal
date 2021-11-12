@@ -97,12 +97,11 @@ export const useRetrieveClaimData = () => {
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const callbackRef = useRef(() => {})
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const networkSymbol = useGetCurrentNetwork()
   const { chainId } = useActiveWeb3React()
 
-  const callback = useCallback(async () => {
+  return useCallback(async () => {
     const pricingSession = getPricingSessionContract(
       ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
@@ -216,15 +215,8 @@ export const useGetMultiSessionData = () => {
         }
       }
     )
-    console.log("dispatchGetMultiple", sessionData)
     dispatch(getMultipleSessionData(sessionData))
   }, [dispatch, networkSymbol, chainId])
-
-  useEffect(() => {
-    callbackRef.current = _.debounce(callback, 1500)
-  }, [callback])
-
-  return callbackRef.current
 }
 
 type GetUserStatusParams = {
