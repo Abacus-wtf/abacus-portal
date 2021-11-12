@@ -18,7 +18,7 @@ import { AppDispatch } from "../index"
 import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
 import {
   ABC_PRICING_SESSION_ADDRESS,
-  CURRENT_SESSIONS,
+  CURRENT_SESSIONS as CURRENT_SESSIONS_NETWORK,
   ETH_USD_ORACLE_ADDRESS
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
@@ -32,6 +32,7 @@ import {
   currentSessionStatusSelector,
   currentSessionUserStatusSelector,
 } from "./selectors"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 const modifyTimeAndSession = (
   getStatus: string,
@@ -68,10 +69,11 @@ export const useRetrieveClaimData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const sessionData = useCurrentSessionData()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
     const pricingSession = getPricingSessionContract(
-      ABC_PRICING_SESSION_ADDRESS
+      ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
     const [getEthPayout, ethToAbc] = await Promise.all([
       pricingSession.methods
@@ -85,17 +87,19 @@ export const useRetrieveClaimData = () => {
       ethClaimAmount: Number(formatEther(getEthPayout)),
     }
     dispatch(setClaimPosition(claimData))
-  }, [dispatch, sessionData])
+  }, [dispatch, sessionData, networkSymbol])
 }
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
     const pricingSession = getPricingSessionContract(
-      ABC_PRICING_SESSION_ADDRESS
+      ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
+    const CURRENT_SESSIONS = CURRENT_SESSIONS_NETWORK(networkSymbol)
 
     // TODO: Make sure API works for more than 20 contracts
     let URL =
@@ -126,6 +130,7 @@ export const useGetMultiSessionData = () => {
           .call()
       )
     )
+
 
     const finalAppraisalValues = await Promise.all(
       _.map(_.range(0, CURRENT_SESSIONS.length), i =>
@@ -164,7 +169,7 @@ export const useGetMultiSessionData = () => {
     )
 
     const sessionData: SessionData[] = _.map(
-      _.range(0, CURRENT_SESSIONS.length),
+      _.range(0, length),
       i => {
         const { endTime, sessionStatus } = modifyTimeAndSession(
           statuses[i],
@@ -200,7 +205,7 @@ export const useGetMultiSessionData = () => {
       }
     )
     dispatch(getMultipleSessionData(sessionData))
-  }, [dispatch])
+  }, [dispatch, networkSymbol])
 }
 
 type GetUserStatusParams = {
@@ -216,7 +221,8 @@ const getUserStatus = async ({
   tokenId,
 }: GetUserStatusParams) => {
   let getVoterCheck = -1
-  const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
+  const networkSymbol = useGetCurrentNetwork()
+  const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
   if (account) {
     getVoterCheck = await pricingSession.methods
       .getVoterCheck(address, tokenId, account)
@@ -229,12 +235,13 @@ export const useGetCurrentSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
+  const networkSymbol = useGetCurrentNetwork()
   const { account } = useActiveWeb3React()
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
       const pricingSession = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol)
       )
       const ethUsdOracle = getEthUsdContract(
         ETH_USD_ORACLE_ADDRESS
@@ -314,7 +321,7 @@ export const useGetCurrentSessionData = () => {
       }
       dispatch(getCurrentSessionData(currentSessionData))
     },
-    [dispatch, account, getPricingSessionContract]
+    [dispatch, account, getPricingSessionContract, networkSymbol]
   )
 }
 

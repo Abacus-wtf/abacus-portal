@@ -17,20 +17,24 @@ import { formatEther } from "ethers/lib/utils"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 export const useSetAuctionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
-    const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS)
+    const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS(networkSymbol))
     const ethUsdOracle = getEthUsdContract(
       ETH_USD_ORACLE_ADDRESS
     )
 
+    console.log('got here')
     let nonce = await auctionContract.methods.nonce().call()
     nonce = Number(nonce)
+    console.log(nonce, 'nonce')
 
     const [highestBid, highestBidder, endTime] = await Promise.all([
       auctionContract.methods.highestBid(nonce).call(),
@@ -71,15 +75,16 @@ export const useSetAuctionData = () => {
       optionalInfo,
     }
     dispatch(setAuctionData(auctionData))
-  }, [dispatch])
+  }, [dispatch, networkSymbol])
 }
 
 export const useSetPayoutData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async (account: string) => {
-    const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
+    const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
     const [ethPayout, ethToAbc] = await Promise.all([
       pricingSessionContract.methods.payoutStored(account).call(),
       pricingSessionContract.methods.ethToAbc().call(),
@@ -87,7 +92,7 @@ export const useSetPayoutData = () => {
     const eth = Number(formatEther(ethPayout))
     const abc = Number(formatEther(ethToAbc * ethPayout))
     dispatch(setClaimData({ethPayout: eth, abcPayout: abc}))
-  }, [dispatch])
+  }, [dispatch, networkSymbol])
 }
 
 export const useAuctionData = () => {

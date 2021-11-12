@@ -50,7 +50,6 @@ const GlobalLayout: React.FC = (props: any) => {
   }, [])
 
   useEffect(() => {
-    console.log(chainId, 'chainId pls')
     if(chainId) {
       selectNetwork(NetworkSymbolAndId[chainId!])
     } else {

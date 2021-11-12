@@ -28,7 +28,7 @@ const LinkList = styled.div`
   align-items: center;
 `
 
-const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
+const HeaderLink = styled(ButtonClear)<{active: boolean}>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
@@ -38,7 +38,7 @@ const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
     opacity: 1;
   }
 
-  ${({isactive}) => isactive && `
+  ${({active}) => active && `
     opacity: 1;
   `}
 `
@@ -65,13 +65,13 @@ const Navbar = ({location}) => {
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
+          <HeaderLink as={Link} to="/" active={location.pathname === '/'}>
             Explore
           </HeaderLink>
-          <HeaderLink as={Link} to="/auction" isactive={location.pathname === '/auction'}>
+          <HeaderLink as={Link} to="/auction" active={location.pathname === '/auction'}>
             Auction
           </HeaderLink>
-          <HeaderLink as={Link} to="/claim-pool" isactive={location.pathname === '/claim-pool'}>
+          <HeaderLink as={Link} to="/claim-pool" active={location.pathname === '/claim-pool'}>
             Claim Pool
           </HeaderLink>
           {/*<HeaderLink as={Link} to="/my-sessions">
