@@ -272,7 +272,6 @@ export const useGetCurrentSessionData = () => {
           .finalAppraisalValue(nonce, address, tokenId)
           .call()
       ])
-      console.log('pricingSessionCheck', pricingSessionCheck)
 
       let ethUsd
       try {
