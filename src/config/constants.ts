@@ -121,6 +121,8 @@ const NETWORK_ADDRESSES = {
 
 export const web3 = (networkSymbol: NetworkSymbolEnum) => new Web3(NETWORK_ADDRESSES[networkSymbol])
 
+export const web3Eth = new Web3(ETH_RPC)
+
 export const NetworkInfoMap: NetworkInfo[] = [
   {
     rpc: ETH_RPC,

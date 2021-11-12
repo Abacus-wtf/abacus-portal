@@ -4,7 +4,7 @@ import { ListGroupItem, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { HorizontalListGroupModified } from "./CurrentSession.styles"
 import { useActiveWeb3React } from "@hooks/index"
-import web3 from "Web3"
+import {web3Eth} from "@config/constants"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
 
 interface HashSystem {
@@ -35,7 +35,7 @@ export default ({ onCreateHash }: HashSystem) => {
     setIsAppraisalValid(true)
     setIsPasswordValid(true)
 
-    const hash = web3.eth.abi.encodeParameters(
+    const hash = web3Eth.eth.abi.encodeParameters(
       ["address", "uint256", "uint256"],
       [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
     )
@@ -50,7 +50,7 @@ export default ({ onCreateHash }: HashSystem) => {
   }
 
   useEffect(() => {
-    const hash = web3.eth.abi.encodeParameters(
+    const hash = web3Eth.eth.abi.encodeParameters(
       ["address", "uint256", "uint256"],
       [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
     )
