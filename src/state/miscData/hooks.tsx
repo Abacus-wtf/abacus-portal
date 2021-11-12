@@ -49,19 +49,24 @@ export const useSetAuctionData = () => {
       ethUsd = 4500
     }
 
-    const userVote = await auctionContract.methods
-      .userVote(nonce, highestBidder)
-      .call()
+    const [highestBidderUserVote, userVote] = await Promise.all([
+        auctionContract.methods
+        .userVote(nonce, highestBidder)
+        .call(),
+        auctionContract.methods
+        .userVote(nonce, account)
+        .call(),
+      ])
     let optionalInfo
-    if (userVote.nftAddress !== ZERO_ADDRESS) {
-      const URL = `asset/${userVote.nftAddress}/${userVote.tokenid}`
+    if (highestBidderUserVote.nftAddress !== ZERO_ADDRESS) {
+      const URL = `asset/${highestBidderUserVote.nftAddress}/${highestBidderUserVote.tokenid}`
       const nftMetadata = await openseaGet(URL)
 
       optionalInfo = {
         img: nftMetadata?.image_url || nftMetadata?.image_preview_url,
         highestBidderAddress: highestBidder,
-        highestNftAddress: userVote.nftAddress,
-        highestNftTokenId: userVote.tokenid,
+        highestNftAddress: highestBidderUserVote.nftAddress,
+        highestNftTokenId: highestBidderUserVote.tokenid,
         highestNftCollectionTitle: nftMetadata?.collection?.name,
         highestNftName: nftMetadata?.name,
       }
@@ -72,6 +77,11 @@ export const useSetAuctionData = () => {
       highestBid: Number(formatEther(highestBid)),
       highestBidDollars: Number(formatEther(highestBid)) * Number(ethUsd),
       optionalInfo,
+      existingBidInfo: userVote && Number(userVote.bid) !== 0 ?  {
+        ...userVote,
+        tokenId: userVote.tokenid,
+        initialAppraisal: formatEther(userVote.intitialAppraisal)
+      }  : undefined
     }
     dispatch(setAuctionData(auctionData))
   }, [dispatch, networkSymbol, chainId])

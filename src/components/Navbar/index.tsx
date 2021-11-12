@@ -65,15 +65,15 @@ const Navbar = ({location}) => {
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          <HeaderLink as={Link} to="/" active={location.pathname === '/'}>
+          {/*<HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
             Explore
-          </HeaderLink>
-          <HeaderLink as={Link} to="/auction" active={location.pathname === '/auction'}>
+          </HeaderLink>*/}
+          <HeaderLink as={Link} to="/auction" isactive={location.pathname === '/'}>
             Auction
           </HeaderLink>
-          <HeaderLink as={Link} to="/claim-pool" active={location.pathname === '/claim-pool'}>
+          {/*<HeaderLink as={Link} to="/claim-pool" isactive={location.pathname === '/claim-pool'}>
             Claim Pool
-          </HeaderLink>
+          </HeaderLink>*/}
           {/*<HeaderLink as={Link} to="/my-sessions">
             My Sessions
           </HeaderLink>
