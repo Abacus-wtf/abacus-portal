@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
 import BackgroundSource from "@images/title_bg.png"
@@ -10,6 +10,8 @@ import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import _ from "lodash"
 import Link from "gatsby-link"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { useActiveWeb3React } from "@hooks/index"
 
 const BackgroundIMG = styled.img.attrs({
   src: BackgroundSource,
@@ -52,17 +54,14 @@ const Home: React.FC = () => {
     AppState["sessionData"]["multiSessionData"]
   >(state => state.sessionData.multiSessionData)
   const [searchValue, setSearchValue] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
+  const networkSymbol = useGetCurrentNetwork()
+  const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
-    if (multiSessionData !== null) {
-      setIsLoading(false)
+    if (networkSymbol && chainId) {
+      getMultiSessionData()
     }
-  }, [multiSessionData])
-
-  useEffect(() => {
-    getMultiSessionData()
-  }, [])
+  }, [networkSymbol, chainId])
 
   return (
     <UniversalContainer>
@@ -92,7 +91,7 @@ const Home: React.FC = () => {
           </Button>
         </HeaderBarContainer>*/}
       </HeaderBar>
-      {isLoading ? (
+      {multiSessionData === null ? (
         <UniversalContainer style={{ alignItems: "center" }}>
           Loading... {/* TODO: find a loader */}
         </UniversalContainer>

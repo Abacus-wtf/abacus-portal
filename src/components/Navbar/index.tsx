@@ -7,6 +7,7 @@ import Button, { ButtonClear } from "../Button"
 import { useActiveWeb3React } from "@hooks/index"
 import { shortenAddress } from "@config/utils"
 import { useToggleWalletModal } from "@state/application/hooks"
+import NetworkSelectorButton from './NetworkSelectorButton'
 
 const RowStyled = styled(Row)`
   padding: 0px;
@@ -24,9 +25,10 @@ const activeClassName = "ACTIVE"
 const LinkList = styled.div`
   display: flex;
   grid-gap: 40px;
+  align-items: center;
 `
 
-const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
+const HeaderLink = styled(ButtonClear)<{active: string}>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
@@ -36,7 +38,7 @@ const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
     opacity: 1;
   }
 
-  ${({isactive}) => isactive && `
+  ${({active}) => active === 'true' && `
     opacity: 1;
   `}
 `
@@ -63,23 +65,26 @@ const Navbar = ({location}) => {
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          <HeaderLink as={Link} to="/" isactive={location.pathname === '/'}>
+          {/*<HeaderLink as={Link} to="/" active={(location.pathname === '/').toString()}>
             Explore
-          </HeaderLink>
-          <HeaderLink as={Link} to="/auction" isactive={location.pathname === '/auction'}>
+          </HeaderLink>*/}
+          <HeaderLink as={Link} to="/" active={(location.pathname === '/').toString()}>
             Auction
           </HeaderLink>
-          <HeaderLink as={Link} to="/claim-pool" isactive={location.pathname === '/claim-pool'}>
+          {/*<HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
             Claim Pool
-          </HeaderLink>
-          {/*<HeaderLink as={Link} to="/my-sessions">
+          </HeaderLink>*/}
+          {/*<HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()>
             My Sessions
           </HeaderLink>
           */}
         </LinkList>
-        <Button onClick={() => toggleWalletModal()}>
-          {account ? shortenAddress(account) : "Connect Wallet"}
-        </Button>
+        <LinkList>
+          <NetworkSelectorButton />
+          <Button onClick={() => toggleWalletModal()}>
+            {account ? shortenAddress(account) : "Connect Wallet"}
+          </Button>
+        </LinkList>
       </NavbarContainer>
     </RowStyled>
   )

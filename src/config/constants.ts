@@ -1,6 +1,6 @@
 import { AbstractConnector } from "@web3-react/abstract-connector"
 import Web3 from "web3"
-import {fortmatic, portis, walletconnect, walletlink, injected} from './connectors'
+import {fortmatic, portis, walletconnect, walletlink, injected, network} from './connectors'
 
 export declare enum ChainId {
   MAINNET = 1,
@@ -12,15 +12,32 @@ export declare enum ChainId {
   MUMBAI = 80001
 }
 
-export const COINGECKO_ETH_USD =
-  "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+export type NetworkSymbol = "ETH" | "AETH";
+
+export enum NetworkSymbolEnum  {
+  ETH = 'ETH',
+  ARBITRUM = 'AETH'
+}
 
 export const NetworkContextName = "NETWORK"
 export const ETH_RPC = process.env.GATSBY_NETWORK_URL as string
+export const ARBITRUM_ETH_RPC = process.env.GATSBY_APP_ARBITRUM_NETWORK_URL as string
+export const ARBITRUM_NETWORK_CHAIN_ID = Number(process.env.GATSBY_APP_ARBITRUM_CHAIN_ID as string)
 export const NETWORK_CHAIN_ID = Number(process.env.GATSBY_CHAIN_ID as string)
 export const IS_PRODUCTION = process.env.GATSBY_IS_PRODUCTION === "true"
 export const OPENSEA_LINK = process.env.GATSBY_OPENSEA_API as string
-export const CURRENT_SESSIONS = IS_PRODUCTION
+
+const ARB_CURRENT_SESSIONS = IS_PRODUCTION
+  ? [
+  ]
+  : [
+    {
+      address: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
+      tokenId: '5770'
+    }
+    ]
+
+const ETH_CURRENT_SESSIONS = IS_PRODUCTION
   ? [
     {
       address: '0x251b5f14a825c537ff788604ea1b58e49b70726f',
@@ -34,37 +51,103 @@ export const CURRENT_SESSIONS = IS_PRODUCTION
       },
     ]
 
-export const ABC_TREASURY_ADDRESS = IS_PRODUCTION
+const ETH_ABC_TREASURY_ADDRESS = IS_PRODUCTION
   ? "0xA20B4b391Cd5f581Ab17a8d61388e0fe78dde28C"
-  : "0x69421DCF160B85fF2586Ea2c3415b4d48AC0b729"
-export const ABC_TOKEN_ADDRESS = IS_PRODUCTION
+  : "0x0107DF387861521c138D82A33D31D63f1DcC64Db"
+const ETH_ABC_TOKEN_ADDRESS = IS_PRODUCTION
   ? "0x4Ec341bB76Ea53e57907675C84227F3a0e52a206"
-  : "0x5e7aD50819f507f088Aff27196e0F4B9f727fa5b"
-export const ABC_AUCTION_ADDRESS = IS_PRODUCTION
+  : "0xD7A07721503d0DF3031C701c78a2674d99dd61E1"
+const ETH_ABC_AUCTION_ADDRESS = IS_PRODUCTION
   ? "0x46dc64ABa177cA298b827840F285f95498ab3ACd"
-  : "0x286c881126b86519221045B9d5DaAd25E4511780"
-export const ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
+  : "0xaF3525AdDBaB1954C7C940816b27E2e58e345aE6"
+const ETH_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? "0x37b4932ECeAE6b07b761F4B86975325Cb36c31aD"
-  : "0x34F282d640AB5769bd1D868A7425ad9e48B0e10f"
+  : "0x555175ffc256B699af8e1c9fA5Cb82Bc8552C034"
+
+const ARB_ABC_TREASURY_ADDRESS = IS_PRODUCTION
+  ? ""
+  : "0xa41E613FDC12Dd029e2a770F93b8A9E5569Ca4E8"
+const ARB_ABC_TOKEN_ADDRESS = IS_PRODUCTION
+  ? ""
+  : "0xd054ea8f9b2558dBc69beF1DcaDce2B60d7E6bA2"
+const ARB_ABC_AUCTION_ADDRESS = IS_PRODUCTION
+  ? "0x62e93f6A9a1848E5DfB400a60Fa484622c01CAF0"
+  : "0x03fEfB2d2148B810c5a2fC1797cC288249650230"
+const ARB_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
+  ? ""
+  : "0xc7d3C91504Ad12DeAd9d03dc0E9c32ED42E482Ec"
+
+
+export const CURRENT_SESSIONS = (networkSymbol: NetworkSymbolEnum) => 
+  networkSymbol === NetworkSymbolEnum.ETH 
+  ? ETH_CURRENT_SESSIONS
+  : ARB_CURRENT_SESSIONS
+  
+export const ABC_TREASURY_ADDRESS = (networkSymbol: NetworkSymbolEnum) => 
+  networkSymbol === NetworkSymbolEnum.ETH 
+  ? ETH_ABC_TREASURY_ADDRESS
+  : ARB_ABC_TREASURY_ADDRESS
+
+export const ABC_TOKEN_ADDRESS = (networkSymbol: NetworkSymbolEnum) => 
+  networkSymbol === NetworkSymbolEnum.ETH 
+  ? ETH_ABC_TOKEN_ADDRESS
+  : ARB_ABC_TOKEN_ADDRESS
+
+export const ABC_AUCTION_ADDRESS = (networkSymbol: NetworkSymbolEnum) => 
+  networkSymbol === NetworkSymbolEnum.ETH 
+  ? ETH_ABC_AUCTION_ADDRESS
+  : ARB_ABC_AUCTION_ADDRESS
+
+
+export const ABC_PRICING_SESSION_ADDRESS = (networkSymbol: NetworkSymbolEnum) => 
+  networkSymbol === NetworkSymbolEnum.ETH 
+  ? ETH_ABC_PRICING_SESSION_ADDRESS
+  : ARB_ABC_PRICING_SESSION_ADDRESS
+
+export const ETH_USD_ORACLE_ADDRESS = '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419'
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-interface NetworkInfo {
+export interface NetworkInfo {
   rpc: any
   chainId: number
   symbol: string
   network: string
   logo: string
+  blockExplorer: string
 }
 
-export const web3 = new Web3(ETH_RPC)
+const NETWORK_ADDRESSES = {
+  [NetworkSymbolEnum.ETH]: ETH_RPC,
+  [NetworkSymbolEnum.ARBITRUM]: ARBITRUM_ETH_RPC,
+}
 
-export const NetworkInfoMap: NetworkInfo = {
-  rpc: ETH_RPC,
-  chainId: NETWORK_CHAIN_ID,
-  symbol: "ETH",
-  network: IS_PRODUCTION ? "mainnet" : "rinkeby",
-  logo: "/ETH.svg",
+export const web3 = (networkSymbol: NetworkSymbolEnum) => new Web3(NETWORK_ADDRESSES[networkSymbol])
+
+export const web3Eth = new Web3(ETH_RPC)
+
+export const NetworkInfoMap: NetworkInfo[] = [
+  {
+    rpc: ETH_RPC,
+    chainId: NETWORK_CHAIN_ID,
+    symbol: 'ETH',
+    network: IS_PRODUCTION ? 'Ethereum Mainnet' : "Rinkeby Test Network",
+    logo: 'ETH.svg',
+    blockExplorer: IS_PRODUCTION ? 'https://etherscan.io/#/' : 'https://rinkeby.etherscan.io/#/'
+  },
+  {
+    rpc: ARBITRUM_ETH_RPC,
+    chainId: ARBITRUM_NETWORK_CHAIN_ID,
+    symbol: 'AETH',
+    network: IS_PRODUCTION ? 'Arbitrum One' : 'Arbitrum Testnet Rinkeby',
+    logo: 'AETH.svg',
+    blockExplorer: IS_PRODUCTION ? 'https://explorer.arbitrum.io/#/' : 'https://rinkeby-explorer.arbitrum.io/#/'
+  }
+]
+
+export const NetworkSymbolAndId = {
+  [NETWORK_CHAIN_ID]: NetworkSymbolEnum.ETH,
+  [ARBITRUM_NETWORK_CHAIN_ID]: NetworkSymbolEnum.ARBITRUM,
 }
 
 export interface WalletInfo {
