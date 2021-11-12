@@ -19,14 +19,12 @@ const Logo = styled(Link)`
   color: ${({ theme }) => theme.colors.text1};
 `
 
-const activeClassName = "ACTIVE"
-
 const LinkList = styled.div`
   display: flex;
   grid-gap: 40px;
 `
 
-const HeaderLink = styled(ButtonClear)<{ isactive: boolean }>`
+const HeaderLink = styled(ButtonClear)<{ isactive: string }>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
@@ -37,7 +35,7 @@ const HeaderLink = styled(ButtonClear)<{ isactive: boolean }>`
   }
 
   ${({ isactive }) =>
-    isactive &&
+    isactive === 'true' &&
     `
     opacity: 1;
   `}

@@ -4,8 +4,10 @@ import * as queryString from "query-string"
 import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
-  useGetCurrentSessionData,
+  useGetCurrentSessionDataGRT,
+  useCurrentSessionFetchStatus
 } from "@state/sessionData/hooks"
+import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
 import Link from "gatsby-link"
 import _ from "lodash"
@@ -21,19 +23,17 @@ import {
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
 
 const CurrentSession = ({ location }) => {
-  const getCurrentSessionData = useGetCurrentSessionData()
+  const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
   const { account } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
-
+  const fetchStatus = useCurrentSessionFetchStatus()
   const { address, tokenId, nonce } = queryString.parse(location.search)
-  const [isLoading, setIsLoading] = useState(true)
+  const isLoading = fetchStatus === PromiseStatus.Pending
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true)
       // @ts-ignore
-      await getCurrentSessionData(address!, tokenId, nonce)
-      setIsLoading(false)
+      await getCurrentSessionDataGRT(address!, tokenId, nonce)
     }
 
     if (!address || !tokenId || !nonce) {

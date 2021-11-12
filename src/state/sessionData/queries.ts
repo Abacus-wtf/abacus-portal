@@ -10,12 +10,19 @@ export type SubgraphPricingSession = {
   endTime: number
   sessionStatus: number
   numParticipants: number
+  timeFinalAppraisalSet: number
   maxAppraisal?: number
 }
 
 export type GetPricingSessionsQueryResponse = {
   data: {
     pricingSessions: SubgraphPricingSession[]
+  }
+}
+
+export type GetPricingSessionQueryResponse = {
+  data: {
+    pricingSession: SubgraphPricingSession
   }
 }
 
@@ -32,6 +39,26 @@ export const GET_PRICING_SESSIONS = `
       votingTime
       endTime
       sessionStatus
+      timeFinalAppraisalSet
+      numParticipants
+    }
+  }
+`
+
+export const GET_PRICING_SESSION = (id: string) => `
+  query GetPricingSession {
+    pricingSession(id: "${id}") {
+      id
+      nftAddress
+      tokenId
+      nonce
+      finalAppraisalValue
+      totalStaked
+      bounty
+      votingTime
+      endTime
+      sessionStatus
+      timeFinalAppraisalSet
       numParticipants
     }
   }

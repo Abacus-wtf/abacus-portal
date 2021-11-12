@@ -9,6 +9,8 @@ import {
   getCurrentSessionData,
   setUserStatus,
   setClaimPosition,
+  setCurrentSessionFetchStatus,
+  setCurrentSessionErrorMessage
 } from "./actions"
 import {
   SessionData,
@@ -39,15 +41,18 @@ import {
   currentSessionStatusSelector,
   currentSessionUserStatusSelector,
   multiSessionStateSelector,
+  currentSessionFetchStatusSelector
 } from "./selectors"
 import { PromiseStatus } from "@models/PromiseStatus"
 import {
   GET_PRICING_SESSIONS,
   GetPricingSessionsQueryResponse,
+  GetPricingSessionQueryResponse,
   SubgraphPricingSession,
+  GET_PRICING_SESSION
 } from "./queries"
 
-const GRAPHQL_ENDPOINT = process.env.SUBGRAPH_ENDPOINT
+const GRAPHQL_ENDPOINT = process.env.GATSBY_APP_SUBGRAPH_ENDPOINT
 
 const modifyTimeAndSession = (
   getStatus: string,
@@ -139,7 +144,8 @@ export const useGetMultiSessionData = () => {
           },
         }
       )
-      //   // TODO: Make sure API works for more than 20 contracts
+      console.log(pricingSessions, 'pricingsession')
+      // TODO: Make sure API works for more than 20 contracts
       let URL = `assets?${pricingSessions
         .map(session => `asset_contract_addresses=${session.nftAddress}&`)
         .toString()}${pricingSessions
@@ -158,6 +164,7 @@ export const useGetMultiSessionData = () => {
             numPpl: Number(session.numParticipants),
             collectionTitle: asset.asset_contract.name,
             totalStaked: Number(formatEther(session.totalStaked)),
+            bounty: Number(formatEther(session.bounty)),
             nftName: asset.name,
             finalAppraisalValue:
               session.sessionStatus >= 3
@@ -204,6 +211,97 @@ const getUserStatus = async ({
       .call()
   }
   return Number(getVoterCheck)
+}
+
+export const useGetCurrentSessionDataGRT = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
+  const { account } = useActiveWeb3React()
+
+  return useCallback(
+    async (address: string, tokenId: string, nonce: number) => {
+      dispatch(setCurrentSessionFetchStatus(PromiseStatus.Pending))
+      const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
+      try {
+        let URL = `asset/${address}/${tokenId}`
+        const [
+          data,
+          asset
+        ] = await Promise.all([
+          axios.post<GetPricingSessionQueryResponse>(
+            GRAPHQL_ENDPOINT,
+            {
+              query: GET_PRICING_SESSION(`${address}/${tokenId}/${nonce}`),
+            },
+            {
+              headers: {
+                "content-type": "application/json",
+              },
+            }
+          ),
+          openseaGet(URL)
+      ])
+      const pricingSession = data.data.data.pricingSession
+
+      let ethUsd
+      try {
+        ethUsd = await ethUsdOracle.methods.latestRoundData().call()
+        ethUsd = Number(ethUsd.answer) / 100000000
+      } catch (e) {
+        ethUsd = 4500
+      }
+
+      const { endTime, sessionStatus } = modifyTimeAndSession(
+        ''+pricingSession.sessionStatus,
+        pricingSession,
+        pricingSession
+      )
+
+      const sessionData: SessionData = {
+            img: asset.image_preview_url || asset.image_url,
+            endTime: Number(endTime),
+            numPpl: Number(pricingSession.numParticipants),
+            collectionTitle: asset.asset_contract.name,
+            totalStaked: Number(formatEther(pricingSession.totalStaked)),
+            totalStakedInUSD: Number(formatEther(pricingSession.totalStaked)) * ethUsd,
+            bounty: Number(formatEther(pricingSession.bounty)),
+            nftName: asset.name,
+            finalAppraisalValue:
+              sessionStatus >= 3
+                ? Number(formatEther(pricingSession.finalAppraisalValue))
+                : undefined,
+            address: pricingSession.nftAddress,
+            tokenId: pricingSession.tokenId,
+            nonce: Number(pricingSession.nonce),
+            ownerAddress: asset.owner?.address,
+            owner:
+              asset?.owner?.user && asset?.owner?.user?.username
+                ? asset?.owner?.user?.username
+                : shortenAddress(asset?.owner?.address),
+            maxAppraisal: Number(pricingSession?.maxAppraisal),
+          }
+
+        const userStatus = await getUserStatus({
+          address,
+          account,
+          getPricingSessionContract,
+          tokenId,
+        })
+  
+        const currentSessionData: CurrentSessionState = {
+          sessionData,
+          userStatus,
+          sessionStatus: sessionStatus,
+        }
+        dispatch(getCurrentSessionData(currentSessionData))
+        dispatch(setCurrentSessionFetchStatus(PromiseStatus.Resolved))
+      } catch (e) {
+        console.error(e)
+        dispatch(setCurrentSessionFetchStatus(PromiseStatus.Rejected))
+        dispatch(setCurrentSessionErrorMessage("Failed to get Session Data"))
+      }
+    }, [])
 }
 
 export const useGetCurrentSessionData = () => {
@@ -257,6 +355,7 @@ export const useGetCurrentSessionData = () => {
         numPpl: Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,
         totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
+        bounty: Number(formatEther(pricingSessionCore.bounty)),
         totalStakedInUSD:
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
           Number(ethUsd),
@@ -276,8 +375,6 @@ export const useGetCurrentSessionData = () => {
         ownerAddress: pricingSessionMetadata?.owner?.address,
         maxAppraisal: Number(pricingSessionCore.maxAppraisal),
       }
-
-      console.log(sessionData)
 
       const userStatus = await getUserStatus({
         address,
@@ -331,6 +428,10 @@ export const useCurrentSessionData = () =>
 export const useMultiSessionState = () =>
   useSelector<AppState, AppState["sessionData"]["multiSessionState"]>(
     multiSessionStateSelector
+  )
+export const useCurrentSessionFetchStatus = () =>
+  useSelector<AppState, AppState["sessionData"]["currentSessionData"]["fetchStatus"]>(
+    currentSessionFetchStatusSelector
   )
 
 export const useMultiSessionData = () =>

@@ -1,5 +1,6 @@
 import { initialState } from "@state/sessionData/reducer"
 import { AppState } from "@state/index"
+import { PromiseStatus } from "@models/PromiseStatus"
 
 const defaultSessionData: AppState["sessionData"]["currentSessionData"]["sessionData"] = {
   img: "",
@@ -14,6 +15,7 @@ const defaultSessionData: AppState["sessionData"]["currentSessionData"]["session
   ownerAddress: "",
   nonce: 0,
   maxAppraisal: 0,
+  bounty: 0
 }
 
 export const multiSessionStateSelector = (
@@ -30,6 +32,11 @@ export const currentSessionStatusSelector = (
   state: AppState
 ): AppState["sessionData"]["currentSessionData"]["sessionStatus"] =>
   state?.sessionData?.currentSessionData?.sessionStatus ?? -1
+
+export const currentSessionFetchStatusSelector = (
+  state: AppState
+): AppState["sessionData"]["currentSessionData"]["fetchStatus"] =>
+  state?.sessionData?.currentSessionData?.fetchStatus ?? PromiseStatus.Pending
 
 export const currentSessionUserStatusSelector = (
   state: AppState

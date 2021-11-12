@@ -6,6 +6,8 @@ import {
   setMultipleSessionData,
   setMultipleSessionFetchStatus,
   setMultipleSessionErrorMessage,
+  setCurrentSessionFetchStatus,
+  setCurrentSessionErrorMessage
 } from "./actions"
 import _ from "lodash"
 import { PromiseStatus } from "@models/PromiseStatus"
@@ -34,6 +36,7 @@ export interface SessionData {
   numPpl: number
   collectionTitle: string
   totalStaked: number
+  bounty: number
   nftName: string
   address: string
   tokenId: string
@@ -55,6 +58,8 @@ export interface CurrentSessionState {
   sessionStatus: SessionState
   userStatus: UserState
   claimPositions?: ClaimState
+  fetchStatus?: PromiseStatus
+  errorMessage?: string | null
 }
 
 export interface MultiSessionState {
@@ -96,5 +101,15 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setMultipleSessionErrorMessage, (state, action) => {
       state.multiSessionState.errorMessage = action.payload
+    })
+    .addCase(setCurrentSessionFetchStatus, (state, action) => {
+      if (state.currentSessionData !== null) {
+        state.currentSessionData.fetchStatus = action.payload
+      }
+    })
+    .addCase(setCurrentSessionErrorMessage, (state, action) => {
+      if (state.currentSessionData !== null) {
+        state.currentSessionData.errorMessage = action.payload
+      }
     })
 )
