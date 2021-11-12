@@ -24,13 +24,14 @@ import { InputWithTitle } from "@components/Input"
 import { useActiveWeb3React } from "@hooks/index"
 import { ZERO_ADDRESS } from "@config/constants"
 import _ from "lodash"
-import { useOnBid, useOnClaim } from "@hooks/auction"
+import { useOnBid, useOnClaim, useOnAddToBid } from "@hooks/auction"
 
 const RightSection: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const auctionData = useAuctionData()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const { onBid, isPending } = useOnBid()
+  const { onAddToBid, isPending: isPendingAddToBid} = useOnAddToBid()
   const { onClaim, isPending: isPendingClaim } = useOnClaim()
   const [nftAddress, setNftAddress] = useState()
   const [tokenId, setTokenId] = useState()
@@ -145,6 +146,58 @@ const RightSection: FunctionComponent = () => {
           </Tooltip>
         </VerticalContainer>
       </Form>
+      {auctionData.existingBidInfo && 
+        <Form
+          onSubmit={async (e: FormEvent<HTMLDivElement>) => {
+            e.preventDefault()
+
+            await onAddToBid(
+              e.target["newBid"].value,
+              e.target["nftAddressAdd"].value,
+              e.target["tokenIdAdd"].value
+            )
+          }}
+          >
+          <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
+            <ListGroup style={{width: '100%'}}>
+              <ListGroupItem>
+                <InputWithTitle title={"Add To Bid"} id={"newBid"} placeholder="0" />
+              </ListGroupItem>
+              <ListGroupItem>
+                <InputWithTitle
+                  title={"NFT Address"}
+                  id={"nftAddressAdd"}
+                  placeholder={ZERO_ADDRESS}
+                  defaultValue={auctionData.existingBidInfo.nftAddress}
+                />
+              </ListGroupItem>
+              <ListGroupItem>
+                <InputWithTitle
+                  title={"Token ID"}
+                  id={"tokenIdAdd"}
+                  placeholder="1"
+                  defaultValue={auctionData.existingBidInfo.tokenId}
+                />
+              </ListGroupItem>
+              <ListGroupItem>
+                <InputWithTitle
+                  title={"Initial Appraisal"}
+                  id={"initAppraisal"}
+                  value={auctionData.existingBidInfo.initialAppraisal}
+                  disabled
+                />
+              </ListGroupItem>
+            </ListGroup>
+            <Button
+              disabled={!account || isPendingAddToBid}
+              style={{ width: "100%" }}
+              type="submit"
+            >
+              {isPendingAddToBid ? "Pending..." : "Add To Bid"}
+            </Button>
+          </VerticalContainer>
+        </Form>
+      }
     </>
   )
 }

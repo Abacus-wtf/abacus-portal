@@ -69,6 +69,64 @@ export const useOnBid = () => {
   }
 }
 
+
+export const useOnAddToBid = () => {
+  const { account, library } = useActiveWeb3React()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    ReloadDataType.Auction
+  )
+  const addTransaction = useTransactionAdder()
+
+  const onAddToBid = useCallback(
+    async (
+      bid: string,
+      nftAddress: string,
+      tokenId: string
+    ) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const auctionContract = getContract(
+        ABC_AUCTION_ADDRESS,
+        ABC_AUCTION_ABI,
+        library,
+        account
+      )
+      method = auctionContract.addToBid
+      estimate = auctionContract.estimateGas.addToBid
+      args = [nftAddress, tokenId]
+      value = parseEther(bid)
+      const txnCb = async (response: any) => {
+        addTransaction(response, {
+          summary: "Add To Bid Action",
+        })
+        await response.wait()
+        setTimeout(async () => {
+          const meta = await openseaGet(`asset/${nftAddress}/${tokenId}`)
+          await sendDiscordMessage({
+            webhookUrl: DISCORD_WEBHOOK_URL.NEW_BID,
+            message: `<------------->\nNew bid sent by ${account} !\nBid amount: ${bid} ETH\nNFT Link: ${nftAddress}\nToken ID: ${tokenId}\nOpenSea Link: ${meta?.permalink}\nImage: ${meta?.image_url}`,
+          })
+        }, 3000)
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        cb: txnCb,
+      })
+    },
+    [account, library]
+  )
+  return {
+    onAddToBid,
+    isPending,
+  }
+}
+
 export const useOnClaim = () => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(

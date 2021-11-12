@@ -75,7 +75,11 @@ export const useSetAuctionData = () => {
       highestBid: Number(formatEther(highestBid)),
       highestBidDollars: Number(formatEther(highestBid)) * Number(ethUsd),
       optionalInfo,
-      existingBidInfo: Number(userVote.bid) !== 0 ? userVote : undefined
+      existingBidInfo: userVote && Number(userVote.bid) !== 0 ?  {
+        ...userVote,
+        tokenId: userVote.tokenid,
+        initialAppraisal: formatEther(userVote.intitialAppraisal)
+      }  : undefined
     }
     dispatch(setAuctionData(auctionData))
   }, [dispatch, account])

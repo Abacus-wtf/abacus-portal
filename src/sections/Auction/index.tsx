@@ -18,7 +18,6 @@ import ConnectWalletAlert from "@components/ConnectWalletAlert"
 
 const Auction = () => {
   const { account } = useActiveWeb3React()
-  const [isLoading, setIsLoading] = useState(true)
   const setAuctionData = useSetAuctionData()
   const auctionData = useAuctionData()
   const optionalInfo =
@@ -28,13 +27,13 @@ const Auction = () => {
 
   useEffect(() => {
     const loadUserData = async () => {
-      setIsLoading(true)
       await setAuctionData()
-      setIsLoading(false)
     }
 
-    loadUserData()
-  }, [])
+    if (account && auctionData === null) {
+      loadUserData()
+    }
+  }, [account])
 
   if (!account) {
     return (
@@ -46,7 +45,7 @@ const Auction = () => {
     )
   }
 
-  if (isLoading || auctionData === null) {
+  if (auctionData === null) {
     return (
       <SmallUniversalContainer
         style={{ alignItems: "center", justifyContent: "center" }}
