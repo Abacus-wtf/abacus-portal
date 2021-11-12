@@ -54,15 +54,8 @@ const Home: React.FC = () => {
     AppState["sessionData"]["multiSessionData"]
   >(state => state.sessionData.multiSessionData)
   const [searchValue, setSearchValue] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
   const networkSymbol = useGetCurrentNetwork()
   const { chainId } = useActiveWeb3React()
-
-  useEffect(() => {
-    if (multiSessionData !== null) {
-      setIsLoading(false)
-    }
-  }, [multiSessionData])
 
   useEffect(() => {
     if (networkSymbol && chainId) {
@@ -98,7 +91,7 @@ const Home: React.FC = () => {
           </Button>
         </HeaderBarContainer>*/}
       </HeaderBar>
-      {isLoading ? (
+      {multiSessionData === null ? (
         <UniversalContainer style={{ alignItems: "center" }}>
           Loading... {/* TODO: find a loader */}
         </UniversalContainer>
