@@ -92,18 +92,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_nftAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_tokenid",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "name": "addToBid",
     "outputs": [],
     "stateMutability": "payable",

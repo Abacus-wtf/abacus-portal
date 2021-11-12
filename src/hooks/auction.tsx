@@ -96,7 +96,7 @@ export const useOnAddToBid = () => {
       )
       method = auctionContract.addToBid
       estimate = auctionContract.estimateGas.addToBid
-      args = [nftAddress, tokenId]
+      args = []
       value = parseEther(bid)
       const txnCb = async (response: any) => {
         addTransaction(response, {

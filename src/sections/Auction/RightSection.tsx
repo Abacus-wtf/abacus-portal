@@ -168,7 +168,8 @@ const RightSection: FunctionComponent = () => {
                   title={"NFT Address"}
                   id={"nftAddressAdd"}
                   placeholder={ZERO_ADDRESS}
-                  defaultValue={auctionData.existingBidInfo.nftAddress}
+                  value={auctionData.existingBidInfo.nftAddress}
+                  disabled
                 />
               </ListGroupItem>
               <ListGroupItem>
@@ -176,7 +177,8 @@ const RightSection: FunctionComponent = () => {
                   title={"Token ID"}
                   id={"tokenIdAdd"}
                   placeholder="1"
-                  defaultValue={auctionData.existingBidInfo.tokenId}
+                  value={auctionData.existingBidInfo.tokenId}
+                  disabled
                 />
               </ListGroupItem>
               <ListGroupItem>
