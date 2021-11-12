@@ -22,7 +22,7 @@ import {
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
 import SessionCountdown from "./SessionCountdown"
-import { web3 } from "@config/constants"
+import {web3Eth} from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnWeightVote } from "@hooks/current-session"
 import { UserState } from "@state/sessionData/reducer"
@@ -48,7 +48,7 @@ const Weigh: FunctionComponent = () => {
   const [passwordValue, setPasswordValue] = useState("")
 
   useEffect(() => {
-    const hash = web3.eth.abi.encodeParameters(
+    const hash = web3Eth.eth.abi.encodeParameters(
       ["address", "uint256", "uint256"],
       [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
     )
@@ -89,7 +89,7 @@ const Weigh: FunctionComponent = () => {
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
           const cb = hash => {
-            const hashedMessage = web3.eth.abi.encodeParameters(
+            const hashedMessage = web3Eth.eth.abi.encodeParameters(
               ["address", "uint256", "uint256"],
               [
                 sessionData.address,

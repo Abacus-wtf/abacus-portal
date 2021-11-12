@@ -29,7 +29,7 @@ import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import HashSystem from "../hashSystem"
 import { useActiveWeb3React } from "@hooks/index"
-import { web3 } from "@config/constants"
+import {web3Eth} from "@config/constants"
 import { useOnSubmitVote, useOnUpdateVote, useOnAddToBountyVote } from "@hooks/current-session"
 import { keccak256 } from "@ethersproject/keccak256"
 import _ from "lodash"
@@ -119,7 +119,7 @@ const Vote: FunctionComponent = () => {
         <ListGroup>
           <HashSystem
             onCreateHash={(appraisalValue, password) => {
-              let encodedParams = web3.eth.abi.encodeParameters(
+              let encodedParams = web3Eth.eth.abi.encodeParameters(
                 ["uint", "address", "uint"],
                 [parseEther("" + appraisalValue), account! || "", password]
               )

@@ -8,7 +8,7 @@ import {
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
 } from "@config/constants"
-import { useActiveWeb3React, useWeb3Contract } from "@hooks/index"
+import { useActiveWeb3React, useWeb3Contract, useWeb3EthContract } from "@hooks/index"
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
 import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
@@ -17,15 +17,17 @@ import { formatEther } from "ethers/lib/utils"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 export const useSetAuctionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
-  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
-  const {account} = useActiveWeb3React()
+  const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
+  const networkSymbol = useGetCurrentNetwork()
+  const {chainId} = useActiveWeb3React()
 
   return useCallback(async () => {
-    const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS)
+    const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS(networkSymbol))
     const ethUsdOracle = getEthUsdContract(
       ETH_USD_ORACLE_ADDRESS
     )
@@ -82,15 +84,17 @@ export const useSetAuctionData = () => {
       }  : undefined
     }
     dispatch(setAuctionData(auctionData))
-  }, [dispatch, account])
+  }, [dispatch, networkSymbol, chainId])
 }
 
 export const useSetPayoutData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const networkSymbol = useGetCurrentNetwork()
+  const {chainId} = useActiveWeb3React()
 
   return useCallback(async (account: string) => {
-    const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
+    const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
     const [ethPayout, ethToAbc] = await Promise.all([
       pricingSessionContract.methods.payoutStored(account).call(),
       pricingSessionContract.methods.ethToAbc().call(),
@@ -98,7 +102,7 @@ export const useSetPayoutData = () => {
     const eth = Number(formatEther(ethPayout))
     const abc = Number(formatEther(ethToAbc * ethPayout))
     dispatch(setClaimData({ethPayout: eth, abcPayout: abc}))
-  }, [dispatch])
+  }, [dispatch, networkSymbol, chainId])
 }
 
 export const useAuctionData = () => {

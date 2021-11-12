@@ -6,6 +6,7 @@ import { PortisConnector } from '@web3-react/portis-connector'
 
 import { FortmaticConnector } from './Fortmatic'
 import { NetworkConnector } from './NetworkConnector'
+import { NetworkSymbolEnum, NetworkSymbol, NetworkInfoMap } from '@config/constants'
 
 // import {ETHER, MATIC} from "@unicly/sdk";
 // import * as process from "process";
@@ -23,54 +24,8 @@ export interface NetworkInfo {
 
 }
 
-
-
-//network list
-export const NETWORK_URL: any = process.env.GATSBY_NETWORK_URL
-
-
-//chain list
-export const MATIC_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID_MATIC!)
-export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID!)
-export const MUMBAI_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID_MUMBAI!)
-
-
-export const NetworkInfoMap: NetworkInfo[] = [
-  {
-    rpc: NETWORK_URL,
-    chainId: NETWORK_CHAIN_ID,
-    symbol: 'ETH',
-    network: 'Ethereum Mainnet',
-    logo: '/ETH.svg'
-  }
-]
-
-
-export type NetworkSymbol = "ETH";
-
-export enum NetworkSymbolEnum  {
-  ETH = 'ETH'
-}
-
-type NetworkList = Record<NetworkSymbolEnum, NetworkInfo>;
-
-// network object info by symbol
-export const NetworkSelectorList: NetworkList = {
-  ETH: {rpc: NETWORK_URL, chainId: NETWORK_CHAIN_ID, symbol: 'ETH', network: 'Ethereum Mainnet', logo: 'ETH.svg'},
-};
-
-//select network by chain id
-export const NetworkSymbolAndId = {
-  [NETWORK_CHAIN_ID]:NetworkSymbolEnum.ETH,
-
-}
-
-if (typeof NETWORK_URL === 'undefined') {
-  throw new Error(`GATSBY_NETWORK_URL must be a defined environment variable`)
-}
-
 export const network = (networkSymbol: NetworkSymbolEnum) => new NetworkConnector({
-  urls: { [NetworkSelectorList[networkSymbol].chainId]: NetworkSelectorList[networkSymbol].rpc}
+  urls: { [NetworkInfoMap[networkSymbol].chainId]: NetworkInfoMap[networkSymbol].rpc}
 })
 
 let networkLibrary: Web3Provider | undefined
@@ -80,12 +35,12 @@ export function getNetworkLibrary(networkSymbol: NetworkSymbolEnum): Web3Provide
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 56, 137, 80001]
+  supportedChainIds: [1, 3, 4, 5, 42, 56, 137, 42161, 421611, 80001]
 })
 
 // mainnet only
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1: NETWORK_URL },
+  rpc: { 1: process.env.GATSBY_NETWORK_URL as string },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true
 })
@@ -104,7 +59,7 @@ export const portis = new PortisConnector({
 
 // mainnet only
 export const walletlink = new WalletLinkConnector({
-  url: NETWORK_URL,
+  url: process.env.GATSBY_NETWORK_URL as string,
   appName: 'Abacus Protocol',
   appLogoUrl: '🧮'
 })

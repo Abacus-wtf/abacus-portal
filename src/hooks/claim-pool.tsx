@@ -9,6 +9,7 @@ import { useGeneralizedContractCall, ReloadDataType } from "./"
 import { useActiveWeb3React } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 export const useOnClaimPayout = () => {
   const { account, library } = useActiveWeb3React()
@@ -17,6 +18,7 @@ export const useOnClaimPayout = () => {
     ReloadDataType.ClaimPool
   )
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onClaim = useCallback(
     async (isEth: boolean, amount: string) => {
@@ -26,7 +28,7 @@ export const useOnClaimPayout = () => {
         value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -51,7 +53,7 @@ export const useOnClaimPayout = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData]
+    [account, library, sessionData, networkSymbol]
   )
   return {
     onClaim,

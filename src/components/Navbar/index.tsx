@@ -7,6 +7,7 @@ import Button, { ButtonClear } from "../Button"
 import { useActiveWeb3React } from "@hooks/index"
 import { shortenAddress } from "@config/utils"
 import { useToggleWalletModal } from "@state/application/hooks"
+import NetworkSelectorButton from './NetworkSelectorButton'
 
 const RowStyled = styled(Row)`
   padding: 0px;
@@ -24,9 +25,10 @@ const activeClassName = "ACTIVE"
 const LinkList = styled.div`
   display: flex;
   grid-gap: 40px;
+  align-items: center;
 `
 
-const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
+const HeaderLink = styled(ButtonClear)<{active: boolean}>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
@@ -36,7 +38,7 @@ const HeaderLink = styled(ButtonClear)<{isactive: boolean}>`
     opacity: 1;
   }
 
-  ${({isactive}) => isactive && `
+  ${({active}) => active && `
     opacity: 1;
   `}
 `
@@ -77,9 +79,12 @@ const Navbar = ({location}) => {
           </HeaderLink>
           */}
         </LinkList>
-        <Button onClick={() => toggleWalletModal()}>
-          {account ? shortenAddress(account) : "Connect Wallet"}
-        </Button>
+        <LinkList>
+          <NetworkSelectorButton />
+          <Button onClick={() => toggleWalletModal()}>
+            {account ? shortenAddress(account) : "Connect Wallet"}
+          </Button>
+        </LinkList>
       </NavbarContainer>
     </RowStyled>
   )

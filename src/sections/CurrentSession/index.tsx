@@ -19,14 +19,16 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
 
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const [isLoading, setIsLoading] = useState(true)
+  const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,12 +41,18 @@ const CurrentSession = ({ location }) => {
     if (!address || !tokenId || !nonce) {
       alert("This is a broken link, we are redirecting you to the home page.")
       navigate("/")
-    } else {
-      if (account) {
-        loadData()
-      }
+    } else if (account && chainId && networkSymbol) {
+      loadData()
     }
-  }, [address, tokenId, nonce, account])
+  }, [
+    address,
+    tokenId,
+    nonce,
+    account,
+    networkSymbol,
+    chainId,
+    getCurrentSessionData,
+  ])
 
   if (!account) {
     return (
@@ -88,7 +96,9 @@ const CurrentSession = ({ location }) => {
             </Title>
             <SubText>
               Owned by{" "}
-              <Link to={`https://opensea.io/assets/${sessionData.ownerAddress}`}>
+              <Link
+                to={`https://opensea.io/assets/${sessionData.ownerAddress}`}
+              >
                 {sessionData.owner}
               </Link>
             </SubText>
