@@ -80,7 +80,7 @@ export const useSetAuctionData = () => {
       existingBidInfo: userVote && Number(userVote.bid) !== 0 ?  {
         ...userVote,
         tokenId: userVote.tokenid,
-        initialAppraisal: formatEther(userVote.intitialAppraisal)
+        initialAppraisal: formatEther(userVote.initialAppraisal)
       }  : undefined
     }
     dispatch(setAuctionData(auctionData))

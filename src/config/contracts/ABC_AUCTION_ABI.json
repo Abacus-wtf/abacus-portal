@@ -75,7 +75,44 @@
         "type": "uint256"
       }
     ],
-    "name": "newBidSubmitted",
+    "name": "bountyIncreased",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_bidder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_bidAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_nftAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_tokenid",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_initialAppraisal",
+        "type": "uint256"
+      }
+    ],
+    "name": "newBountySubmitted",
     "type": "event"
   },
   {
@@ -379,7 +416,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "intitialAppraisal",
+        "name": "initialAppraisal",
         "type": "uint256"
       },
       {
