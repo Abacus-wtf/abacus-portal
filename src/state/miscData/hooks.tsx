@@ -8,7 +8,7 @@ import {
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
 } from "@config/constants"
-import { useWeb3Contract } from "@hooks/index"
+import { useActiveWeb3React, useWeb3Contract } from "@hooks/index"
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
 import _ from "lodash"
 import { openseaGet, shortenAddress } from "@config/utils"
@@ -22,6 +22,7 @@ export const useSetAuctionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
+  const {account} = useActiveWeb3React()
 
   return useCallback(async () => {
     const auctionContract = getAuctionContract(ABC_AUCTION_ADDRESS)
@@ -46,19 +47,24 @@ export const useSetAuctionData = () => {
       ethUsd = 4500
     }
 
-    const userVote = await auctionContract.methods
-      .userVote(nonce, highestBidder)
-      .call()
+    const [highestBidderUserVote, userVote] = await Promise.all([
+        auctionContract.methods
+        .userVote(nonce, highestBidder)
+        .call(),
+        auctionContract.methods
+        .userVote(nonce, account)
+        .call(),
+      ])
     let optionalInfo
-    if (userVote.nftAddress !== ZERO_ADDRESS) {
-      const URL = `asset/${userVote.nftAddress}/${userVote.tokenid}`
+    if (highestBidderUserVote.nftAddress !== ZERO_ADDRESS) {
+      const URL = `asset/${highestBidderUserVote.nftAddress}/${highestBidderUserVote.tokenid}`
       const nftMetadata = await openseaGet(URL)
 
       optionalInfo = {
         img: nftMetadata?.image_url || nftMetadata?.image_preview_url,
         highestBidderAddress: highestBidder,
-        highestNftAddress: userVote.nftAddress,
-        highestNftTokenId: userVote.tokenid,
+        highestNftAddress: highestBidderUserVote.nftAddress,
+        highestNftTokenId: highestBidderUserVote.tokenid,
         highestNftCollectionTitle: nftMetadata?.collection?.name,
         highestNftName: nftMetadata?.name,
       }
@@ -69,9 +75,10 @@ export const useSetAuctionData = () => {
       highestBid: Number(formatEther(highestBid)),
       highestBidDollars: Number(formatEther(highestBid)) * Number(ethUsd),
       optionalInfo,
+      existingBidInfo: Number(userVote.bid) !== 0 ? userVote : undefined
     }
     dispatch(setAuctionData(auctionData))
-  }, [dispatch])
+  }, [dispatch, account])
 }
 
 export const useSetPayoutData = () => {
