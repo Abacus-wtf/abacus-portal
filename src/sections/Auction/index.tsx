@@ -15,7 +15,7 @@ import RightSection from "./RightSection"
 import { shortenAddress } from "@config/utils"
 import { useActiveWeb3React } from "@hooks/index"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
-import {useSelectNetwork, useGetCurrentNetwork} from '@state/application/hooks'
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 const Auction = () => {
   const { account } = useActiveWeb3React()
@@ -80,7 +80,7 @@ const Auction = () => {
               <SubText>
                 Highest Bounty by{" "}
                 <Link
-                  target={'_blank'}
+                  target={"_blank"}
                   to={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
                 >
                   {shortenAddress(optionalInfo.highestBidderAddress)}
