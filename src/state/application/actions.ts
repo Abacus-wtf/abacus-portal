@@ -4,6 +4,6 @@ import { createAction } from "@reduxjs/toolkit"
 export const toggleWalletModal = createAction<boolean>(
   "application/toggleWalletModal"
 )
-export const selectNetwork = createAction<{ networkSymbol: NetworkSymbolEnum }>(
+export const selectNetwork = createAction<NetworkSymbolEnum>(
   "application/selectNetwork"
 )

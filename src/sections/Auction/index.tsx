@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { Title, SmallUniversalContainer } from "@components/global.styles"
 import { useAuctionData, useSetAuctionData } from "@state/miscData/hooks"
 import { ButtonsWhite } from "@components/Button"
@@ -31,10 +31,10 @@ const Auction = () => {
     const loadUserData = async () => {
       await setAuctionData()
     }
-    if (account && auctionData === null) {
+    if (account && networkSymbol && auctionData === null) {
       loadUserData()
     }
-  }, [account, networkSymbol])
+  }, [account, networkSymbol, auctionData])
 
   if (!account) {
     return (

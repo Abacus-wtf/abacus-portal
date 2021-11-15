@@ -10,22 +10,15 @@ interface ApplicationState {
 
 export const initialState: ApplicationState = {
   isWalletModalOpen: false,
-  networkSymbol: NetworkSymbolEnum.ETH
+  networkSymbol: NetworkSymbolEnum.ETH,
 }
 
 export default createReducer(initialState, builder =>
-  builder.addCase(toggleWalletModal, (state, action) => {
-    state.isWalletModalOpen = action.payload
-  })
-  .addCase(selectNetwork, (state, action) => {
-      const {networkSymbol} = action.payload;
-      console.log(networkSymbol, 'networkSymbol')
-      if (networkSymbol === state.networkSymbol || networkSymbol === undefined) {
-          return
-      }
-
-      state.networkSymbol = networkSymbol;
-
-
-  })
+  builder
+    .addCase(toggleWalletModal, (state, action) => {
+      state.isWalletModalOpen = action.payload
+    })
+    .addCase(selectNetwork, (state, action) => {
+      state.networkSymbol = action.payload
+    })
 )

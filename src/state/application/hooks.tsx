@@ -24,7 +24,7 @@ export const useSelectNetwork = () => {
 
   return useCallback(
     async (networkChoice: NetworkSymbolEnum) => {
-      dispatch(selectNetwork({ networkSymbol: networkChoice }))
+      dispatch(selectNetwork(networkChoice))
     },
     [dispatch]
   )
