@@ -1,7 +1,8 @@
 import React from "react"
 import styled from "styled-components"
+import { OutboundLink } from "gatsby-plugin-google-analytics"
 
-const ExternalLink = styled.a.attrs({
+const ExternalLink = styled(OutboundLink).attrs({
   target: "_blank",
 })
 

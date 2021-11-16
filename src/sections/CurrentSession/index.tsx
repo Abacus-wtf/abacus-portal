@@ -20,6 +20,7 @@ import {
 } from "./CurrentSession.styles"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
 import { useGetCurrentNetwork } from "@state/application/hooks"
+import { OutboundLink } from "gatsby-plugin-google-analytics"
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionData = useGetCurrentSessionData()
@@ -82,8 +83,8 @@ const CurrentSession = ({ location }) => {
           <ButtonsWhite
             style={{ borderRadius: 8 }}
             target={"_blank"}
-            to={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
-            as={Link}
+            href={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
+            as={OutboundLink}
           >
             OpenSea
           </ButtonsWhite>
@@ -96,11 +97,12 @@ const CurrentSession = ({ location }) => {
             </Title>
             <SubText>
               Owned by{" "}
-              <Link
-                to={`https://opensea.io/assets/${sessionData.ownerAddress}`}
+              <OutboundLink
+                target={"_blank"}
+                href={`https://opensea.io/assets/${sessionData.ownerAddress}`}
               >
                 {sessionData.owner}
-              </Link>
+              </OutboundLink>
             </SubText>
           </VerticalSmallGapContainer>
           <CurrentState />
