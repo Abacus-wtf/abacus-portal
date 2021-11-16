@@ -19,7 +19,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        trackingId: "G-0NEGLJHXHQ",
+        trackingId: "G-4KE9JV7TXF", // TODO: Switch this back to abacus value
         head: true,
         anonymize: true,
       },
