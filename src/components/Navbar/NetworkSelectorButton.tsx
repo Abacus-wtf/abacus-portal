@@ -12,6 +12,7 @@ import Button from "../Button"
 import { ETH_RPC } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useGetCurrentNetwork } from "@state/application/hooks"
+import { Activity } from 'react-feather'
 
 const StyledMenuButton = styled.button`
   position: relative;
@@ -162,8 +163,8 @@ const NetworkSelectorButton = () => {
               src={require(`../../images/${networkSymbol}.svg`)}
               style={{ marginRight: "10px", height: "18px", width: "auto" }}
             />
-          ) : null}
-          {networkSymbol}
+          ) : <Activity style={{ marginRight: "10px", height: "18px", width: "auto" }} />}
+          {networkSymbol || 'Change Network'}
         </Aligner>
       </StyledMenuButton>
       <Modal
