@@ -55,13 +55,12 @@ const Home: React.FC = () => {
   >(state => state.sessionData.multiSessionData)
   const [searchValue, setSearchValue] = useState("")
   const networkSymbol = useGetCurrentNetwork()
-  const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
-    if (networkSymbol && chainId) {
+    if (networkSymbol) {
       getMultiSessionData()
     }
-  }, [networkSymbol, chainId])
+  }, [networkSymbol])
 
   return (
     <UniversalContainer>
