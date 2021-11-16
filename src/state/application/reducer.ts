@@ -5,12 +5,12 @@ import { NetworkSymbolEnum } from "@config/constants"
 
 interface ApplicationState {
   isWalletModalOpen: boolean
-  networkSymbol: NetworkSymbolEnum
+  networkSymbol: NetworkSymbolEnum | null
 }
 
 export const initialState: ApplicationState = {
   isWalletModalOpen: false,
-  networkSymbol: NetworkSymbolEnum.ETH,
+  networkSymbol: null,
 }
 
 export default createReducer(initialState, builder =>

@@ -123,7 +123,7 @@ export const useGetMultiSessionData = () => {
       console.error(e)
       return
     }
-    pricingSessionMetadata = pricingSessionMetadata.assets
+    pricingSessionMetadata = pricingSessionMetadata?.assets
 
     if (!_.get(pricingSession, "currentProvider")) {
       return
@@ -247,15 +247,12 @@ const getUserStatus = async ({
 
 export const useGetCurrentSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const callbackRef = useRef(
-    (address: string, tokenId: string, nonce: number) => {}
-  )
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
   const { account, chainId } = useActiveWeb3React()
 
-  const callback = useCallback(
+  return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
       const pricingSession = getPricingSessionContract(
         ABC_PRICING_SESSION_ADDRESS(networkSymbol)
@@ -339,12 +336,6 @@ export const useGetCurrentSessionData = () => {
     },
     [dispatch, account, getPricingSessionContract, networkSymbol, chainId]
   )
-
-  useEffect(() => {
-    callbackRef.current = _.debounce(callback, 1500)
-  }, [callback])
-
-  return callbackRef.current
 }
 
 export const useGetUserStatus = () => {
