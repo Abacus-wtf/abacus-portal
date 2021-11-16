@@ -65,7 +65,7 @@ const MySessions: React.FC = () => {
         </UniversalContainer>
       ) : (
         <CardContainer>
-          {_.map(multiSessionData, i => (
+          {_.map(isMySessions ? multiSessionData : multiSessionData, i => (
             <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
           ))}
         </CardContainer>
