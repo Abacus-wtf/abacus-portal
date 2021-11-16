@@ -33,9 +33,6 @@ const CreateSession: React.FC = () => {
         <Form
           onSubmit={(e: FormEvent<HTMLDivElement>) => {
             e.preventDefault()
-            console.log(e.target["nftAddress"].value)
-            console.log(e.target["tokenId"].value)
-            console.log(e.target["initAppraisal"].value)
             toggle()
           }}
         >

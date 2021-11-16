@@ -3738,11 +3738,6 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0, ansi-styles@^4.2.0:
   dependencies:
     color-convert "^2.0.1"
 
-ansicolors@~0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.3.2.tgz#665597de86a9ffe3aa9bfbe6cae5c6ea426b4979"
-  integrity sha1-ZlWX3oap/+Oqm/vmyuXG6kJrSXk=
-
 any-base@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/any-base/-/any-base-1.1.0.tgz#ae101a62bc08a597b4c9ab5b7089d456630549fe"
@@ -5976,9 +5971,6 @@ cardinal@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/cardinal/-/cardinal-2.1.1.tgz#7cc1055d822d212954d07b085dea251cc7bc5505"
   integrity sha1-fMEFXYItISlU0HsIXeolHMe8VQU=
-  dependencies:
-    ansicolors "~0.3.2"
-    redeyed "~2.1.0"
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -9898,10 +9890,10 @@ gatsby-link@^2.11.0:
     "@types/reach__router" "^1.3.7"
     prop-types "^15.7.2"
 
-gatsby-link@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/gatsby-link/-/gatsby-link-4.0.0.tgz#56b11c842c5ed1760805701f6950e41d421a0754"
-  integrity sha512-oeAfw/KvVIJ4QCFt2+rZMFiwuzdckphmjyUEGozc2POSnDT+WqZvuP3ncy/XL3g2l0tV1elk8X095NZv53xoBg==
+gatsby-link@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/gatsby-link/-/gatsby-link-4.1.0.tgz#d2abe2c36c907cd897855226fbaa3a3b519bbc73"
+  integrity sha512-igOvc/ks6XNwT4vpwViC3n7KthP16XlKWejvIZA8yLKIwkOszcgV5/PYMTri8e2C2xpUAeutTreBWfmRFNcWtw==
   dependencies:
     "@babel/runtime" "^7.15.4"
     "@types/reach__router" "^1.3.9"
@@ -13535,11 +13527,6 @@ merge2@^1.2.3, merge2@^1.3.0:
   resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
-merge@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/merge/-/merge-2.1.1.tgz#59ef4bf7e0b3e879186436e8481c06a6c162ca98"
-  integrity sha512-jz+Cfrg9GWOZbQAnDQ4hlVnQky+341Yk5ru8bZSe6sIDTCIg8n9i/u7hSQGSVOF3C7lH6mGtqjkiT9G4wFLL0w==
-
 merkle-patricia-tree@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/merkle-patricia-tree/-/merkle-patricia-tree-3.0.0.tgz#448d85415565df72febc33ca362b8b614f5a58f8"
@@ -16446,20 +16433,6 @@ redent@^1.0.0:
   dependencies:
     indent-string "^2.1.0"
     strip-indent "^1.0.1"
-
-redeyed@~2.1.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/redeyed/-/redeyed-2.1.1.tgz#8984b5815d99cb220469c99eeeffe38913e6cc0b"
-  integrity sha1-iYS1gV2ZyyIEacme7v/jiRPmzAs=
-  dependencies:
-    esprima "~4.0.0"
-
-redux-localstorage-simple@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/redux-localstorage-simple/-/redux-localstorage-simple-2.4.1.tgz#b838991de3642977cc6458b277122f7fd8543c0e"
-  integrity sha512-Oij3OAPukQVNqHwakfOXWGAcv254HvFtePIyZQY3tfomG8ruz4BV5FL4WytO4Pz8Ja7i3r9cCTEXvnzgv1xCJg==
-  dependencies:
-    merge "2.1.1"
 
 redux-thunk@^2.3.0:
   version "2.3.0"
