@@ -78,7 +78,6 @@ const NetworkSelectorButton = () => {
   const { ethereum } = window as any
 
   const MetamaskRequest = async (network: NetworkInfo) => {
-    console.log("chainidd", network.chainId)
     if (network.chainId === 1) {
       try {
         await ethereum.request({

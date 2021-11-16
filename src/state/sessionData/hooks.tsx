@@ -317,8 +317,6 @@ export const useGetCurrentSessionData = () => {
         maxAppraisal: Number(pricingSessionCore.maxAppraisal),
       }
 
-      console.log(sessionData)
-
       const userStatus = await getUserStatus({
         address,
         account,
