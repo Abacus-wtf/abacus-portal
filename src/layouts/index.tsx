@@ -50,10 +50,9 @@ const GlobalLayout: React.FC = (props: any) => {
   }, [])
 
   useEffect(() => {
-    if (chainId) {
-      selectNetwork(NetworkSymbolAndId[chainId!])
-    } else {
-      selectNetwork(NetworkSymbolEnum.ETH)
+    const network = NetworkSymbolAndId[chainId!]
+    if (network) {
+      selectNetwork(network)
     }
   }, [chainId, selectNetwork])
 
