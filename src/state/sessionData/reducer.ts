@@ -7,7 +7,13 @@ import {
   setMultipleSessionFetchStatus,
   setMultipleSessionErrorMessage,
   setCurrentSessionFetchStatus,
-  setCurrentSessionErrorMessage
+  setCurrentSessionErrorMessage,
+  setMySessionsData,
+  setMySessionsFetchStatus,
+  setMySessionsErrorMessage,
+  setActiveSessionsData,
+  setActiveSessionsFetchStatus,
+  setActiveSessionsErrorMessage,
 } from "./actions"
 import _ from "lodash"
 import { PromiseStatus } from "@models/PromiseStatus"
@@ -68,15 +74,39 @@ export interface MultiSessionState {
   errorMessage: string | null
 }
 
+export interface MySessionsState {
+  mySessionsData: SessionData[]
+  fetchStatus: PromiseStatus
+  errorMessage: string | null
+}
+
+export interface ActiveSessionsState {
+  activeSessionsData: SessionData[]
+  fetchStatus: PromiseStatus
+  errorMessage: string | null
+}
+
 interface SessionDataState {
-  multiSessionState: MultiSessionState
   currentSessionData: CurrentSessionState | null
+  multiSessionState: MultiSessionState
+  mySessionsState: MySessionsState
+  activeSessionsState: ActiveSessionsState
 }
 
 export const initialState = {
   currentSessionData: null,
   multiSessionState: {
     multiSessionData: [],
+    fetchStatus: PromiseStatus.Idle,
+    errorMessage: null,
+  },
+  mySessionsState: {
+    mySessionsData: [],
+    fetchStatus: PromiseStatus.Idle,
+    errorMessage: null,
+  },
+  activeSessionsState: {
+    activeSessionsData: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
   },
@@ -93,15 +123,6 @@ export default createReducer(initialState, builder =>
     .addCase(setClaimPosition, (state, action) => {
       state.currentSessionData.claimPositions = action.payload
     })
-    .addCase(setMultipleSessionData, (state, action) => {
-      state.multiSessionState.multiSessionData = action.payload
-    })
-    .addCase(setMultipleSessionFetchStatus, (state, action) => {
-      state.multiSessionState.fetchStatus = action.payload
-    })
-    .addCase(setMultipleSessionErrorMessage, (state, action) => {
-      state.multiSessionState.errorMessage = action.payload
-    })
     .addCase(setCurrentSessionFetchStatus, (state, action) => {
       if (state.currentSessionData !== null) {
         state.currentSessionData.fetchStatus = action.payload
@@ -111,5 +132,32 @@ export default createReducer(initialState, builder =>
       if (state.currentSessionData !== null) {
         state.currentSessionData.errorMessage = action.payload
       }
+    })
+    .addCase(setMultipleSessionData, (state, action) => {
+      state.multiSessionState.multiSessionData = action.payload
+    })
+    .addCase(setMultipleSessionFetchStatus, (state, action) => {
+      state.multiSessionState.fetchStatus = action.payload
+    })
+    .addCase(setMultipleSessionErrorMessage, (state, action) => {
+      state.multiSessionState.errorMessage = action.payload
+    })
+    .addCase(setMySessionsData, (state, action) => {
+      state.mySessionsState.mySessionsData = action.payload
+    })
+    .addCase(setMySessionsFetchStatus, (state, action) => {
+      state.mySessionsState.fetchStatus = action.payload
+    })
+    .addCase(setMySessionsErrorMessage, (state, action) => {
+      state.mySessionsState.errorMessage = action.payload
+    })
+    .addCase(setActiveSessionsData, (state, action) => {
+      state.activeSessionsState.activeSessionsData = action.payload
+    })
+    .addCase(setActiveSessionsFetchStatus, (state, action) => {
+      state.activeSessionsState.fetchStatus = action.payload
+    })
+    .addCase(setActiveSessionsErrorMessage, (state, action) => {
+      state.activeSessionsState.errorMessage = action.payload
     })
 )
