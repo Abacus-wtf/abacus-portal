@@ -74,14 +74,14 @@ const Home: React.FC = () => {
             Sessions
           </Subheader>
         </div>
-        {/*<HeaderBarContainer>
-          <ButtonsWhite>Filter</ButtonsWhite>
+        <HeaderBarContainer>
+          {/*<ButtonsWhite>Filter</ButtonsWhite>
           <SearchBar
             input={searchValue}
             changeInput={input => setSearchValue(input)}
             placeholder={"Find something"}
             onEnter={() => {}}
-          />
+          />*/}
           <Button
             style={{ display: "flex", alignItems: "center" }}
             as={Link}
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
           >
             Create Session
           </Button>
-        </HeaderBarContainer>*/}
+        </HeaderBarContainer>
       </HeaderBar>
       {multiSessionData === null ? (
         <UniversalContainer style={{ alignItems: "center" }}>

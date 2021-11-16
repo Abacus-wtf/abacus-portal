@@ -65,7 +65,7 @@ const GlobalLayout: React.FC = (props: any) => {
         <Navbar location={props.location} />
         <RowContainer>
           <Web3Modal />
-          {NetworkSymbolAndId[chainId!] !== NetworkSymbolEnum.ARBITRUM ? (
+          {NetworkSymbolAndId[chainId!] !== NetworkSymbolEnum.ARBITRUM && NetworkSymbolAndId[chainId!] !== NetworkSymbolEnum.ETH ? (
             <div
               style={{
                 textAlign: "center",
