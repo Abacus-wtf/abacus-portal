@@ -84,10 +84,15 @@ const Navbar = ({ location }) => {
           >
             Claim Pool
           </HeaderLink>
-          {/*<HeaderLink as={Link} to="/my-sessions">
-            My Sessions
-          </HeaderLink>
-          */}
+          {account && 
+            <HeaderLink 
+              as={Link} 
+              to="/my-sessions" 
+              isactive={(location.pathname === "/my-sessions").toString()}
+            >
+              My Sessions
+            </HeaderLink>
+          }
         </LinkList>
         <Button onClick={() => toggleWalletModal()}>
           {account ? shortenAddress(account) : "Connect Wallet"}

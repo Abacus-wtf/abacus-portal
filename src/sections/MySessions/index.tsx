@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
+import styled from "styled-components"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
+import BackgroundSource from "@images/title_bg.png"
 import Button, { ButtonsWhite } from "@components/Button"
 import SearchBar from "@components/SeachBar"
 import Card from "@components/Card"
@@ -10,19 +12,39 @@ import {
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import _ from "lodash"
-import Link from "gatsby-link"
 import { PromiseStatus } from "@models/PromiseStatus"
 import {
-  BackgroundIMG,
-  HeaderBar,
+  HeaderBar, 
   CardContainer
-} from './Home.styles'
- 
-const Home: React.FC = () => {
+} from '../Home/Home.styles'
+
+const HeaderBarStyled = styled(HeaderBar)`
+  flex-direction: column;
+  grid-gap: 15px;
+`
+
+const TabContainer = styled.div`
+  display: flex;
+  grid-gap: 24px;
+`
+
+const TabButton = styled(Button)<{active: boolean}>`
+  border-radius: 8px !important;
+  ${({active, theme}) => !active && `
+    color: ${theme.colors.text2} !important;
+    background-color: transparent !important;
+
+    &:hover {
+      background-color: transparent !important;
+    }
+  `}
+`
+
+const MySessions: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
-  const { multiSessionData, fetchStatus, errorMessage } = useMultiSessionState()
-  const [searchValue, setSearchValue] = useState("")
+  const { multiSessionData, fetchStatus } = useMultiSessionState()
   const isLoading = fetchStatus === PromiseStatus.Pending
+  const [isMySessions, setIsMySessions] = useState(true)
 
   useEffect(() => {
     getMultiSessionData()
@@ -30,32 +52,13 @@ const Home: React.FC = () => {
 
   return (
     <UniversalContainer>
-      <BackgroundIMG />
-      <HeaderBar>
-        <div>
-          <Title>Highlighted</Title>
-          <Subheader>
-            Browse {multiSessionData ? multiSessionData.length : "-"} Total
-            Sessions
-          </Subheader>
-        </div>
-        {/*<HeaderBarContainer>
-          <ButtonsWhite>Filter</ButtonsWhite>
-          <SearchBar
-            input={searchValue}
-            changeInput={input => setSearchValue(input)}
-            placeholder={"Find something"}
-            onEnter={() => {}}
-          />
-          <Button
-            style={{ display: "flex", alignItems: "center" }}
-            as={Link}
-            to="/create-session"
-          >
-            Create Session
-          </Button>
-        </HeaderBarContainer>*/}
-      </HeaderBar>
+      <HeaderBarStyled>
+        <Title>Sessions</Title>
+        <TabContainer>
+          <TabButton active={isMySessions} onClick={() => setIsMySessions(true)}>My Sessions</TabButton>
+          <TabButton active={!isMySessions} onClick={() => setIsMySessions(false)}>Activity</TabButton>
+        </TabContainer>
+      </HeaderBarStyled>
       {isLoading ? (
         <UniversalContainer style={{ alignItems: "center" }}>
           Loading... {/* TODO: find a loader */}
@@ -71,4 +74,4 @@ const Home: React.FC = () => {
   )
 }
 
-export default Home
+export default MySessions
