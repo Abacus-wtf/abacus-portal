@@ -1,7 +1,47 @@
-import { useCallback, useEffect, useRef } from "react"
-import { AppState } from "@state/index"
+import { useCallback } from "react"
+import { AppState, AppDispatch } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
+import {
+  useWeb3Contract,
+  useActiveWeb3React,
+  useWeb3EthContract,
+} from "@hooks/index"
+import {
+  ABC_PRICING_SESSION_ADDRESS,
+  ETH_USD_ORACLE_ADDRESS,
+  NetworkSymbolEnum,
+} from "@config/constants"
+import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
+import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
+import _ from "lodash"
+import {
+  openseaGet,
+  openseaGetMany,
+  OpenSeaGetResponse,
+  shortenAddress,
+} from "@config/utils"
+import { formatEther } from "ethers/lib/utils"
+import { PromiseStatus } from "@models/PromiseStatus"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import {
+  GET_PRICING_SESSIONS,
+  GetPricingSessionsQueryResponse,
+  GetPricingSessionQueryResponse,
+  SubgraphPricingSession,
+  GET_PRICING_SESSION,
+  GetActiveSessionsQueryResponse,
+  GET_ACTIVE_SESSIONS,
+  GetMySessionsQueryResponse,
+  GET_MY_SESSIONS,
+} from "./queries"
+import {
+  SessionData,
+  CurrentSessionState,
+  UserState,
+  SessionState,
+  ClaimState,
+} from "./reducer"
 import {
   setMultipleSessionData,
   setMultipleSessionFetchStatus,
@@ -16,36 +56,6 @@ import {
   setMySessionsData,
 } from "./actions"
 import {
-  SessionData,
-  CurrentSessionState,
-  UserState,
-  SessionState,
-  ClaimState,
-} from "./reducer"
-import { AppDispatch } from "../index"
-import {
-  useWeb3Contract,
-  useActiveWeb3React,
-  useWeb3EthContract,
-} from "@hooks/index"
-import {
-  ABC_PRICING_SESSION_ADDRESS,
-  CURRENT_SESSIONS,
-  ETH_USD_ORACLE_ADDRESS,
-  CURRENT_SESSIONS as CURRENT_SESSIONS_NETWORK,
-  NetworkSymbolEnum,
-} from "@config/constants"
-import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
-import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
-import _ from "lodash"
-import {
-  openseaGet,
-  openseaGetMany,
-  OpenSeaGetResponse,
-  shortenAddress,
-} from "@config/utils"
-import { formatEther } from "ethers/lib/utils"
-import {
   currentSessionDataSelector,
   currentSessionStatusSelector,
   currentSessionUserStatusSelector,
@@ -54,19 +64,6 @@ import {
   mySessionsStateSelector,
   activeSessionsStateSelector,
 } from "./selectors"
-import { PromiseStatus } from "@models/PromiseStatus"
-import {
-  GET_PRICING_SESSIONS,
-  GetPricingSessionsQueryResponse,
-  GetPricingSessionQueryResponse,
-  SubgraphPricingSession,
-  GET_PRICING_SESSION,
-  GetActiveSessionsQueryResponse,
-  GET_ACTIVE_SESSIONS,
-  GetMySessionsQueryResponse,
-  GET_MY_SESSIONS,
-} from "./queries"
-import { useGetCurrentNetwork } from "@state/application/hooks"
 
 const GRAPHQL_ENDPOINT = process.env.GATSBY_APP_SUBGRAPH_ENDPOINT
 
@@ -89,16 +86,88 @@ const modifyTimeAndSession = (
     endTime =
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 2 * 1000
-  } else if (sessionStatus == 1) {
-    endTime = endTime + Number(pricingSessionData.votingTime) * 1000
+  } else if (sessionStatus === 1) {
+    endTime += Number(pricingSessionData.votingTime) * 1000
     if (currentTime >= endTime) {
       sessionStatus = 2
     }
-  } else if (sessionStatus == 0 && currentTime > endTime) {
+  } else if (sessionStatus === 0 && currentTime > endTime) {
     sessionStatus = 1
-    endTime = endTime + Number(pricingSessionData.votingTime) * 1000
+    endTime += Number(pricingSessionData.votingTime) * 1000
   }
   return { endTime, sessionStatus }
+}
+
+export const useCurrentSessionStatus = () =>
+  useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionStatus"]
+  >(currentSessionStatusSelector)
+
+export const useCurrentSessionData = () =>
+  useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["sessionData"]
+  >(currentSessionDataSelector)
+
+export const useMultiSessionState = () =>
+  useSelector<AppState, AppState["sessionData"]["multiSessionState"]>(
+    multiSessionStateSelector
+  )
+export const useCurrentSessionFetchStatus = () =>
+  useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["fetchStatus"]
+  >(currentSessionFetchStatusSelector)
+
+export const useMultiSessionData = () =>
+  useSelector<
+    AppState,
+    AppState["sessionData"]["multiSessionState"]["multiSessionData"]
+  >((state) => state.sessionData.multiSessionState.multiSessionData)
+
+export const useMySessionsState = () =>
+  useSelector<AppState, AppState["sessionData"]["mySessionsState"]>(
+    mySessionsStateSelector
+  )
+
+export const useActiveSessionsState = () =>
+  useSelector<AppState, AppState["sessionData"]["activeSessionsState"]>(
+    activeSessionsStateSelector
+  )
+
+export const useCurrentSessionUserStatus = () =>
+  useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >(currentSessionUserStatusSelector)
+
+export const useCanUserInteract = () => {
+  const sessionStatus = useCurrentSessionStatus()
+  const userStatus = useSelector<
+    AppState,
+    AppState["sessionData"]["currentSessionData"]["userStatus"]
+  >((state) => state.sessionData.currentSessionData.userStatus)
+
+  switch (sessionStatus) {
+    case SessionState.Vote:
+      return (
+        userStatus === UserState.NotVoted ||
+        userStatus === UserState.CompletedVote
+      )
+    case SessionState.Weigh:
+      return userStatus === UserState.CompletedVote
+    case SessionState.SetFinalAppraisal:
+      return true
+    case SessionState.Harvest:
+      return userStatus === UserState.CompletedWeigh
+    case SessionState.Claim:
+      return userStatus === UserState.CompletedHarvest
+    case SessionState.Complete:
+      return true
+    default:
+      return false
+  }
 }
 
 export const useRetrieveClaimData = () => {
@@ -123,7 +192,13 @@ export const useRetrieveClaimData = () => {
       ethClaimAmount: Number(formatEther(getEthPayout)),
     }
     dispatch(setClaimPosition(claimData))
-  }, [dispatch, sessionData, networkSymbol])
+  }, [
+    getPricingSessionContract,
+    networkSymbol,
+    sessionData.address,
+    sessionData.tokenId,
+    dispatch,
+  ])
 }
 
 const findAsset = (
@@ -131,7 +206,7 @@ const findAsset = (
   session: SubgraphPricingSession
 ) => {
   const ret = assets.find(
-    asset =>
+    (asset) =>
       asset.asset_contract.address === session.nftAddress &&
       asset.token_id === String(session.tokenId)
   )
@@ -274,7 +349,7 @@ export const useGetActiveSessionsData = () => {
       )
       if (user) {
         const { votes } = user
-        const pricingSessions = _.map(votes, i => i.pricingSession)
+        const pricingSessions = _.map(votes, (i) => i.pricingSession)
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
         dispatch(setActiveSessionsData(sessionData))
       } else {
@@ -325,7 +400,7 @@ export const useGetCurrentSessionDataGRT = () => {
       dispatch(setCurrentSessionFetchStatus(PromiseStatus.Pending))
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
       try {
-        let URL = `asset/${address}/${tokenId}`
+        const URL = `asset/${address}/${tokenId}`
         const [data, asset] = await Promise.all([
           axios.post<GetPricingSessionQueryResponse>(
             GRAPHQL_ENDPOINT,
@@ -340,7 +415,7 @@ export const useGetCurrentSessionDataGRT = () => {
           ),
           openseaGet(URL),
         ])
-        const pricingSession = data.data.data.pricingSession
+        const { pricingSession } = data.data.data
 
         let ethUsd
         try {
@@ -351,7 +426,7 @@ export const useGetCurrentSessionDataGRT = () => {
         }
 
         const { endTime, sessionStatus } = modifyTimeAndSession(
-          "" + pricingSession.sessionStatus,
+          `${pricingSession.sessionStatus}`,
           pricingSession,
           pricingSession
         )
@@ -392,17 +467,22 @@ export const useGetCurrentSessionDataGRT = () => {
         const currentSessionData: CurrentSessionState = {
           sessionData,
           userStatus,
-          sessionStatus: sessionStatus,
+          sessionStatus,
         }
         dispatch(getCurrentSessionData(currentSessionData))
         dispatch(setCurrentSessionFetchStatus(PromiseStatus.Resolved))
       } catch (e) {
-        console.error(e)
         dispatch(setCurrentSessionFetchStatus(PromiseStatus.Rejected))
         dispatch(setCurrentSessionErrorMessage("Failed to get Session Data"))
       }
     },
-    [networkSymbol]
+    [
+      account,
+      dispatch,
+      getEthUsdContract,
+      getPricingSessionContract,
+      networkSymbol,
+    ]
   )
 }
 
@@ -411,7 +491,7 @@ export const useGetCurrentSessionData = () => {
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
@@ -420,7 +500,7 @@ export const useGetCurrentSessionData = () => {
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
 
-      let URL = `asset/${address}/${tokenId}`
+      const URL = `asset/${address}/${tokenId}`
       const [
         pricingSessionMetadata,
         pricingSessionCore,
@@ -463,9 +543,9 @@ export const useGetCurrentSessionData = () => {
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
           Number(ethUsd),
         nftName: pricingSessionMetadata?.name,
-        address: address,
-        tokenId: tokenId,
-        nonce: nonce,
+        address,
+        tokenId,
+        nonce,
         finalAppraisalValue:
           sessionStatus >= 3
             ? Number(formatEther(finalAppraisalValue))
@@ -490,11 +570,17 @@ export const useGetCurrentSessionData = () => {
       const currentSessionData: CurrentSessionState = {
         sessionData,
         userStatus,
-        sessionStatus: sessionStatus,
+        sessionStatus,
       }
       dispatch(getCurrentSessionData(currentSessionData))
     },
-    [dispatch, account, getPricingSessionContract, networkSymbol, chainId]
+    [
+      getPricingSessionContract,
+      networkSymbol,
+      getEthUsdContract,
+      account,
+      dispatch,
+    ]
   )
 }
 
@@ -517,76 +603,4 @@ export const useGetUserStatus = () => {
     },
     [account, dispatch, getPricingSessionContract, networkSymbol]
   )
-}
-
-export const useCurrentSessionStatus = () =>
-  useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionStatus"]
-  >(currentSessionStatusSelector)
-
-export const useCurrentSessionData = () =>
-  useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["sessionData"]
-  >(currentSessionDataSelector)
-
-export const useMultiSessionState = () =>
-  useSelector<AppState, AppState["sessionData"]["multiSessionState"]>(
-    multiSessionStateSelector
-  )
-export const useCurrentSessionFetchStatus = () =>
-  useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["fetchStatus"]
-  >(currentSessionFetchStatusSelector)
-
-export const useMultiSessionData = () =>
-  useSelector<
-    AppState,
-    AppState["sessionData"]["multiSessionState"]["multiSessionData"]
-  >(state => state.sessionData.multiSessionState.multiSessionData)
-
-export const useMySessionsState = () =>
-  useSelector<AppState, AppState["sessionData"]["mySessionsState"]>(
-    mySessionsStateSelector
-  )
-
-export const useActiveSessionsState = () =>
-  useSelector<AppState, AppState["sessionData"]["activeSessionsState"]>(
-    activeSessionsStateSelector
-  )
-
-export const useCurrentSessionUserStatus = () =>
-  useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(currentSessionUserStatusSelector)
-
-export const useCanUserInteract = () => {
-  const sessionStatus = useCurrentSessionStatus()
-  const userStatus = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
-
-  switch (sessionStatus) {
-    case SessionState.Vote:
-      return (
-        userStatus === UserState.NotVoted ||
-        userStatus === UserState.CompletedVote
-      )
-    case SessionState.Weigh:
-      return userStatus === UserState.CompletedVote
-    case SessionState.SetFinalAppraisal:
-      return true
-    case SessionState.Harvest:
-      return userStatus === UserState.CompletedWeigh
-    case SessionState.Claim:
-      return userStatus === UserState.CompletedHarvest
-    case SessionState.Complete:
-      return true
-    default:
-      return false
-  }
 }
