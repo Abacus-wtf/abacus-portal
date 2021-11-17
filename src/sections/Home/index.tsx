@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react"
-import styled from "styled-components"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
-import BackgroundSource from "@images/title_bg.png"
 import Button, { ButtonsWhite } from "@components/Button"
 import SearchBar from "@components/SeachBar"
 import Card from "@components/Card"
@@ -14,41 +12,12 @@ import { AppState } from "@state/index"
 import _ from "lodash"
 import Link from "gatsby-link"
 import { PromiseStatus } from "@models/PromiseStatus"
-
-const BackgroundIMG = styled.img.attrs({
-  src: BackgroundSource,
-})`
-  position: absolute;
-  transform: rotate(30deg);
-  filter: blur(4px);
-  opacity: 0.4;
-  height: 450px;
-  z-index: -1;
-  top: 0;
-`
-
-const HeaderBar = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  margin-bottom: 45px;
-`
-
-const HeaderBarContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  grid-gap: 12px;
-  max-height: 38px;
-`
-
-const CardContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 20px;
-  row-gap: 40px;
-`
-
+import {
+  BackgroundIMG,
+  HeaderBar,
+  CardContainer
+} from './Home.styles'
+ 
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
   const { multiSessionData, fetchStatus, errorMessage } = useMultiSessionState()

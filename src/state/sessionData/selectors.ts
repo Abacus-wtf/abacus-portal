@@ -15,7 +15,7 @@ const defaultSessionData: AppState["sessionData"]["currentSessionData"]["session
   ownerAddress: "",
   nonce: 0,
   maxAppraisal: 0,
-  bounty: 0
+  bounty: 0,
 }
 
 export const multiSessionStateSelector = (
@@ -42,3 +42,13 @@ export const currentSessionUserStatusSelector = (
   state: AppState
 ): AppState["sessionData"]["currentSessionData"]["userStatus"] =>
   state?.sessionData?.currentSessionData?.userStatus ?? -1
+
+export const mySessionsStateSelector = (
+  state: AppState
+): AppState["sessionData"]["mySessionsState"] =>
+  state.sessionData.mySessionsState
+
+export const activeSessionsStateSelector = (
+  state: AppState
+): AppState["sessionData"]["activeSessionsState"] =>
+  state.sessionData.activeSessionsState
