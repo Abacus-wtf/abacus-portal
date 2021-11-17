@@ -2,7 +2,6 @@ import React, { useEffect } from "react"
 import { Title, SmallUniversalContainer } from "@components/global.styles"
 import { useAuctionData, useSetAuctionData } from "@state/miscData/hooks"
 import { ButtonsWhite } from "@components/Button"
-import Link from "gatsby-link"
 import _ from "lodash"
 import {
   SplitContainer,
@@ -16,6 +15,7 @@ import { shortenAddress } from "@config/utils"
 import { useActiveWeb3React } from "@hooks/index"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
 import { useGetCurrentNetwork } from "@state/application/hooks"
+import { OutboundLink } from "gatsby-plugin-google-gtag"
 
 const Auction = () => {
   const { account } = useActiveWeb3React()
@@ -65,8 +65,8 @@ const Auction = () => {
             <ButtonsWhite
               style={{ borderRadius: 8 }}
               target={"_blank"}
-              to={`https://opensea.io/assets/${optionalInfo.highestNftAddress}/${optionalInfo.highestNftTokenId}`}
-              as={Link}
+              href={`https://opensea.io/assets/${optionalInfo.highestNftAddress}/${optionalInfo.highestNftTokenId}`}
+              as={OutboundLink}
             >
               OpenSea
             </ButtonsWhite>
@@ -79,12 +79,12 @@ const Auction = () => {
               </Title>
               <SubText>
                 Highest Bounty by{" "}
-                <Link
+                <OutboundLink
                   target={"_blank"}
-                  to={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
+                  href={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
                 >
                   {shortenAddress(optionalInfo.highestBidderAddress)}
-                </Link>
+                </OutboundLink>
               </SubText>
             </VerticalSmallGapContainer>
             <RightSection />

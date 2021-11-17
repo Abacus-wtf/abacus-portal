@@ -17,11 +17,17 @@ module.exports = {
   pathPrefix: "__PATH_PREFIX__",
   plugins: [
     {
-      resolve: `gatsby-plugin-google-analytics`,
+      resolve: `gatsby-plugin-google-gtag`,
       options: {
-        trackingId: "G-0NEGLJHXHQ",
-        head: true,
-        anonymize: true,
+        trackingIds: ["G-0NEGLJHXHQ"],
+        gtagConfig: {
+          anonymize_ip: true,
+          cookie_expires: 0,
+        },
+        pluginConfig: {
+          head: false,
+          respectDNT: true,
+        },
       },
     },
     `gatsby-plugin-react-helmet`,
@@ -31,12 +37,6 @@ module.exports = {
       options: {
         prefix: `__PATH_PREFIX__`,
         pattern: /^(\/bzz:\/[^/]+)/, // use /^(\/(?:ipfs|ipns)\/[^/]+)/ for IPFS
-      },
-    },
-    {
-      resolve: "gatsby-plugin-generate-types",
-      options: {
-        inProduction: true,
       },
     },
     {
