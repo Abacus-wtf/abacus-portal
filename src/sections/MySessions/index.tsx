@@ -76,7 +76,7 @@ const MySessions: React.FC = () => {
               <UniversalContainer style={{ alignItems: "center" }}>
                 {isMySessions
                   ? "We have not found any sessions created by you"
-                  : "We have not found any sessions you are participating in"}
+                  : "We have not found any sessions you participated in"}
               </UniversalContainer>
             )}
             <CardContainer>

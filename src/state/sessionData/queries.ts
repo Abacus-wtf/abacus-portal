@@ -74,7 +74,7 @@ export type GetMySessionsQueryResponse = {
 
 export const GET_MY_SESSIONS = (userId: string) => `
   query GetMySessions {
-    user(id:"${userId}") {
+    user(id: "${userId}") {
       creatorOf {
         id
         nftAddress
@@ -96,15 +96,15 @@ export const GET_MY_SESSIONS = (userId: string) => `
 export type GetActiveSessionsQueryResponse = {
   data: {
     user: {
-      votes: SubgraphPricingSession[]
+      votes: {pricingSession: SubgraphPricingSession}[]
     } | null
   }
 }
 
 export const GET_ACTIVE_SESSIONS = (userId: string) => `
   query GetActiveSessions {
-    user(id:"${userId}") {
-      votes(first: 20) {
+    user(id: "${userId}") {
+      votes {
         pricingSession {
           id
           nftAddress

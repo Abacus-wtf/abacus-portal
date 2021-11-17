@@ -216,7 +216,7 @@ export const useGetMySessionsData = () => {
       } = await axios.post<GetMySessionsQueryResponse>(
         GRAPHQL_ENDPOINT,
         {
-          query: GET_MY_SESSIONS(account),
+          query: GET_MY_SESSIONS(account.toLowerCase()),
         },
         {
           headers: {
@@ -256,7 +256,7 @@ export const useGetActiveSessionsData = () => {
       } = await axios.post<GetActiveSessionsQueryResponse>(
         GRAPHQL_ENDPOINT,
         {
-          query: GET_ACTIVE_SESSIONS(account),
+          query: GET_ACTIVE_SESSIONS(account.toLowerCase()),
         },
         {
           headers: {
@@ -265,7 +265,8 @@ export const useGetActiveSessionsData = () => {
         }
       )
       if (user) {
-        const { votes: pricingSessions } = user
+        const { votes } = user
+        const pricingSessions = _.map(votes, (i) => i.pricingSession)
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
         dispatch(setActiveSessionsData(sessionData))
       } else {
