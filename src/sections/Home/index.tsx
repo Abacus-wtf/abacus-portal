@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import styled from "styled-components"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
 import Button, { ButtonsWhite } from "@components/Button"
 import SearchBar from "@components/SeachBar"
@@ -7,26 +8,32 @@ import {
   useGetMultiSessionData,
   useMultiSessionState,
 } from "@state/sessionData/hooks"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import _ from "lodash"
 import Link from "gatsby-link"
 import { PromiseStatus } from "@models/PromiseStatus"
-import {
-  BackgroundIMG,
-  HeaderBar,
-  CardContainer
-} from './Home.styles'
- 
+import { BackgroundIMG, HeaderBar, CardContainer } from "./Home.styles"
+
+import { useGetCurrentNetwork } from "@state/application/hooks"
+
+const HeaderBarContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  grid-gap: 12px;
+  max-height: 38px;
+`
+
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
   const { multiSessionData, fetchStatus, errorMessage } = useMultiSessionState()
   const [searchValue, setSearchValue] = useState("")
   const isLoading = fetchStatus === PromiseStatus.Pending
+  const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
-    getMultiSessionData()
-  }, [])
+    if (networkSymbol) {
+      getMultiSessionData()
+    }
+  }, [networkSymbol])
 
   return (
     <UniversalContainer>
@@ -39,14 +46,14 @@ const Home: React.FC = () => {
             Sessions
           </Subheader>
         </div>
-        {/*<HeaderBarContainer>
-          <ButtonsWhite>Filter</ButtonsWhite>
+        <HeaderBarContainer>
+          {/*<ButtonsWhite>Filter</ButtonsWhite>
           <SearchBar
             input={searchValue}
             changeInput={input => setSearchValue(input)}
             placeholder={"Find something"}
             onEnter={() => {}}
-          />
+          />*/}
           <Button
             style={{ display: "flex", alignItems: "center" }}
             as={Link}
@@ -54,7 +61,7 @@ const Home: React.FC = () => {
           >
             Create Session
           </Button>
-        </HeaderBarContainer>*/}
+        </HeaderBarContainer>
       </HeaderBar>
       {isLoading ? (
         <UniversalContainer style={{ alignItems: "center" }}>

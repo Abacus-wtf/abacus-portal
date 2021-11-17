@@ -11,7 +11,7 @@ import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
-export const useOnClaimPayout = () => {
+export const useOnCreateNewSession = () => {
   const { account, library } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
@@ -20,8 +20,8 @@ export const useOnClaimPayout = () => {
   const addTransaction = useTransactionAdder()
   const networkSymbol = useGetCurrentNetwork()
 
-  const onClaim = useCallback(
-    async (isEth: boolean, amount: string) => {
+  const onCreateNewSession = useCallback(
+    async (nftAddress: string, tokenId: string, initAppraisal: string, votingTime: number, cb: () => void, bounty?: string) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -33,17 +33,21 @@ export const useOnClaimPayout = () => {
         library,
         account
       )
-      method = pricingSessionContract.claimProfitsEarned
-      estimate = pricingSessionContract.estimateGas.claimProfitsEarned
+      method = pricingSessionContract.createNewSession
+      estimate = pricingSessionContract.estimateGas.createNewSession
       args = [
-        isEth ? 1 : 2,
-        parseEther(amount)
+        nftAddress,
+        tokenId,
+        parseEther(initAppraisal),
+        votingTime
       ]
-      value = null
+      value = bounty ? parseEther(bounty) : null
       const txnCb = async (response: any) => {
         addTransaction(response, {
-          summary: "Claim Payout",
+          summary: "Create New Session",
         })
+        await response.wait()
+        cb()
       }
       await generalizedContractCall({
         method,
@@ -56,7 +60,7 @@ export const useOnClaimPayout = () => {
     [account, library, sessionData, networkSymbol]
   )
   return {
-    onClaim,
+    onCreateNewSession,
     isPending,
   }
 }

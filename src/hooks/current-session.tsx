@@ -9,6 +9,7 @@ import { useGeneralizedContractCall } from "./"
 import { useActiveWeb3React } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
+import {useGetCurrentNetwork} from '@state/application/hooks'
 
 
 export const useOnAddToBountyVote = () => {
@@ -16,6 +17,7 @@ export const useOnAddToBountyVote = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onAddToBounty = useCallback(
     async (amount: string) => {
@@ -25,7 +27,7 @@ export const useOnAddToBountyVote = () => {
         value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -47,7 +49,7 @@ export const useOnAddToBountyVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, generalizedContractCall, addTransaction]
+    [account, library, sessionData, generalizedContractCall, addTransaction, networkSymbol]
   )
   return {
     onAddToBounty,
@@ -60,6 +62,7 @@ export const useOnSubmitVote = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onSubmitVote = useCallback(
     async (hash: string, stake: string) => {
@@ -69,7 +72,7 @@ export const useOnSubmitVote = () => {
         value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -91,7 +94,7 @@ export const useOnSubmitVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, generalizedContractCall, addTransaction]
+    [account, library, sessionData, generalizedContractCall, addTransaction, networkSymbol]
   )
   return {
     onSubmitVote,
@@ -104,6 +107,7 @@ export const useOnUpdateVote = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onUpdateVote = useCallback(
     async (hash: string) => {
@@ -113,7 +117,7 @@ export const useOnUpdateVote = () => {
         value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -135,7 +139,7 @@ export const useOnUpdateVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, generalizedContractCall, addTransaction]
+    [account, library, sessionData, generalizedContractCall, addTransaction, networkSymbol]
   )
   return {
     onUpdateVote,
@@ -148,6 +152,7 @@ export const useOnWeightVote = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onWeightVote = useCallback(
     async (
@@ -161,7 +166,7 @@ export const useOnWeightVote = () => {
         value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -189,7 +194,7 @@ export const useOnWeightVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData]
+    [account, library, sessionData, networkSymbol]
   )
   return {
     onWeightVote,
@@ -202,6 +207,7 @@ export const useOnSetFinalAppraisal = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onSetFinalAppraisal = useCallback(async () => {
     let estimate,
@@ -210,7 +216,7 @@ export const useOnSetFinalAppraisal = () => {
       value: BigNumber | null
 
     const pricingSessionContract = getContract(
-      ABC_PRICING_SESSION_ADDRESS,
+      ABC_PRICING_SESSION_ADDRESS(networkSymbol),
       ABC_PRICING_SESSION_ABI,
       library,
       account
@@ -231,7 +237,7 @@ export const useOnSetFinalAppraisal = () => {
       value,
       cb: txnCb,
     })
-  }, [account, library, sessionData])
+  }, [account, library, sessionData, networkSymbol])
   return {
     onSetFinalAppraisal,
     isPending,
@@ -243,6 +249,7 @@ export const useOnHarvest = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onHarvest = useCallback(async () => {
     let estimate,
@@ -251,7 +258,7 @@ export const useOnHarvest = () => {
       value: BigNumber | null
 
     const pricingSessionContract = getContract(
-      ABC_PRICING_SESSION_ADDRESS,
+      ABC_PRICING_SESSION_ADDRESS(networkSymbol),
       ABC_PRICING_SESSION_ABI,
       library,
       account
@@ -272,7 +279,7 @@ export const useOnHarvest = () => {
       value,
       cb: txnCb,
     })
-  }, [account, library, sessionData])
+  }, [account, library, sessionData, networkSymbol])
   return {
     onHarvest,
     isPending,
@@ -284,6 +291,7 @@ export const useOnClaim = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onClaim = useCallback(
     async () => {
@@ -293,7 +301,7 @@ export const useOnClaim = () => {
         value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS,
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -318,7 +326,7 @@ export const useOnClaim = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData]
+    [account, library, sessionData, networkSymbol]
   )
   return {
     onClaim,
@@ -331,6 +339,7 @@ export const useOnEndSession = () => {
   const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall()
   const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
 
   const onEndSession = useCallback(async () => {
     let estimate,
@@ -339,7 +348,7 @@ export const useOnEndSession = () => {
       value: BigNumber | null
 
     const pricingSessionContract = getContract(
-      ABC_PRICING_SESSION_ADDRESS,
+      ABC_PRICING_SESSION_ADDRESS(networkSymbol),
       ABC_PRICING_SESSION_ABI,
       library,
       account
@@ -360,9 +369,10 @@ export const useOnEndSession = () => {
       value,
       cb: txnCb,
     })
-  }, [account, library, sessionData])
+  }, [account, library, sessionData, networkSymbol])
   return {
     onEndSession,
     isPending,
   }
 }
+

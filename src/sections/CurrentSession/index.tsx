@@ -5,11 +5,11 @@ import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
   useGetCurrentSessionDataGRT,
-  useCurrentSessionFetchStatus
+  useCurrentSessionFetchStatus,
+  useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
-import Link from "gatsby-link"
 import _ from "lodash"
 import CurrentState from "./CurrentState"
 import { useActiveWeb3React } from "@hooks/index"
@@ -21,14 +21,18 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { OutboundLink } from "gatsby-plugin-google-gtag"
 
 const CurrentSession = ({ location }) => {
   const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
-  const { account } = useActiveWeb3React()
+  const getCurrentSessionData = useGetCurrentSessionData()
+  const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const isLoading = fetchStatus === PromiseStatus.Pending
+  const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,12 +43,18 @@ const CurrentSession = ({ location }) => {
     if (!address || !tokenId || !nonce) {
       alert("This is a broken link, we are redirecting you to the home page.")
       navigate("/")
-    } else {
-      if (account) {
-        loadData()
-      }
+    } else if (account && chainId && networkSymbol) {
+      loadData()
     }
-  }, [address, tokenId, nonce, account])
+  }, [
+    address,
+    tokenId,
+    nonce,
+    account,
+    networkSymbol,
+    chainId,
+    getCurrentSessionDataGRT,
+  ])
 
   if (!account) {
     return (
@@ -74,8 +84,8 @@ const CurrentSession = ({ location }) => {
           <ButtonsWhite
             style={{ borderRadius: 8 }}
             target={"_blank"}
-            to={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
-            as={Link}
+            href={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
+            as={OutboundLink}
           >
             OpenSea
           </ButtonsWhite>
@@ -88,9 +98,12 @@ const CurrentSession = ({ location }) => {
             </Title>
             <SubText>
               Owned by{" "}
-              <Link to={`https://opensea.io/assets/${sessionData.ownerAddress}`}>
+              <OutboundLink
+                target={"_blank"}
+                href={`https://opensea.io/assets/${sessionData.ownerAddress}`}
+              >
                 {sessionData.owner}
-              </Link>
+              </OutboundLink>
             </SubText>
           </VerticalSmallGapContainer>
           <CurrentState />
