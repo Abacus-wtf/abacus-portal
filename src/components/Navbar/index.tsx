@@ -65,9 +65,9 @@ const Navbar = ({location}) => {
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
         <LinkList>
-          <HeaderLink as={Link} to="/" active={(location.pathname === '/').toString()}>
+          {/*<HeaderLink as={Link} to="/" active={(location.pathname === '/').toString()}>
             Explore
-          </HeaderLink>
+          </HeaderLink>*/}
           <HeaderLink as={Link} to="/" active={(location.pathname === '/').toString()}>
             Auction
           </HeaderLink>
