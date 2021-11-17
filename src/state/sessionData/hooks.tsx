@@ -65,7 +65,16 @@ import {
   activeSessionsStateSelector,
 } from "./selectors"
 
-const GRAPHQL_ENDPOINT = process.env.GATSBY_APP_SUBGRAPH_ENDPOINT
+const GRAPHQL_ENDPOINT = (networkSymbol: NetworkSymbolEnum): string => {
+  switch (networkSymbol) {
+    case NetworkSymbolEnum.ETH:
+      return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ETH
+    case NetworkSymbolEnum.ARBITRUM:
+      return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ARBITRUM
+    default:
+      return ""
+  }
+}
 
 const modifyTimeAndSession = (
   getStatus: string,
@@ -252,6 +261,7 @@ const parseSubgraphPricingSessions = async (
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
     dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
@@ -262,7 +272,7 @@ export const useGetMultiSessionData = () => {
           data: { pricingSessions },
         },
       } = await axios.post<GetPricingSessionsQueryResponse>(
-        GRAPHQL_ENDPOINT,
+        GRAPHQL_ENDPOINT(networkSymbol),
         {
           query: GET_PRICING_SESSIONS,
         },
@@ -278,12 +288,13 @@ export const useGetMultiSessionData = () => {
     } catch {
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
     }
-  }, [dispatch])
+  }, [dispatch, networkSymbol])
 }
 
 export const useGetMySessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { account } = useActiveWeb3React()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
     if (!account) {
@@ -297,7 +308,7 @@ export const useGetMySessionsData = () => {
           data: { user },
         },
       } = await axios.post<GetMySessionsQueryResponse>(
-        GRAPHQL_ENDPOINT,
+        GRAPHQL_ENDPOINT(networkSymbol),
         {
           query: GET_MY_SESSIONS(account.toLowerCase()),
         },
@@ -318,12 +329,13 @@ export const useGetMySessionsData = () => {
     } catch {
       dispatch(setMySessionsFetchStatus(PromiseStatus.Rejected))
     }
-  }, [dispatch, account])
+  }, [account, dispatch, networkSymbol])
 }
 
 export const useGetActiveSessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { account } = useActiveWeb3React()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
     if (!account) {
@@ -337,7 +349,7 @@ export const useGetActiveSessionsData = () => {
           data: { user },
         },
       } = await axios.post<GetActiveSessionsQueryResponse>(
-        GRAPHQL_ENDPOINT,
+        GRAPHQL_ENDPOINT(networkSymbol),
         {
           query: GET_ACTIVE_SESSIONS(account.toLowerCase()),
         },
@@ -359,7 +371,7 @@ export const useGetActiveSessionsData = () => {
     } catch {
       dispatch(setActiveSessionsFetchStatus(PromiseStatus.Rejected))
     }
-  }, [dispatch, account])
+  }, [account, dispatch, networkSymbol])
 }
 
 type GetUserStatusParams = {
@@ -403,7 +415,7 @@ export const useGetCurrentSessionDataGRT = () => {
         const URL = `asset/${address}/${tokenId}`
         const [data, asset] = await Promise.all([
           axios.post<GetPricingSessionQueryResponse>(
-            GRAPHQL_ENDPOINT,
+            GRAPHQL_ENDPOINT(networkSymbol),
             {
               query: GET_PRICING_SESSION(`${address}/${tokenId}/${nonce}`),
             },
