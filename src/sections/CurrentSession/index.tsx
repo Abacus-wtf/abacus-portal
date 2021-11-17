@@ -10,7 +10,6 @@ import {
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
-import Link from "gatsby-link"
 import _ from "lodash"
 import CurrentState from "./CurrentState"
 import { useActiveWeb3React } from "@hooks/index"
@@ -54,7 +53,7 @@ const CurrentSession = ({ location }) => {
     account,
     networkSymbol,
     chainId,
-    getCurrentSessionData,
+    getCurrentSessionDataGRT,
   ])
 
   if (!account) {
