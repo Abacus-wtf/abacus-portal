@@ -5,10 +5,6 @@ import sessionData from "./sessionData/reducer"
 import transactions from "./transactions/reducer"
 import miscData from "./miscData/reducer"
 
-const PERSISTED_KEYS: string[] = []
-
-export const updateVersion = createAction<void>("global/updateVersion")
-
 const store = configureStore({
   reducer: {
     application,

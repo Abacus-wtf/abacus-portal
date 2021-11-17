@@ -11,11 +11,19 @@ interface OptionalAuctionInfo {
   highestNftName: string
 }
 
+export interface ExistingBidInfo {
+  bid: string
+  nftAddress: string
+  tokenId: string
+  initialAppraisal: string
+}
+
 export interface AuctionData {
   endTime: number
   highestBid: number
   highestBidDollars: number
   optionalInfo?: OptionalAuctionInfo
+  existingBidInfo?: ExistingBidInfo
 }
 
 export interface ClaimData {

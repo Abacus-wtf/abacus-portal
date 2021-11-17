@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { AppState } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
@@ -23,11 +23,17 @@ import {
   ClaimState,
 } from "./reducer"
 import { AppDispatch } from "../index"
-import { useWeb3Contract, useActiveWeb3React } from "@hooks/index"
+import {
+  useWeb3Contract,
+  useActiveWeb3React,
+  useWeb3EthContract,
+} from "@hooks/index"
 import {
   ABC_PRICING_SESSION_ADDRESS,
   CURRENT_SESSIONS,
   ETH_USD_ORACLE_ADDRESS,
+  CURRENT_SESSIONS as CURRENT_SESSIONS_NETWORK,
+  NetworkSymbolEnum,
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
@@ -60,6 +66,7 @@ import {
   GetMySessionsQueryResponse,
   GET_MY_SESSIONS,
 } from "./queries"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 const GRAPHQL_ENDPOINT = process.env.GATSBY_APP_SUBGRAPH_ENDPOINT
 
@@ -98,10 +105,11 @@ export const useRetrieveClaimData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const sessionData = useCurrentSessionData()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
     const pricingSession = getPricingSessionContract(
-      ABC_PRICING_SESSION_ADDRESS
+      ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
     const [getEthPayout, ethToAbc] = await Promise.all([
       pricingSession.methods
@@ -115,7 +123,7 @@ export const useRetrieveClaimData = () => {
       ethClaimAmount: Number(formatEther(getEthPayout)),
     }
     dispatch(setClaimPosition(claimData))
-  }, [dispatch, sessionData])
+  }, [dispatch, sessionData, networkSymbol])
 }
 
 const findAsset = (
@@ -266,7 +274,7 @@ export const useGetActiveSessionsData = () => {
       )
       if (user) {
         const { votes } = user
-        const pricingSessions = _.map(votes, (i) => i.pricingSession)
+        const pricingSessions = _.map(votes, i => i.pricingSession)
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
         dispatch(setActiveSessionsData(sessionData))
       } else {
@@ -284,15 +292,19 @@ type GetUserStatusParams = {
   getPricingSessionContract: ReturnType<typeof useWeb3Contract>
   address: string
   tokenId: string
+  networkSymbol: NetworkSymbolEnum
 }
 const getUserStatus = async ({
   account,
   getPricingSessionContract,
   address,
   tokenId,
+  networkSymbol,
 }: GetUserStatusParams) => {
   let getVoterCheck = -1
-  const pricingSession = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS)
+  const pricingSession = getPricingSessionContract(
+    ABC_PRICING_SESSION_ADDRESS(networkSymbol)
+  )
   if (account) {
     getVoterCheck = await pricingSession.methods
       .getVoterCheck(address, tokenId, account)
@@ -306,6 +318,7 @@ export const useGetCurrentSessionDataGRT = () => {
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
   const { account } = useActiveWeb3React()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
@@ -373,6 +386,7 @@ export const useGetCurrentSessionDataGRT = () => {
           account,
           getPricingSessionContract,
           tokenId,
+          networkSymbol,
         })
 
         const currentSessionData: CurrentSessionState = {
@@ -388,20 +402,21 @@ export const useGetCurrentSessionDataGRT = () => {
         dispatch(setCurrentSessionErrorMessage("Failed to get Session Data"))
       }
     },
-    []
+    [networkSymbol]
   )
 }
 
 export const useGetCurrentSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
-  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
-  const { account } = useActiveWeb3React()
+  const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
+  const networkSymbol = useGetCurrentNetwork()
+  const { account, chainId } = useActiveWeb3React()
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
       const pricingSession = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol)
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
 
@@ -469,6 +484,7 @@ export const useGetCurrentSessionData = () => {
         account,
         getPricingSessionContract,
         tokenId,
+        networkSymbol,
       })
 
       const currentSessionData: CurrentSessionState = {
@@ -478,7 +494,7 @@ export const useGetCurrentSessionData = () => {
       }
       dispatch(getCurrentSessionData(currentSessionData))
     },
-    [dispatch, account, getPricingSessionContract]
+    [dispatch, account, getPricingSessionContract, networkSymbol, chainId]
   )
 }
 
@@ -486,6 +502,7 @@ export const useGetUserStatus = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const { account } = useActiveWeb3React()
+  const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(
     async (address: string, tokenId: string) => {
@@ -494,10 +511,11 @@ export const useGetUserStatus = () => {
         account,
         getPricingSessionContract,
         tokenId,
+        networkSymbol,
       })
       dispatch(setUserStatus(userStatus))
     },
-    [account, dispatch, getPricingSessionContract]
+    [account, dispatch, getPricingSessionContract, networkSymbol]
   )
 }
 
