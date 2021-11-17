@@ -63,8 +63,15 @@ export async function openseaGet<T = OpenSeaAsset>(input: string) {
   }
 }
 
-export async function openseaGetMany(input: string) {
-  const result = await openseaGet<OpenSeaGetResponse>(input)
+export type OpenSeaGetManyParams = { nftAddress: string; tokenId: string }[]
+
+export async function openseaGetMany(pricingSessions: OpenSeaGetManyParams) {
+  const URL = `assets?${pricingSessions
+    .map(session => `asset_contract_addresses=${session.nftAddress}&`)
+    .toString()}${pricingSessions
+    .map(session => `token_ids=${session.tokenId}&`)
+    .toString()}`
+  const result = await openseaGet<OpenSeaGetResponse>(URL.replaceAll(",", ""))
   return result
 }
 
