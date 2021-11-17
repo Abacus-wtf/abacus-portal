@@ -1,12 +1,13 @@
 import { AbstractConnector } from "@web3-react/abstract-connector"
+import { InjectedConnector } from "@web3-react/injected-connector"
 import Web3 from "web3"
 import {
   fortmatic,
   portis,
   walletconnect,
   walletlink,
-  injected,
   network,
+  InjectedConnectorProps,
 } from "./connectors"
 
 export declare enum ChainId {
@@ -186,7 +187,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     primary: true
   },*/
   METAMASK: {
-    connector: injected,
+    connector: new InjectedConnector(InjectedConnectorProps),
     name: "MetaMask",
     iconName: "metamask.png",
     description: "Easy-to-use browser extension.",
