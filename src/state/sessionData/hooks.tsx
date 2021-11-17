@@ -228,10 +228,7 @@ export const useGetMySessionsData = () => {
       } = await axios.post<GetMySessionsQueryResponse>(
         GRAPHQL_ENDPOINT,
         {
-          query: GET_MY_SESSIONS(
-            "0x4af8c784213a4c2f2a2681c3b3a62104cf5239a8",
-            page
-          ),
+          query: GET_MY_SESSIONS(account.toLowerCase(), page),
         },
         {
           headers: {
@@ -273,10 +270,7 @@ export const useGetActiveSessionsData = () => {
       } = await axios.post<GetActiveSessionsQueryResponse>(
         GRAPHQL_ENDPOINT,
         {
-          query: GET_ACTIVE_SESSIONS(
-            "0x4af8c784213a4c2f2a2681c3b3a62104cf5239a8",
-            page
-          ),
+          query: GET_ACTIVE_SESSIONS(account.toLowerCase(), page),
         },
         {
           headers: {
