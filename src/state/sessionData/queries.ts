@@ -1,3 +1,5 @@
+import { PAGINATE_BY } from "./constants"
+
 export type SubgraphPricingSession = {
   id: string
   nftAddress: string
@@ -20,9 +22,11 @@ export type GetPricingSessionsQueryResponse = {
   }
 }
 
-export const GET_PRICING_SESSIONS = `
+export const GET_PRICING_SESSIONS = (page: number) => `
   query GetPricingSessions {
-    pricingSessions(first: 20) {
+    pricingSessions(first: ${PAGINATE_BY}, orderBy: createdAt, skip: ${
+  page * PAGINATE_BY
+}) {
       id
       nftAddress
       tokenId
@@ -72,10 +76,12 @@ export type GetMySessionsQueryResponse = {
   }
 }
 
-export const GET_MY_SESSIONS = (userId: string) => `
+export const GET_MY_SESSIONS = (userId: string, page: number) => `
   query GetMySessions {
     user(id: "${userId}") {
-      creatorOf {
+      creatorOf(first: ${PAGINATE_BY}, orderBy: createdAt, skip: ${
+  page * PAGINATE_BY
+}) {
         id
         nftAddress
         tokenId
@@ -96,15 +102,15 @@ export const GET_MY_SESSIONS = (userId: string) => `
 export type GetActiveSessionsQueryResponse = {
   data: {
     user: {
-      votes: {pricingSession: SubgraphPricingSession}[]
+      votes: { pricingSession: SubgraphPricingSession }[]
     } | null
   }
 }
 
-export const GET_ACTIVE_SESSIONS = (userId: string) => `
+export const GET_ACTIVE_SESSIONS = (userId: string, page: number) => `
   query GetActiveSessions {
     user(id: "${userId}") {
-      votes {
+      votes(first: ${PAGINATE_BY}, skip: ${page * PAGINATE_BY}) {
         pricingSession {
           id
           nftAddress

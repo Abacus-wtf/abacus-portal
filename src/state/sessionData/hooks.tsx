@@ -14,6 +14,12 @@ import {
   setActiveSessionsFetchStatus,
   setActiveSessionsData,
   setMySessionsData,
+  setMultipleSessionPage,
+  setMultipleSessionIsLastPage,
+  setMySessionsPage,
+  setMySessionsIsLastPage,
+  setActiveSessionsPage,
+  setActiveSessionsIsLastPage,
 } from "./actions"
 import {
   SessionData,
@@ -60,8 +66,9 @@ import {
   GetMySessionsQueryResponse,
   GET_MY_SESSIONS,
 } from "./queries"
+import { PAGINATE_BY } from "./constants"
 
-const GRAPHQL_ENDPOINT = process.env.GATSBY_APP_SUBGRAPH_ENDPOINT
+const GRAPHQL_ENDPOINT = process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ETH
 
 const modifyTimeAndSession = (
   getStatus: string,
@@ -123,7 +130,7 @@ const findAsset = (
   session: SubgraphPricingSession
 ) => {
   const ret = assets.find(
-    asset =>
+    (asset) =>
       asset.asset_contract.address === session.nftAddress &&
       asset.token_id === String(session.tokenId)
   )
@@ -169,6 +176,7 @@ const parseSubgraphPricingSessions = async (
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const { page, multiSessionData } = useMultiSessionState()
 
   return useCallback(async () => {
     dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
@@ -181,7 +189,7 @@ export const useGetMultiSessionData = () => {
       } = await axios.post<GetPricingSessionsQueryResponse>(
         GRAPHQL_ENDPOINT,
         {
-          query: GET_PRICING_SESSIONS,
+          query: GET_PRICING_SESSIONS(page),
         },
         {
           headers: {
@@ -190,17 +198,21 @@ export const useGetMultiSessionData = () => {
         }
       )
       const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-      dispatch(setMultipleSessionData(sessionData))
+      const isLastPage = sessionData.length < PAGINATE_BY
+      dispatch(setMultipleSessionData([...multiSessionData, ...sessionData]))
+      dispatch(setMultipleSessionPage(page + 1))
+      dispatch(setMultipleSessionIsLastPage(isLastPage))
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
     } catch {
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
     }
-  }, [dispatch])
+  }, [dispatch, page, multiSessionData])
 }
 
 export const useGetMySessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { account } = useActiveWeb3React()
+  const { page, data } = useMySessionsState()
 
   return useCallback(async () => {
     if (!account) {
@@ -216,7 +228,10 @@ export const useGetMySessionsData = () => {
       } = await axios.post<GetMySessionsQueryResponse>(
         GRAPHQL_ENDPOINT,
         {
-          query: GET_MY_SESSIONS(account.toLowerCase()),
+          query: GET_MY_SESSIONS(
+            "0x4af8c784213a4c2f2a2681c3b3a62104cf5239a8",
+            page
+          ),
         },
         {
           headers: {
@@ -227,20 +242,22 @@ export const useGetMySessionsData = () => {
       if (user) {
         const { creatorOf: pricingSessions } = user
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-        dispatch(setMySessionsData(sessionData))
-      } else {
-        dispatch(setMySessionsData([]))
+        const isLastPage = sessionData.length < PAGINATE_BY
+        dispatch(setMySessionsData([...data, ...sessionData]))
+        dispatch(setMySessionsPage(page + 1))
+        dispatch(setMySessionsIsLastPage(isLastPage))
       }
       dispatch(setMySessionsFetchStatus(PromiseStatus.Resolved))
     } catch {
       dispatch(setMySessionsFetchStatus(PromiseStatus.Rejected))
     }
-  }, [dispatch, account])
+  }, [dispatch, account, page, data])
 }
 
 export const useGetActiveSessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { account } = useActiveWeb3React()
+  const { page, data } = useActiveSessionsState()
 
   return useCallback(async () => {
     if (!account) {
@@ -256,7 +273,10 @@ export const useGetActiveSessionsData = () => {
       } = await axios.post<GetActiveSessionsQueryResponse>(
         GRAPHQL_ENDPOINT,
         {
-          query: GET_ACTIVE_SESSIONS(account.toLowerCase()),
+          query: GET_ACTIVE_SESSIONS(
+            "0x4af8c784213a4c2f2a2681c3b3a62104cf5239a8",
+            page
+          ),
         },
         {
           headers: {
@@ -268,15 +288,16 @@ export const useGetActiveSessionsData = () => {
         const { votes } = user
         const pricingSessions = _.map(votes, (i) => i.pricingSession)
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-        dispatch(setActiveSessionsData(sessionData))
-      } else {
-        dispatch(setActiveSessionsData([]))
+        const isLastPage = sessionData.length < PAGINATE_BY
+        dispatch(setActiveSessionsData([...data, ...sessionData]))
+        dispatch(setActiveSessionsPage(page + 1))
+        dispatch(setActiveSessionsIsLastPage(isLastPage))
       }
       dispatch(setActiveSessionsFetchStatus(PromiseStatus.Resolved))
     } catch {
       dispatch(setActiveSessionsFetchStatus(PromiseStatus.Rejected))
     }
-  }, [dispatch, account])
+  }, [dispatch, account, page, data])
 }
 
 type GetUserStatusParams = {
@@ -527,7 +548,7 @@ export const useMultiSessionData = () =>
   useSelector<
     AppState,
     AppState["sessionData"]["multiSessionState"]["multiSessionData"]
-  >(state => state.sessionData.multiSessionState.multiSessionData)
+  >((state) => state.sessionData.multiSessionState.multiSessionData)
 
 export const useMySessionsState = () =>
   useSelector<AppState, AppState["sessionData"]["mySessionsState"]>(
@@ -550,7 +571,7 @@ export const useCanUserInteract = () => {
   const userStatus = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["userStatus"]
-  >(state => state.sessionData.currentSessionData.userStatus)
+  >((state) => state.sessionData.currentSessionData.userStatus)
 
   switch (sessionStatus) {
     case SessionState.Vote:
