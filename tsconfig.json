@@ -1,5 +1,5 @@
 {
-  "exclude": ["_types/globalTypes.ts"],
+  "exclude": ["_types/globalTypes.ts", "node_modules", "public", ".cache"],
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
