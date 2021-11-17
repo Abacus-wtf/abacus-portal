@@ -75,13 +75,13 @@ export interface MultiSessionState {
 }
 
 export interface MySessionsState {
-  mySessionsData: SessionData[]
+  data: SessionData[]
   fetchStatus: PromiseStatus
   errorMessage: string | null
 }
 
 export interface ActiveSessionsState {
-  activeSessionsData: SessionData[]
+  data: SessionData[]
   fetchStatus: PromiseStatus
   errorMessage: string | null
 }
@@ -101,12 +101,12 @@ export const initialState = {
     errorMessage: null,
   },
   mySessionsState: {
-    mySessionsData: [],
+    data: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
   },
   activeSessionsState: {
-    activeSessionsData: [],
+    data: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
   },
@@ -137,24 +137,40 @@ export default createReducer(initialState, builder =>
       state.multiSessionState.multiSessionData = action.payload
     })
     .addCase(setMultipleSessionFetchStatus, (state, action) => {
+      if (action.payload === PromiseStatus.Rejected) {
+        state.multiSessionState.errorMessage = "Failed to get Session Data"
+      } else if (action.payload === PromiseStatus.Resolved) {
+        state.multiSessionState.errorMessage = null
+      }
       state.multiSessionState.fetchStatus = action.payload
     })
     .addCase(setMultipleSessionErrorMessage, (state, action) => {
       state.multiSessionState.errorMessage = action.payload
     })
     .addCase(setMySessionsData, (state, action) => {
-      state.mySessionsState.mySessionsData = action.payload
+      state.mySessionsState.data = action.payload
     })
     .addCase(setMySessionsFetchStatus, (state, action) => {
+      if (action.payload === PromiseStatus.Rejected) {
+        state.mySessionsState.errorMessage = "Failed to get My Sessions Data"
+      } else if (action.payload === PromiseStatus.Resolved) {
+        state.mySessionsState.errorMessage = null
+      }
       state.mySessionsState.fetchStatus = action.payload
     })
     .addCase(setMySessionsErrorMessage, (state, action) => {
       state.mySessionsState.errorMessage = action.payload
     })
     .addCase(setActiveSessionsData, (state, action) => {
-      state.activeSessionsState.activeSessionsData = action.payload
+      state.activeSessionsState.data = action.payload
     })
     .addCase(setActiveSessionsFetchStatus, (state, action) => {
+      if (action.payload === PromiseStatus.Rejected) {
+        state.activeSessionsState.errorMessage =
+          "Failed to get Active Sessions Data"
+      } else if (action.payload === PromiseStatus.Resolved) {
+        state.activeSessionsState.errorMessage = null
+      }
       state.activeSessionsState.fetchStatus = action.payload
     })
     .addCase(setActiveSessionsErrorMessage, (state, action) => {
