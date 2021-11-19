@@ -16,6 +16,7 @@ import { useActiveWeb3React } from "@hooks/index"
 const BackgroundIMG = styled.img.attrs({
   src: BackgroundSource,
 })`
+  display: none;
   position: absolute;
   transform: rotate(30deg);
   filter: blur(4px);
@@ -23,28 +24,61 @@ const BackgroundIMG = styled.img.attrs({
   height: 450px;
   z-index: -1;
   top: 0;
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    display: unset;
+  }
 `
 
 const HeaderBar = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   justify-content: space-between;
   margin-bottom: 45px;
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    flex-direction: row;
+  }
+`
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `
 
 const HeaderBarContainer = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: center;
   grid-gap: 12px;
   max-height: 38px;
+  margin-top: 15px;
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    margin-top: 0;
+    justify-content: flex-start;
+    flex-direction: row;
+  }
 `
 
 const CardContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 20px;
-  row-gap: 40px;
+  grid-template-columns: 1fr;
+
+  @media ${({ theme }) => theme.mediaMin.phone} {
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    row-gap: 40px;
+  }
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 20px;
+    row-gap: 40px;
+  }
 `
 
 const Home: React.FC = () => {
@@ -52,7 +86,7 @@ const Home: React.FC = () => {
   const multiSessionData = useSelector<
     AppState,
     AppState["sessionData"]["multiSessionData"]
-  >(state => state.sessionData.multiSessionData)
+  >((state) => state.sessionData.multiSessionData)
   const [searchValue, setSearchValue] = useState("")
   const networkSymbol = useGetCurrentNetwork()
 
@@ -66,21 +100,21 @@ const Home: React.FC = () => {
     <UniversalContainer>
       <BackgroundIMG />
       <HeaderBar>
-        <div>
+        <Header>
           <Title>Highlighted</Title>
           <Subheader>
             Browse {multiSessionData ? multiSessionData.length : "-"} Total
             Sessions
           </Subheader>
-        </div>
+        </Header>
         <HeaderBarContainer>
-          {/*<ButtonsWhite>Filter</ButtonsWhite>
+          {/* <ButtonsWhite>Filter</ButtonsWhite>
           <SearchBar
             input={searchValue}
             changeInput={input => setSearchValue(input)}
             placeholder={"Find something"}
             onEnter={() => {}}
-          />*/}
+          /> */}
           <Button
             style={{ display: "flex", alignItems: "center" }}
             as={Link}
@@ -96,7 +130,7 @@ const Home: React.FC = () => {
         </UniversalContainer>
       ) : (
         <CardContainer>
-          {_.map(multiSessionData, i => (
+          {_.map(multiSessionData, (i) => (
             <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
           ))}
         </CardContainer>

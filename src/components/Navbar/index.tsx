@@ -1,34 +1,68 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import Link from "gatsby-link"
-import { ChevronsLeft, AlignJustify } from "react-feather"
 import { Row } from "shards-react"
-import Button, { ButtonClear } from "../Button"
-import { useActiveWeb3React } from "@hooks/index"
+import { useActiveWeb3React, usePrevious } from "@hooks/index"
 import { shortenAddress } from "@config/utils"
 import { useToggleWalletModal } from "@state/application/hooks"
-import NetworkSelectorButton from './NetworkSelectorButton'
+import { Menu, X } from "react-feather"
+import Button, { ButtonClear } from "../Button"
+import NetworkSelectorButton from "./NetworkSelectorButton"
 
 const RowStyled = styled(Row)`
   padding: 0px;
   transition: 0.3s;
+  margin: 0;
 `
 
 const Logo = styled(Link)`
   font-size: 1.5rem;
   font-weight: 500;
   color: ${({ theme }) => theme.colors.text1};
+  width: 25%;
 `
 
-const activeClassName = "ACTIVE"
-
-const LinkList = styled.div`
-  display: flex;
-  grid-gap: 40px;
+const LinkList = styled.div<{ menuOpen: boolean }>`
+  display: ${({ menuOpen }) => (menuOpen ? "flex" : "none")};
   align-items: center;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: ${({ theme }) => theme.navbar.height};
+  background-color: ${({ theme }) => theme.colors.bg1};
+  z-index: 1;
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    display: flex;
+    width: 75%;
+    justify-content: space-between;
+    grid-gap: 40px;
+    flex-direction: row;
+    position: unset;
+  }
 `
 
-const HeaderLink = styled(ButtonClear)<{active: string}>`
+const ListSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    flex-direction: row;
+    grid-gap: 40px;
+  }
+`
+
+const MobileNavButton = styled(ButtonClear)`
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    display: none;
+  }
+`
+
+const HeaderLink = styled(ButtonClear)<{ active: string }>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
@@ -38,52 +72,81 @@ const HeaderLink = styled(ButtonClear)<{active: string}>`
     opacity: 1;
   }
 
-  ${({active}) => active === 'true' && `
+  ${({ active }) =>
+    active === "true" &&
+    `
     opacity: 1;
   `}
 `
 
 const NavbarContainer = styled.div`
   display: flex;
-  grid-gap: 30px;
-  padding: 45px 80px;
   justify-content: space-between;
+  padding: 10px 0px;
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #e4e6ee;
   background-color: ${({ theme }) => theme.colors.bg1};
+  height: ${({ theme }) => theme.navbar.height};
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    height: unset;
+    grid-gap: 30px;
+    padding: 45px 80px;
+  }
 `
 
-const Navbar = ({location}) => {
-  const { account, chainId, library } = useActiveWeb3React()
+const Navbar = ({ location }) => {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { account } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
+  const prevLocation = usePrevious(location)
 
   // @TODO: UPDATE AUCTION HERE
+
+  useEffect(() => {
+    if (location !== prevLocation) {
+      setMenuOpen(false)
+    }
+  }, [location, prevLocation])
 
   return (
     <RowStyled>
       <NavbarContainer>
         <Logo to="/">Abacus</Logo>
-        <LinkList>
-          <HeaderLink as={Link} to="/" active={(location.pathname === '/').toString()}>
-            Explore
-          </HeaderLink>
-          <HeaderLink as={Link} to="/" active={(location.pathname === '/').toString()}>
-            Auction
-          </HeaderLink>
-          {/*<HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
+        <MobileNavButton onClick={() => setMenuOpen((open) => !open)}>
+          {menuOpen ? <X /> : <Menu />}
+        </MobileNavButton>
+        <LinkList menuOpen={menuOpen}>
+          <ListSection>
+            <HeaderLink
+              as={Link}
+              to="/"
+              active={(location.pathname === "/").toString()}
+            >
+              Explore
+            </HeaderLink>
+            <HeaderLink
+              as={Link}
+              to="/"
+              active={(location.pathname === "/").toString()}
+            >
+              Auction
+            </HeaderLink>
+            {/* <HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
             Claim Pool
-          </HeaderLink>*/}
-          {/*<HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()>
+          </HeaderLink> */}
+            {/* <HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()>
             My Sessions
           </HeaderLink>
           */}
-        </LinkList>
-        <LinkList>
-          <NetworkSelectorButton />
-          <Button onClick={() => toggleWalletModal()}>
-            {account ? shortenAddress(account) : "Connect Wallet"}
-          </Button>
+          </ListSection>
+          <ListSection>
+            <NetworkSelectorButton />
+            <Button onClick={() => toggleWalletModal()}>
+              {account ? shortenAddress(account) : "Connect Wallet"}
+            </Button>
+          </ListSection>
         </LinkList>
       </NavbarContainer>
     </RowStyled>
