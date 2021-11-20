@@ -2,18 +2,16 @@ import GlobalLayout from "@layouts/index"
 import Home from "@sections/Home"
 import React from "react"
 
-const IndexPage = (props: any) => {
-  /*return (
+const IndexPage = (props: any) => (
+  /* return (
     <GlobalLayout {...props}>
       <Auction />
     </GlobalLayout>
-  )*/
+  ) */
 
-  return (
-    <GlobalLayout {...props}>
-      <Home />
-    </GlobalLayout>
-  )
-}
+  <GlobalLayout {...props}>
+    <Home />
+  </GlobalLayout>
+)
 
 export default IndexPage
