@@ -1,35 +1,33 @@
 import styled from "styled-components"
 import React, { useState } from "react"
-import { useSelector } from "react-redux"
-import { AppState } from "../../state"
 import { Modal, ModalBody } from "shards-react"
 import {
   NetworkInfoMap,
   NetworkInfo,
   NetworkSymbolAndId,
+  ETH_RPC,
 } from "@config/constants"
-import Button from "../Button"
-import { ETH_RPC } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useGetCurrentNetwork } from "@state/application/hooks"
-import { Activity } from 'react-feather'
+import { Activity } from "react-feather"
+import Button from "../Button"
 
 const StyledMenuButton = styled.button`
   position: relative;
   width: auto;
-  height: 100%;
   border: none;
   margin: 0;
   padding: 0;
   white-space: nowrap;
   background-color: #fff;
-  border: ${({ theme }) => `1px solid ${theme.primary1}`}
+  border: ${({ theme }) => `1px solid ${theme.primary1}`};
   color: ${({ theme }) => theme.primary1};
   opacity: 1;
   font-weight: 700;
-  padding: 0.15rem 0.5rem;
   border-radius: 4px;
   transition: opacity 0.3s;
+  height: 44px;
+  margin-bottom: 10px;
 
   :hover,
   :focus {
@@ -37,7 +35,13 @@ const StyledMenuButton = styled.button`
     outline: none;
     opacity: 0.8;
   }
-  `
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    margin-bottom: 0;
+    padding: 0.15rem 0.5rem;
+    height: 100%;
+  }
+`
 
 const Aligner = styled.div`
   display: flex;
@@ -71,7 +75,7 @@ const NetworkButton = styled(Button)`
 `
 
 const NetworkSelectorButton = () => {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
   const networkSymbol = useGetCurrentNetwork()
 
   const [showModal, setShowModal] = useState<boolean>(false)
@@ -139,7 +143,7 @@ const NetworkSelectorButton = () => {
           method: "wallet_addEthereumChain",
           params: [
             {
-              chainId: "0x" + network.chainId.toString(16),
+              chainId: `0x${network.chainId.toString(16)}`,
               chainName: network.network,
               nativeCurrency: {
                 name: network.symbol,
@@ -160,40 +164,44 @@ const NetworkSelectorButton = () => {
         <Aligner>
           {networkSymbol ? (
             <img
+              alt=""
               src={require(`../../images/${networkSymbol}.svg`)}
               style={{ marginRight: "10px", height: "18px", width: "auto" }}
             />
-          ) : <Activity style={{ marginRight: "10px", height: "18px", width: "auto" }} />}
-          {networkSymbol || 'Change Network'}
+          ) : (
+            <Activity
+              style={{ marginRight: "10px", height: "18px", width: "auto" }}
+            />
+          )}
+          {networkSymbol || "Change Network"}
         </Aligner>
       </StyledMenuButton>
       <Modal
         size="md"
         open={showModal}
         toggle={() => setShowModal(!showModal)}
-        centered={true}
+        centered
       >
         <ModalBody>
           <AlignerColumn>
             <h4>Select network</h4>
             <Aligner>
-              {NetworkInfoMap.map((network, index) => {
-                return (
-                  <NetworkButton
-                    key={index}
-                    disabled={network.chainId === chainId}
-                    onClick={() => MetamaskRequest(network)}
-                  >
-                    <Aligner>
-                      <img
-                        src={require(`../../images/${network.logo}`)}
-                        style={{ paddingRight: "10px", height: "18px" }}
-                      />
-                      {NetworkSymbolAndId[network.chainId]}
-                    </Aligner>
-                  </NetworkButton>
-                )
-              })}
+              {NetworkInfoMap.map((network, index) => (
+                <NetworkButton
+                  key={index}
+                  disabled={network.chainId === chainId}
+                  onClick={() => MetamaskRequest(network)}
+                >
+                  <Aligner>
+                    <img
+                      alt=""
+                      src={require(`../../images/${network.logo}`)}
+                      style={{ paddingRight: "10px", height: "18px" }}
+                    />
+                    {NetworkSymbolAndId[network.chainId]}
+                  </Aligner>
+                </NetworkButton>
+              ))}
             </Aligner>
           </AlignerColumn>
         </ModalBody>

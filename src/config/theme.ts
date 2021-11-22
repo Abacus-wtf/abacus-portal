@@ -19,9 +19,17 @@ export const theme = {
   copy: {
     large: "40px",
   },
+  navbar: {
+    height: "60px",
+  },
   media: {
     splitCenter: `(max-width: ${sizes.splitCenter})`,
     tablet: `(max-width: ${sizes.tablet})`,
     phone: `(max-width: ${sizes.phone})`,
+  },
+  mediaMin: {
+    splitCenter: `(min-width: ${sizes.splitCenter})`,
+    tablet: `(min-width: ${sizes.tablet})`,
+    phone: `(min-width: ${sizes.phone})`,
   },
 }

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react"
 import Helmet from "react-helmet"
-import { GlobalStyles } from "./styles"
 import Navbar from "@components/Navbar"
 import styled from "styled-components"
 import { Container, Row } from "shards-react"
@@ -9,6 +8,7 @@ import Web3 from "web3"
 import { useActiveWeb3React } from "@hooks/index"
 import { useSelectNetwork } from "@state/application/hooks"
 import { NetworkSymbolEnum, NetworkSymbolAndId } from "@config/constants"
+import { GlobalStyles } from "./styles"
 
 const StyledContainer = styled(Container)`
   width: 100%;
@@ -17,11 +17,11 @@ const StyledContainer = styled(Container)`
 
 const RowContainer = styled(Row)`
   flex-wrap: inherit;
-  padding: 65px 80px;
+  padding: 15px;
   justify-content: center;
 
-  @media ${({ theme }) => theme.media.tablet} {
-    width: 100%;
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    padding: 65px 80px;
   }
 `
 
@@ -57,9 +57,9 @@ const GlobalLayout: React.FC = (props: any) => {
   }, [chainId, selectNetwork])
 
   return (
-    <React.Fragment>
+    <>
       <GlobalStyles />
-      <Helmet title={"Abacus Protocol"} />
+      <Helmet title="Abacus Protocol" />
       <StyledContainer>
         <Navbar location={props.location} />
         <RowContainer>
@@ -82,7 +82,7 @@ const GlobalLayout: React.FC = (props: any) => {
           )}
         </RowContainer>
       </StyledContainer>
-    </React.Fragment>
+    </>
   )
 }
 
