@@ -4,6 +4,7 @@ import BackgroundSource from "@images/title_bg.png"
 export const BackgroundIMG = styled.img.attrs({
   src: BackgroundSource,
 })`
+  display: none;
   position: absolute;
   transform: rotate(30deg);
   filter: blur(4px);
@@ -11,6 +12,10 @@ export const BackgroundIMG = styled.img.attrs({
   height: 450px;
   z-index: -1;
   top: 0;
+
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    display: unset;
+  }
 `
 
 export const HeaderBar = styled.div`

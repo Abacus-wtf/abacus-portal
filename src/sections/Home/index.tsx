@@ -7,6 +7,8 @@ import Card from "@components/Card"
 import {
   useGetMultiSessionData,
   useMultiSessionState,
+  useMultiSessionData,
+  useCurrentSessionFetchStatus
 } from "@state/sessionData/hooks"
 import _ from "lodash"
 import Link from "gatsby-link"
@@ -14,35 +16,6 @@ import { PromiseStatus } from "@models/PromiseStatus"
 import { BackgroundIMG, HeaderBar, CardContainer } from "./Home.styles"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { useActiveWeb3React } from "@hooks/index"
-
-const BackgroundIMG = styled.img.attrs({
-  src: BackgroundSource,
-})`
-  display: none;
-  position: absolute;
-  transform: rotate(30deg);
-  filter: blur(4px);
-  opacity: 0.4;
-  height: 450px;
-  z-index: -1;
-  top: 0;
-
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
-    display: unset;
-  }
-`
-
-const HeaderBar = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: space-between;
-  margin-bottom: 45px;
-
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
-    flex-direction: row;
-  }
-`
 
 const Header = styled.div`
   display: flex;
@@ -70,30 +43,11 @@ const HeaderBarContainer = styled.div`
   }
 `
 
-const CardContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-
-  @media ${({ theme }) => theme.mediaMin.phone} {
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
-    row-gap: 40px;
-  }
-
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 20px;
-    row-gap: 40px;
-  }
-`
-
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
-  const multiSessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["multiSessionData"]
-  >((state) => state.sessionData.multiSessionData)
+  const multiSessionData = useMultiSessionData()
   const [searchValue, setSearchValue] = useState("")
+  const fetchStatus = useCurrentSessionFetchStatus()
   const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
 
