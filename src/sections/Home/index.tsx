@@ -46,7 +46,11 @@ const Header = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+
+  @media ${({theme}) => theme.media.tablet} {
+    align-items: center;
+  }
+
 `
 
 const HeaderBarContainer = styled.div`

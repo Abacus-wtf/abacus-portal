@@ -19,7 +19,6 @@ const Logo = styled(Link)`
   font-size: 1.5rem;
   font-weight: 500;
   color: ${({ theme }) => theme.colors.text1};
-  width: 25%;
 `
 
 const LinkList = styled.div<{ menuOpen: boolean }>`
@@ -37,7 +36,7 @@ const LinkList = styled.div<{ menuOpen: boolean }>`
 
   @media ${({ theme }) => theme.mediaMin.splitCenter} {
     display: flex;
-    width: 75%;
+    width: 100%;
     justify-content: space-between;
     grid-gap: 40px;
     flex-direction: row;
@@ -45,7 +44,7 @@ const LinkList = styled.div<{ menuOpen: boolean }>`
   }
 `
 
-const ListSection = styled.div`
+const ListSectionSelector = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,6 +52,13 @@ const ListSection = styled.div`
   @media ${({ theme }) => theme.mediaMin.splitCenter} {
     flex-direction: row;
     grid-gap: 40px;
+  }
+`
+
+const ListSection = styled(ListSectionSelector)`
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    width: 100%;
+    justify-content: center;
   }
 `
 
@@ -141,12 +147,12 @@ const Navbar = ({ location }) => {
           </HeaderLink>
           */}
           </ListSection>
-          <ListSection>
+          <ListSectionSelector>
             <NetworkSelectorButton />
             <Button onClick={() => toggleWalletModal()}>
               {account ? shortenAddress(account) : "Connect Wallet"}
             </Button>
-          </ListSection>
+          </ListSectionSelector>
         </LinkList>
       </NavbarContainer>
     </RowStyled>
