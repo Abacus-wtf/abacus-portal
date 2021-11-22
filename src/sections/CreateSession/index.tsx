@@ -80,7 +80,7 @@ const CreateSession: React.FC = () => {
     const initAppraisal = e.target.initAppraisal.value
     const votingTime = Number(e.target.votingTime.value)
     const bounty =
-      e.target.initBounty.value === "" ? undefined : e.target.initBounty.value
+      e.target.initBounty.value === "" || Number(e.target.initBounty.value) === 0 ? undefined : e.target.initBounty.value
 
     if (votingTime > 24) {
       alert("You must choose a voting time that is 24 hours or below")
