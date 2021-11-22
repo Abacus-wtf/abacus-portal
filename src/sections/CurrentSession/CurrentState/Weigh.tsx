@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, {
   FormEvent,
   FunctionComponent,
@@ -16,22 +17,21 @@ import {
 import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
-import {
-  VerticalContainer,
-  SubText,
-  ListGroupItemMinWidth,
-} from "../CurrentSession.styles"
-import SessionCountdown from "./SessionCountdown"
-import {web3Eth} from "@config/constants"
+import { web3Eth } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnWeightVote } from "@hooks/current-session"
 import { UserState } from "@state/sessionData/reducer"
-import _ from "lodash"
 import {
   useCanUserInteract,
   useCurrentSessionData,
   useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
+import SessionCountdown from "./SessionCountdown"
+import {
+  VerticalContainer,
+  SubText,
+  ListGroupItemMinWidth,
+} from "../CurrentSession.styles"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
@@ -64,7 +64,7 @@ const Weigh: FunctionComponent = () => {
         )
       }
     }
-  }, [account])
+  }, [account, sessionData.address, sessionData.nonce, sessionData.tokenId])
 
   return (
     <>
@@ -88,7 +88,8 @@ const Weigh: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = hash => {
+          const cb = (hash) => {
+            console.log(hash)
             const hashedMessage = web3Eth.eth.abi.encodeParameters(
               ["address", "uint256", "uint256"],
               [
@@ -106,34 +107,34 @@ const Weigh: FunctionComponent = () => {
           <HorizontalListGroup>
             <ListGroupItem>
               <InputWithTitle
-                title={"Appraisal Value"}
-                id={"appraisalValue"}
+                title="Appraisal Value"
+                id="appraisalValue"
                 placeholder="0"
                 value={appraisalValue}
-                onChange={e => setAppraisalValue(e.target.value)}
+                onChange={(e) => setAppraisalValue(e.target.value)}
               />
             </ListGroupItem>
             <ListGroupItem>
               <InputWithTitle
-                title={"Seed"}
-                id={"password"}
+                title="Seed"
+                id="password"
                 placeholder="Input"
                 value={passwordValue}
-                onChange={e => setPasswordValue(e.target.value)}
+                onChange={(e) => setPasswordValue(e.target.value)}
               />
             </ListGroupItem>
           </HorizontalListGroup>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <div style={{ width: "100%" }} id={"submitWeighButton"}>
+          <div style={{ width: "100%" }} id="submitWeighButton">
             <Button
               disabled={
                 !canUserInteract ||
                 isPending ||
                 appraisalValue === "" ||
                 passwordValue === "" ||
-                isNaN(Number(appraisalValue)) ||
-                isNaN(Number(passwordValue)) ||
+                Number.isNaN(Number(appraisalValue)) ||
+                Number.isNaN(Number(passwordValue)) ||
                 userStatus === UserState.CompletedWeigh ||
                 userStatus === UserState.NotLoggedIn
               }
@@ -152,7 +153,7 @@ const Weigh: FunctionComponent = () => {
             target="#submitWeighButton"
             disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
-            placement={"right"}
+            placement="right"
           >
             {userStatus === UserState.CompletedWeigh
               ? "You already weighed your vote"
