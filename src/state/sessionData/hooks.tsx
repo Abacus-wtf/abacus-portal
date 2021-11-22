@@ -29,9 +29,9 @@ import {
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 import _ from "lodash"
-import { openseaGet, shortenAddress } from "@config/utils"
+import { hashValues, openseaGet, shortenAddress } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
-import axios from "axios"
+import {web3Eth} from "@config/constants"
 import {
   currentSessionDataSelector,
   currentSessionStatusSelector,
@@ -144,38 +144,44 @@ export const useGetMultiSessionData = () => {
     )
 
     const finalAppraisalValues = await Promise.all(
-      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
-        pricingSession.methods
-          .finalAppraisalValue(
-            Number(pricingSessionNonce[i]),
-            CURRENT_SESSIONS[i].address,
-            CURRENT_SESSIONS[i].tokenId
-          )
+      _.map(_.range(0, CURRENT_SESSIONS.length), i => {
+        const hash = hashValues({
+          address: CURRENT_SESSIONS[i].address,
+          nonce: Number(pricingSessionNonce[i]),
+          tokenId: CURRENT_SESSIONS[i].tokenId
+        })
+        return pricingSession.methods
+          .finalAppraisalValue(hash)
           .call()
+      }
       )
     )
 
     const pricingSessionCoreData = await Promise.all(
-      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
-        pricingSession.methods
-          .NftSessionCore(
-            pricingSessionNonce[i],
-            CURRENT_SESSIONS[i].address,
-            CURRENT_SESSIONS[i].tokenId
-          )
-          .call()
+      _.map(_.range(0, CURRENT_SESSIONS.length), i => {
+          const hash = hashValues({
+            address: CURRENT_SESSIONS[i].address,
+            nonce: Number(pricingSessionNonce[i]),
+            tokenId: CURRENT_SESSIONS[i].tokenId
+          })
+          return pricingSession.methods
+            .NftSessionCore(hash)
+            .call()
+        }
       )
     )
 
     const pricingSessionCheckData = await Promise.all(
-      _.map(_.range(0, CURRENT_SESSIONS.length), i =>
-        pricingSession.methods
-          .NftSessionCheck(
-            pricingSessionNonce[i],
-            CURRENT_SESSIONS[i].address,
-            CURRENT_SESSIONS[i].tokenId
-          )
-          .call()
+      _.map(_.range(0, CURRENT_SESSIONS.length), i => {
+          const hash = hashValues({
+            address: CURRENT_SESSIONS[i].address,
+            nonce: Number(pricingSessionNonce[i]),
+            tokenId: CURRENT_SESSIONS[i].tokenId
+          })
+          return pricingSession.methods
+            .NftSessionCheck(hash)
+            .call()
+        }
       )
     )
 
@@ -188,6 +194,7 @@ export const useGetMultiSessionData = () => {
           pricingSessionCheckData[i]
         )
         return {
+          bounty: Number(formatEther(pricingSessionCoreData[i].bounty)),
           img:
             pricingSessionMetadata?.[i]?.image_preview_url ||
             pricingSessionMetadata?.[i]?.image_url,
@@ -258,6 +265,12 @@ export const useGetCurrentSessionData = () => {
         ABC_PRICING_SESSION_ADDRESS(networkSymbol)
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
+      
+      const hash = hashValues({
+        address: address,
+        nonce: nonce,
+        tokenId: tokenId
+      })
 
       let URL = `asset/${address}/${tokenId}`
       const [
@@ -268,11 +281,11 @@ export const useGetCurrentSessionData = () => {
         finalAppraisalValue,
       ] = await Promise.all([
         openseaGet(URL),
-        pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
+        pricingSession.methods.NftSessionCore(hash).call(),
         pricingSession.methods.getStatus(address, tokenId).call(),
-        pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
+        pricingSession.methods.NftSessionCheck(hash).call(),
         pricingSession.methods
-          .finalAppraisalValue(nonce, address, tokenId)
+          .finalAppraisalValue(hash)
           .call(),
       ])
 
@@ -290,6 +303,7 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCheck
       )
       const sessionData: SessionData = {
+        bounty: Number(formatEther(pricingSessionCore.bounty)),
         img:
           pricingSessionMetadata?.image_url ||
           pricingSessionMetadata?.image_preview_url,

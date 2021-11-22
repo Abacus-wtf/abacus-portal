@@ -20,10 +20,13 @@ export const VerticalContainer = styled.div`
   flex-direction: column;
   width: 100%;
   grid-gap: 15px;
+  max-width: 100%;
+  overflow: hidden;
 `
 
 export const VerticalSmallGapContainer = styled(VerticalContainer)`
   grid-gap: 2px;
+  overflow: hidden;
 `
 
 export const SquareImageContainer = styled(ImageContainer)`

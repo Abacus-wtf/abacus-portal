@@ -32,6 +32,7 @@ import {
   useCurrentSessionData,
   useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
+import {hashValues} from '@config/utils'
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
@@ -48,10 +49,11 @@ const Weigh: FunctionComponent = () => {
   const [passwordValue, setPasswordValue] = useState("")
 
   useEffect(() => {
-    const hash = web3Eth.eth.abi.encodeParameters(
-      ["address", "uint256", "uint256"],
-      [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
-    )
+    const hash = hashValues({
+      address: sessionData.address,
+      tokenId: sessionData.tokenId,
+      nonce: sessionData.nonce
+    })
     const itemsString = localStorage.getItem(hash)
     if (itemsString && account) {
       try {
