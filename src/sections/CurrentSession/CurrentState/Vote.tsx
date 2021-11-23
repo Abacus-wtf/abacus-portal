@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, {
   FormEvent,
   FunctionComponent,
@@ -13,12 +14,6 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
-import {
-  VerticalContainer,
-  SubText,
-  ListGroupItemMinWidth,
-} from "../CurrentSession.styles"
-import SessionCountdown from "./SessionCountdown"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
@@ -27,13 +22,23 @@ import {
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
-import HashSystem from "../hashSystem"
 import { useActiveWeb3React } from "@hooks/index"
-import {web3Eth} from "@config/constants"
-import { useOnSubmitVote, useOnUpdateVote, useOnAddToBountyVote } from "@hooks/current-session"
+import { web3Eth } from "@config/constants"
+import {
+  useOnSubmitVote,
+  useOnUpdateVote,
+  useOnAddToBountyVote,
+} from "@hooks/current-session"
 import { keccak256 } from "@ethersproject/keccak256"
 import _ from "lodash"
 import { parseEther } from "ethers/lib/utils"
+import HashSystem from "../hashSystem"
+import SessionCountdown from "./SessionCountdown"
+import {
+  VerticalContainer,
+  SubText,
+  ListGroupItemMinWidth,
+} from "../CurrentSession.styles"
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
@@ -47,9 +52,10 @@ const Vote: FunctionComponent = () => {
 
   const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
-  const { onAddToBounty, isPending: addToBountyPending } = useOnAddToBountyVote()
+  const { onAddToBounty, isPending: addToBountyPending } =
+    useOnAddToBountyVote()
   const [stakeVal, setStakeVal] = useState("")
-  const [bountyAddition, setBountyAddition] = useState('')
+  const [bountyAddition, setBountyAddition] = useState("")
 
   const isPending = submitVotePending || updateVotePending
 
@@ -83,19 +89,18 @@ const Vote: FunctionComponent = () => {
           e.preventDefault()
 
           if (
-            Number(e.target["appraisalValue"]?.value) >=
-            sessionData.maxAppraisal
+            Number(e.target.appraisalValue?.value) >= sessionData.maxAppraisal
           ) {
             alert(
-              `The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${e.target["appraisalValue"].value} Ether.`
+              `The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${e.target.appraisalValue.value} Ether.`
             )
             return
           }
 
-          if (Number(e.target["stake"]?.value) < 0.005) {
+          if (Number(e.target.stake?.value) < 0.005) {
             alert(
               `The min amount of eth you can stake is .005 Ether. You tried staking ${Number(
-                e.target["stake"].value
+                e.target.stake.value
               )} Ether.`
             )
             return
@@ -103,13 +108,10 @@ const Vote: FunctionComponent = () => {
 
           switch (userStatus) {
             case UserState.NotVoted:
-              await onSubmitVote(
-                e.target["appraise"].value,
-                e.target["stake"].value
-              )
+              await onSubmitVote(e.target.appraise.value, e.target.stake.value)
               break
             case UserState.CompletedVote:
-              await onUpdateVote(e.target["appraise"].value)
+              await onUpdateVote(e.target.appraise.value)
               break
             default:
               break
@@ -121,7 +123,7 @@ const Vote: FunctionComponent = () => {
             onCreateHash={(appraisalValue, password) => {
               let encodedParams = web3Eth.eth.abi.encodeParameters(
                 ["uint", "address", "uint"],
-                [parseEther("" + appraisalValue), account! || "", password]
+                [parseEther(`${appraisalValue}`), account! || "", password]
               )
               encodedParams =
                 encodedParams.slice(0, 64) +
@@ -131,34 +133,34 @@ const Vote: FunctionComponent = () => {
           />
           <ListGroupItem>
             <InputWithTitle
-              title={"Appraisal Result (Hashed)"}
-              id={"appraise"}
+              title="Appraisal Result (Hashed)"
+              id="appraise"
               placeholder="0"
               value={appraisalHash}
-              disabled={true}
+              disabled
             />
           </ListGroupItem>
           {userStatus !== UserState.CompletedVote ? (
             <ListGroupItem>
               <InputWithTitle
-                title={"Stake"}
-                id={"stake"}
+                title="Stake"
+                id="stake"
                 value={stakeVal}
-                onChange={e => setStakeVal(e.target.value)}
+                onChange={(e) => setStakeVal(e.target.value)}
                 placeholder="0.001"
               />
             </ListGroupItem>
           ) : null}
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <div style={{ width: "100%" }} id={"submitVoteButton"}>
+          <div style={{ width: "100%" }} id="submitVoteButton">
             <Button
               disabled={
                 !canUserInteract ||
                 isPending ||
                 appraisalHash === "" ||
                 (userStatus === UserState.NotVoted &&
-                  (isNaN(Number(stakeVal)) || stakeVal === ""))
+                  (Number.isNaN(Number(stakeVal)) || stakeVal === ""))
               }
               style={{ width: "100%" }}
               type="submit"
@@ -166,8 +168,8 @@ const Vote: FunctionComponent = () => {
               {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedVote
-                  ? "Update"
-                  : "Submit"}
+                ? "Update"
+                : "Submit"}
             </Button>
           </div>
           <Tooltip
@@ -175,34 +177,43 @@ const Vote: FunctionComponent = () => {
             target="#submitVoteButton"
             disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
-            placement={"right"}
+            placement="right"
           >
             It seems you've already voted, or you're not logged in
           </Tooltip>
         </VerticalContainer>
-        <ListGroup style={{marginTop: 35}}>
+        <ListGroup style={{ marginTop: 35 }}>
           <ListGroupItem>
             <InputWithTitle
-              title={"Add to Bounty"}
-              id={"bountyAddition"}
+              title="Add to Bounty"
+              id="bountyAddition"
               placeholder="0"
               value={bountyAddition}
               onChange={(e) => setBountyAddition(e.target.value)}
             />
           </ListGroupItem>
-          <div style={{ width: "100%", margin: '35px 0px 10px 0px' }} id={"addToBountyButton"}>
+          <div
+            style={{ width: "100%", margin: "35px 0px 10px 0px" }}
+            id="addToBountyButton"
+          >
             <Button
-              disabled={addToBountyPending || isNaN(Number(bountyAddition)) || bountyAddition === ''}
+              disabled={
+                addToBountyPending ||
+                Number.isNaN(Number(bountyAddition)) ||
+                bountyAddition === ""
+              }
               style={{ width: "100%" }}
-              onClick={async () => await onAddToBounty(bountyAddition)}
+              onClick={async () => {
+                await onAddToBounty(bountyAddition)
+              }}
             >
-              {addToBountyPending
-                ? "Pending..."
-                : "Add to Bounty"}
+              {addToBountyPending ? "Pending..." : "Add to Bounty"}
             </Button>
           </div>
         </ListGroup>
-        <div style={{ width: "100%", display: 'flex', justifyContent: 'center' }}>
+        <div
+          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+        >
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>

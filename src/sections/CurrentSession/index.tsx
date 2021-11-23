@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { Title, SmallUniversalContainer } from "@components/global.styles"
 import * as queryString from "query-string"
 import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
-  useGetCurrentSessionDataGRT,
+  // useGetCurrentSessionDataGRT,
   useCurrentSessionFetchStatus,
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
 import _ from "lodash"
-import CurrentState from "./CurrentState"
 import { useActiveWeb3React } from "@hooks/index"
+import ConnectWalletAlert from "@components/ConnectWalletAlert"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { OutboundLink } from "gatsby-plugin-google-gtag"
 import {
   SplitContainer,
   VerticalContainer,
@@ -20,12 +22,10 @@ import {
   SquareImageContainer,
   SubText,
 } from "./CurrentSession.styles"
-import ConnectWalletAlert from "@components/ConnectWalletAlert"
-import { useGetCurrentNetwork } from "@state/application/hooks"
-import { OutboundLink } from "gatsby-plugin-google-gtag"
+import CurrentState from "./CurrentState"
 
 const CurrentSession = ({ location }) => {
-  const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
+  // const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
   const getCurrentSessionData = useGetCurrentSessionData()
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
@@ -36,8 +36,11 @@ const CurrentSession = ({ location }) => {
 
   useEffect(() => {
     const loadData = async () => {
-      // @ts-ignore
-      await getCurrentSessionDataGRT(address!, tokenId, nonce)
+      await getCurrentSessionData(
+        String(address),
+        String(tokenId),
+        Number(nonce)
+      )
     }
 
     if (!address || !tokenId || !nonce) {
@@ -53,7 +56,7 @@ const CurrentSession = ({ location }) => {
     account,
     networkSymbol,
     chainId,
-    getCurrentSessionDataGRT,
+    getCurrentSessionData,
   ])
 
   if (!account) {
@@ -83,7 +86,7 @@ const CurrentSession = ({ location }) => {
           <SquareImageContainer src={sessionData.img} />
           <ButtonsWhite
             style={{ borderRadius: 8 }}
-            target={"_blank"}
+            target="_blank"
             href={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
             as={OutboundLink}
           >
@@ -99,7 +102,7 @@ const CurrentSession = ({ location }) => {
             <SubText>
               Owned by{" "}
               <OutboundLink
-                target={"_blank"}
+                target="_blank"
                 href={`https://opensea.io/assets/${sessionData.ownerAddress}`}
               >
                 {sessionData.owner}

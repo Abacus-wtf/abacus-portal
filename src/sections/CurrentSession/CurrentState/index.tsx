@@ -6,7 +6,6 @@ import Weigh from "./Weigh"
 import SetFinalAppraisal from "./SetFinalAppraisal"
 import Harvest from "./Harvest"
 import Claim from "./Claim"
-import EndSession from "./EndSession"
 import SessionCompleted from "./SessionCompleted"
 
 const CurrentState: FunctionComponent = () => {
