@@ -20,6 +20,7 @@ import {
   openseaGetMany,
   OpenSeaGetResponse,
   shortenAddress,
+  hashValues
 } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import { PromiseStatus } from "@models/PromiseStatus"
@@ -511,6 +512,12 @@ export const useGetCurrentSessionData = () => {
         ABC_PRICING_SESSION_ADDRESS(networkSymbol)
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
+      
+      const hash = hashValues({
+        address: address,
+        nonce: nonce,
+        tokenId: tokenId
+      })
 
       const URL = `asset/${address}/${tokenId}`
       const [
@@ -521,11 +528,11 @@ export const useGetCurrentSessionData = () => {
         finalAppraisalValue,
       ] = await Promise.all([
         openseaGet(URL),
-        pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
+        pricingSession.methods.NftSessionCore(hash).call(),
         pricingSession.methods.getStatus(address, tokenId).call(),
-        pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
+        pricingSession.methods.NftSessionCheck(hash).call(),
         pricingSession.methods
-          .finalAppraisalValue(nonce, address, tokenId)
+          .finalAppraisalValue(hash)
           .call(),
       ])
 
@@ -543,6 +550,7 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCheck
       )
       const sessionData: SessionData = {
+        bounty: Number(formatEther(pricingSessionCore.bounty)),
         img:
           pricingSessionMetadata?.image_url ||
           pricingSessionMetadata?.image_preview_url,

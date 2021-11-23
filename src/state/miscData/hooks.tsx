@@ -96,7 +96,7 @@ export const useSetPayoutData = () => {
   return useCallback(async (account: string) => {
     const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
     const [ethPayout, ethToAbc] = await Promise.all([
-      pricingSessionContract.methods.payoutStored(account).call(),
+      pricingSessionContract.methods.profitStored(account).call(),
       pricingSessionContract.methods.ethToAbc().call(),
     ])
     const eth = Number(formatEther(ethPayout))

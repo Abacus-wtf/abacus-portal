@@ -22,7 +22,7 @@ const Header = styled.div`
   flex-direction: column;
   justify-content: center;
 
-  @media ${({theme}) => theme.media.tablet} {
+  @media ${({theme}) => theme.media.splitCenter} {
     align-items: center;
   }
 
