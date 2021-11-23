@@ -45,7 +45,7 @@ export function hashValues({nonce, address, tokenId}: {nonce: number, address: s
     [ "uint", "address", "uint"],
     [nonce, address, tokenId]
   )
-  return keccak256(encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length))
+  return keccak256(encodedParams.slice(0, 66) + encodedParams.slice(90, encodedParams.length))
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {
