@@ -6,6 +6,7 @@ import { HorizontalListGroupModified } from "./CurrentSession.styles"
 import { useActiveWeb3React } from "@hooks/index"
 import {web3Eth} from "@config/constants"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
+import { hashValues } from "@config/utils"
 
 interface HashSystem {
   onCreateHash: (appraisalValue: number, password: number) => void
@@ -35,10 +36,11 @@ export default ({ onCreateHash }: HashSystem) => {
     setIsAppraisalValid(true)
     setIsPasswordValid(true)
 
-    const hash = web3Eth.eth.abi.encodeParameters(
-      ["address", "uint256", "uint256"],
-      [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
-    )
+    const hash = hashValues({
+      address: sessionData.address,
+      tokenId: sessionData.tokenId,
+      nonce: sessionData.nonce
+    })
     localStorage.setItem(
       hash,
       JSON.stringify({
@@ -50,10 +52,11 @@ export default ({ onCreateHash }: HashSystem) => {
   }
 
   useEffect(() => {
-    const hash = web3Eth.eth.abi.encodeParameters(
-      ["address", "uint256", "uint256"],
-      [sessionData.address, Number(sessionData.tokenId), sessionData.nonce]
-    )
+    const hash = hashValues({
+      address: sessionData.address,
+      tokenId: sessionData.tokenId,
+      nonce: sessionData.nonce
+    })
     const itemsString = localStorage.getItem(hash)
     if (itemsString !== null && account) {
       const items = JSON.parse(itemsString)
