@@ -1,46 +1,20 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
-import BackgroundSource from "@images/title_bg.png"
 import Button, { ButtonsWhite } from "@components/Button"
 import SearchBar from "@components/SeachBar"
 import Card from "@components/Card"
-import { useGetMultiSessionData } from "@state/sessionData/hooks"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
+import {
+  useGetMultiSessionData,
+  useMultiSessionState,
+  useMultiSessionData,
+} from "@state/sessionData/hooks"
 import _ from "lodash"
 import Link from "gatsby-link"
+import { PromiseStatus } from "@models/PromiseStatus"
+import { BackgroundIMG, HeaderBar, CardContainer } from "./Home.styles"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { useActiveWeb3React } from "@hooks/index"
-
-const BackgroundIMG = styled.img.attrs({
-  src: BackgroundSource,
-})`
-  display: none;
-  position: absolute;
-  transform: rotate(30deg);
-  filter: blur(4px);
-  opacity: 0.4;
-  height: 450px;
-  z-index: -1;
-  top: 0;
-
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
-    display: unset;
-  }
-`
-
-const HeaderBar = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: space-between;
-  margin-bottom: 45px;
-
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
-    flex-direction: row;
-  }
-`
 
 const Header = styled.div`
   display: flex;
@@ -68,30 +42,12 @@ const HeaderBarContainer = styled.div`
   }
 `
 
-const CardContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-
-  @media ${({ theme }) => theme.mediaMin.phone} {
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
-    row-gap: 40px;
-  }
-
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 20px;
-    row-gap: 40px;
-  }
-`
-
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
-  const multiSessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["multiSessionData"]
-  >((state) => state.sessionData.multiSessionData)
+  const multiSessionData = useMultiSessionData()
   const [searchValue, setSearchValue] = useState("")
+  const multiSessionState = useMultiSessionState()
+  const isLoading = multiSessionState.fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
@@ -128,7 +84,7 @@ const Home: React.FC = () => {
           </Button>
         </HeaderBarContainer>
       </HeaderBar>
-      {multiSessionData === null ? (
+      {isLoading ? (
         <UniversalContainer style={{ alignItems: "center" }}>
           Loading... {/* TODO: find a loader */}
         </UniversalContainer>
