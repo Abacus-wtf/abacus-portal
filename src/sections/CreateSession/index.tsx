@@ -70,7 +70,7 @@ const CreateSession: React.FC = () => {
 
   const toggle = () => setOpenModal(!openModal)
 
-  const handleSubmit = async (e: FormEvent<HTMLDivElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const pricingSession = getPricingSessionContract(
       ABC_PRICING_SESSION_ADDRESS(networkSymbol)
@@ -80,7 +80,17 @@ const CreateSession: React.FC = () => {
     const initAppraisal = e.target.initAppraisal.value
     const votingTime = Number(e.target.votingTime.value)
     const bounty =
-      e.target.initBounty.value === "" || Number(e.target.initBounty.value) === 0 ? undefined : e.target.initBounty.value
+      e.target.initBounty.value === "" ||
+      Number(e.target.initBounty.value) === 0
+        ? undefined
+        : e.target.initBounty.value
+
+    const meta = await openseaGet(`asset/${nftAddress}/${tokenId}`)
+
+    if (!meta.token_id) {
+      alert("The NFT Address and Token ID you have entered is not valid")
+      return
+    }
 
     if (votingTime > 24) {
       alert("You must choose a voting time that is 24 hours or below")
@@ -91,11 +101,11 @@ const CreateSession: React.FC = () => {
       nftAddress,
       tokenId,
       initAppraisal,
-      votingTime * 3600,
+      Math.round(votingTime * 3600),
       () => toggle(),
       bounty
     )
-    const meta = await openseaGet(`asset/${nftAddress}/${tokenId}`)
+
     const nonce = await pricingSession.methods
       .nftNonce(nftAddress, tokenId)
       .call()
