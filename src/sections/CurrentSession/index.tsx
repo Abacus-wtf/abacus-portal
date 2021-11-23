@@ -4,10 +4,12 @@ import * as queryString from "query-string"
 import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
+  useGetCurrentSessionDataGRT,
+  useCurrentSessionFetchStatus,
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
+import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
-import Link from "gatsby-link"
 import _ from "lodash"
 import CurrentState from "./CurrentState"
 import { useActiveWeb3React } from "@hooks/index"
@@ -23,20 +25,19 @@ import { useGetCurrentNetwork } from "@state/application/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
 
 const CurrentSession = ({ location }) => {
+  const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
   const getCurrentSessionData = useGetCurrentSessionData()
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
-
+  const fetchStatus = useCurrentSessionFetchStatus()
   const { address, tokenId, nonce } = queryString.parse(location.search)
-  const [isLoading, setIsLoading] = useState(true)
+  const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true)
       // @ts-ignore
-      await getCurrentSessionData(address!, tokenId, nonce)
-      setIsLoading(false)
+      await getCurrentSessionDataGRT(address!, tokenId, nonce)
     }
 
     if (!address || !tokenId || !nonce) {
@@ -52,7 +53,7 @@ const CurrentSession = ({ location }) => {
     account,
     networkSymbol,
     chainId,
-    getCurrentSessionData,
+    getCurrentSessionDataGRT,
   ])
 
   if (!account) {

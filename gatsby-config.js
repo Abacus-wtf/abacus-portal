@@ -42,7 +42,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Personal Website`,
+        name: `Abacus Protocol Portal`,
         display: `minimal-ui`,
         path: `${__dirname}/src/images`,
         icon: `src/images/logo.png`,
