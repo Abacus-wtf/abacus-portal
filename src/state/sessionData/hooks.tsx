@@ -96,6 +96,10 @@ const modifyTimeAndSession = (
     endTime =
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 2 * 1000
+    
+    if (currentTime >= endTime) {
+      sessionStatus = 5
+    }
   } else if (sessionStatus === 1) {
     endTime += Number(pricingSessionData.votingTime) * 1000
     if (currentTime >= endTime) {

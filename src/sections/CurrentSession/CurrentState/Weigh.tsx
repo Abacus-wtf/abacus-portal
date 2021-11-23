@@ -91,7 +91,6 @@ const Weigh: FunctionComponent = () => {
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
           const cb = (hash) => {
-            console.log(hash)
             const hashedMessage = web3Eth.eth.abi.encodeParameters(
               ["address", "uint256", "uint256"],
               [
