@@ -20,7 +20,7 @@ import {
   openseaGetMany,
   OpenSeaGetResponse,
   shortenAddress,
-  hashValues
+  hashValues,
 } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import { PromiseStatus } from "@models/PromiseStatus"
@@ -64,7 +64,6 @@ import {
   currentSessionFetchStatusSelector,
   mySessionsStateSelector,
   activeSessionsStateSelector,
-  multiSessionFetchStatusSelector
 } from "./selectors"
 
 const GRAPHQL_ENDPOINT = (networkSymbol: NetworkSymbolEnum): string => {
@@ -509,15 +508,16 @@ export const useGetCurrentSessionData = () => {
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
+      dispatch(setCurrentSessionFetchStatus(PromiseStatus.Pending))
       const pricingSession = getPricingSessionContract(
         ABC_PRICING_SESSION_ADDRESS(networkSymbol)
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
-      
+
       const hash = hashValues({
-        address: address,
-        nonce: nonce,
-        tokenId: tokenId
+        address,
+        nonce,
+        tokenId,
       })
 
       const URL = `asset/${address}/${tokenId}`
@@ -532,9 +532,7 @@ export const useGetCurrentSessionData = () => {
         pricingSession.methods.NftSessionCore(hash).call(),
         pricingSession.methods.getStatus(address, tokenId).call(),
         pricingSession.methods.NftSessionCheck(hash).call(),
-        pricingSession.methods
-          .finalAppraisalValue(hash)
-          .call(),
+        pricingSession.methods.finalAppraisalValue(hash).call(),
       ])
 
       let ethUsd
@@ -559,7 +557,6 @@ export const useGetCurrentSessionData = () => {
         numPpl: Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,
         totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
-        bounty: Number(formatEther(pricingSessionCore.bounty)),
         totalStakedInUSD:
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
           Number(ethUsd),
@@ -594,6 +591,7 @@ export const useGetCurrentSessionData = () => {
         sessionStatus,
       }
       dispatch(getCurrentSessionData(currentSessionData))
+      dispatch(setCurrentSessionFetchStatus(PromiseStatus.Resolved))
     },
     [
       getPricingSessionContract,
