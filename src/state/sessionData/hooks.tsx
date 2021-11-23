@@ -63,6 +63,7 @@ import {
   currentSessionFetchStatusSelector,
   mySessionsStateSelector,
   activeSessionsStateSelector,
+  multiSessionFetchStatusSelector
 } from "./selectors"
 
 const GRAPHQL_ENDPOINT = (networkSymbol: NetworkSymbolEnum): string => {

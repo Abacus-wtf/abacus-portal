@@ -8,7 +8,6 @@ import {
   useGetMultiSessionData,
   useMultiSessionState,
   useMultiSessionData,
-  useCurrentSessionFetchStatus
 } from "@state/sessionData/hooks"
 import _ from "lodash"
 import Link from "gatsby-link"
@@ -47,8 +46,8 @@ const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
   const multiSessionData = useMultiSessionData()
   const [searchValue, setSearchValue] = useState("")
-  const fetchStatus = useCurrentSessionFetchStatus()
-  const isLoading = fetchStatus === PromiseStatus.Pending
+  const multiSessionState = useMultiSessionState()
+  const isLoading = multiSessionState.fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
