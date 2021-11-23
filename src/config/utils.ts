@@ -1,11 +1,12 @@
 import { getAddress } from "@ethersproject/address"
-import { OPENSEA_LINK } from "@config/constants"
+import { OPENSEA_LINK, web3Eth } from "@config/constants"
 import axios from "axios"
 import axiosRetry from "axios-retry"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Web3Provider, JsonRpcSigner } from "@ethersproject/providers"
 import { Contract } from "@ethersproject/contracts"
 import { AddressZero } from "@ethersproject/constants"
+import { keccak256 } from "@ethersproject/keccak256"
 
 axiosRetry(axios, { retries: 3 })
 
@@ -37,6 +38,14 @@ export async function openseaGet(input: string) {
     console.log(e)
     return null
   }
+}
+
+export function hashValues({nonce, address, tokenId}: {nonce: number, address: string, tokenId: string}) {
+  const encodedParams = web3Eth.eth.abi.encodeParameters(
+    [ "uint", "address", "uint"],
+    [nonce, address, tokenId]
+  )
+  return keccak256(encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length))
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {
