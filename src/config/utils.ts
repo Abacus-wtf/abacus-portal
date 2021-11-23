@@ -73,8 +73,9 @@ export async function openseaGetMany(pricingSessions: OpenSeaGetManyParams) {
     .map(session => `token_ids=${session.tokenId}&`)
     .toString()}`
   const result = await openseaGet<OpenSeaGetResponse>(URL.replaceAll(",", ""))
-  return result
-  
+  return result    
+}
+
 export function hashValues({nonce, address, tokenId}: {nonce: number, address: string, tokenId: string}) {
   const encodedParams = web3Eth.eth.abi.encodeParameters(
     [ "uint", "address", "uint"],
