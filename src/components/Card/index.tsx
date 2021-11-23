@@ -60,6 +60,8 @@ const BoldText = styled(Text)`
   font-weight: bold;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 80%;
+  overflow: hidden;
 `
 
 const SubText = styled(Text)`
@@ -111,14 +113,14 @@ export default (props: SessionData) => {
             {props.nftName} #{props.tokenId}
           </BoldText>
           <EthText>
-            <img style={{ height: 15 }} src={EthSymbol} /> {props.totalStaked}
+            <img style={{ height: 15 }} src={EthSymbol} /> {props.finalAppraisalValue !== undefined ? props.finalAppraisalValue : props.totalStaked}
           </EthText>
         </TextContainer>
         <TextContainer>
           <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
             {props.collectionTitle}
           </SubText>
-          <SubText>Total Staked</SubText>
+          <SubText>{props.finalAppraisalValue !== undefined ? 'Final Appraisal' : 'Total Staked'}</SubText>
         </TextContainer>
       </OuterTextContainer>
     </CardContainer>

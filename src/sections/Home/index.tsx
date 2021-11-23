@@ -12,35 +12,9 @@ import {
 import _ from "lodash"
 import Link from "gatsby-link"
 import { PromiseStatus } from "@models/PromiseStatus"
-import { BackgroundIMG, HeaderBar, CardContainer } from "./Home.styles"
+import { BackgroundIMG, HeaderBar, CardContainer, Header, HeaderBarContainer } from "./Home.styles"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { useActiveWeb3React } from "@hooks/index"
-
-const Header = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  @media ${({theme}) => theme.media.splitCenter} {
-    align-items: center;
-  }
-
-`
-
-const HeaderBarContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  grid-gap: 12px;
-  max-height: 38px;
-  margin-top: 15px;
-
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
-    margin-top: 0;
-    justify-content: flex-start;
-    flex-direction: row;
-  }
-`
 
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
