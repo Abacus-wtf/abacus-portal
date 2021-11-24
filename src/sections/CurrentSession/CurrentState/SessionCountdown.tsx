@@ -15,23 +15,24 @@ interface SessionCountdownProps {
   overrideTitle?: string
 }
 
-const SessionCountdown = (props: SessionCountdownProps) => {
+const SessionCountdown = ({
+  overrideEndTime,
+  overrideOnComplete,
+  overrideTitle,
+}: SessionCountdownProps) => {
   const sessionData = useCurrentSessionData()
   const theme = useContext(ThemeContext)
   const getCurrentSessionData = useGetCurrentSessionData()
+  const endTime = overrideEndTime || sessionData.endTime
   return (
     <ListGroupItem style={{ width: "100%" }}>
-      <Label>
-        {props.overrideTitle ? props.overrideTitle : "Session ends in"}
-      </Label>
+      <Label>{overrideTitle || "Session ends in"}</Label>
       <Countdown
-        date={
-          props.overrideEndTime ? props.overrideEndTime : sessionData.endTime
-        }
+        date={endTime}
         onComplete={async () => {
-          if (props.overrideOnComplete) {
-            await props.overrideOnComplete()
-          } else {
+          if (overrideOnComplete) {
+            await overrideOnComplete()
+          } else if (endTime) {
             await getCurrentSessionData(
               sessionData.address,
               sessionData.tokenId,
@@ -42,40 +43,45 @@ const SessionCountdown = (props: SessionCountdownProps) => {
         renderer={({ hours, minutes, seconds, completed }) => {
           if (completed) {
             return <ListGroupHeader>Completed</ListGroupHeader>
-          } else {
-            const colon = (
-              <ListGroupHeader
-                style={{
-                  color: theme.colors.text2,
-                  margin: "0px 10px",
-                }}
-              >
-                :
-              </ListGroupHeader>
-            )
-            return (
-              <div style={{ display: "flex" }}>
-                <div>
-                  <ListGroupHeader>{hours}</ListGroupHeader>
-                  <ListGroupSubtext>Hr</ListGroupSubtext>
-                </div>
-                {colon}
-                <div>
-                  <ListGroupHeader>{minutes}</ListGroupHeader>
-                  <ListGroupSubtext>Min</ListGroupSubtext>
-                </div>
-                {colon}
-                <div>
-                  <ListGroupHeader>{seconds}</ListGroupHeader>
-                  <ListGroupSubtext>Sec</ListGroupSubtext>
-                </div>
-              </div>
-            )
           }
+          const colon = (
+            <ListGroupHeader
+              style={{
+                color: theme.colors.text2,
+                margin: "0px 10px",
+              }}
+            >
+              :
+            </ListGroupHeader>
+          )
+          return (
+            <div style={{ display: "flex" }}>
+              <div>
+                <ListGroupHeader>{hours}</ListGroupHeader>
+                <ListGroupSubtext>Hr</ListGroupSubtext>
+              </div>
+              {colon}
+              <div>
+                <ListGroupHeader>{minutes}</ListGroupHeader>
+                <ListGroupSubtext>Min</ListGroupSubtext>
+              </div>
+              {colon}
+              <div>
+                <ListGroupHeader>{seconds}</ListGroupHeader>
+                <ListGroupSubtext>Sec</ListGroupSubtext>
+              </div>
+            </div>
+          )
         }}
       />
     </ListGroupItem>
   )
+}
+
+SessionCountdown.defaultProps = {
+  overrideOnComplete: null,
+  overrideEndTime: null,
+  overrideTitle: null,
 }
 
 export default SessionCountdown
