@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useMemo } from "react"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
 import Button, { ButtonsWhite } from "@components/Button"
 import Card from "@components/Card"
@@ -42,6 +42,15 @@ const Home: React.FC = () => {
     }
   }, [getMultiSessionData, isNewNetwork])
 
+  const filteredData = useMemo(() => {
+    if (!searchValue) {
+      return multiSessionData
+    }
+    return multiSessionData.filter((datum) =>
+      datum.nftName.toLowerCase().includes(searchValue.toLowerCase())
+    )
+  }, [searchValue, multiSessionData])
+
   return (
     <UniversalContainer>
       <BackgroundIMG />
@@ -56,11 +65,9 @@ const Home: React.FC = () => {
         <HeaderBarContainer>
           <ButtonsWhite>Filter</ButtonsWhite>
           <SeachBar
-            input={searchValue}
-            changeInput={(input) => setSearchValue(input)}
             placeholder="Find something"
-            onEnter={() => {
-              console.log("Enter", search)
+            onEnter={(search) => {
+              setSearchValue(search)
             }}
           />
           <Button
@@ -74,7 +81,7 @@ const Home: React.FC = () => {
       </HeaderBar>
 
       <CardContainer>
-        {_.map(multiSessionData, (i) => (
+        {_.map(filteredData, (i) => (
           <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
         ))}
       </CardContainer>

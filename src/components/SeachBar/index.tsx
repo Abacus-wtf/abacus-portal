@@ -1,7 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as React from "react"
 import styled from "styled-components"
-import { FormInput, InputGroup, InputGroupAddon, Button } from "shards-react"
+import { FormInput, InputGroup, InputGroupAddon } from "shards-react"
 import { Search } from "react-iconly"
 
 const SearchBar = styled(FormInput).attrs({
@@ -37,24 +36,26 @@ const InputGroupContainer = styled(InputGroup)`
 
 interface SearchProps {
   placeholder: string
-  input: string
-  changeInput: (input: string) => void
-  onEnter: () => void
+  onEnter: (searchValue: string) => void
 }
 
-export default ({ placeholder, input, changeInput, onEnter }: SearchProps) => {
+export default ({ placeholder, onEnter }: SearchProps) => {
+  const [searchValue, setSearchValue] = React.useState("")
+  const search = () => {
+    onEnter(searchValue)
+  }
   return (
     <InputGroupContainer seamless>
-      <InputGroupAddonStyles onClick={() => onEnter()} type="prepend">
+      <InputGroupAddonStyles onClick={search} type="prepend">
         <SearchStyled />
       </InputGroupAddonStyles>
       <SearchBar
-        value={input}
-        onChange={e => changeInput(e.target.value)}
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
         placeholder={placeholder}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (e.key === "Enter") {
-            onEnter()
+            search()
           }
         }}
       />
