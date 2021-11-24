@@ -76,16 +76,16 @@ const ETH_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
 
 const ARB_ABC_TREASURY_ADDRESS = IS_PRODUCTION
   ? ""
-  : "0xa41E613FDC12Dd029e2a770F93b8A9E5569Ca4E8"
+  : "0x20d76475944C51871a72833c375F51C56FC06195"
 const ARB_ABC_TOKEN_ADDRESS = IS_PRODUCTION
   ? ""
-  : "0xd054ea8f9b2558dBc69beF1DcaDce2B60d7E6bA2"
+  : "0x01D639356F80F1982eef8438681Aa7Cf29F402De"
 const ARB_ABC_AUCTION_ADDRESS = IS_PRODUCTION
   ? "0xf50056e8712939AA932CDD68d1101271bb3d4A1E"
-  : "0x03fEfB2d2148B810c5a2fC1797cC288249650230"
+  : "0xB61E87a81e938e8C9CA39c327c88bF00f2F1aE7B"
 const ARB_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? ""
-  : "0xa9EfcAe6fe1703E1aa1591e4D10Cbd01eE6C7623"
+  : "0x8C11B0f87e91d12fB9Fa928AA2A8e7ba5CD7bd7c"
 
 export const CURRENT_SESSIONS = (networkSymbol: NetworkSymbolEnum) =>
   networkSymbol === NetworkSymbolEnum.ETH
@@ -177,7 +177,7 @@ export interface WalletInfo {
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
-  /*INJECTED: {
+  /* INJECTED: {
     connector: injected,
     name: 'Injected',
     iconName: 'arrow-right.svg',
@@ -185,7 +185,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: '#010101',
     primary: true
-  },*/
+  }, */
   METAMASK: {
     connector: new InjectedConnector(InjectedConnectorProps),
     name: "MetaMask",
