@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
-import Button from "@components/Button"
+import Button, { ButtonsWhite } from "@components/Button"
 import Card from "@components/Card"
 import {
   useGetMultiSessionData,
@@ -12,6 +12,7 @@ import { PromiseStatus } from "@models/PromiseStatus"
 import PaginationButton from "@components/PaginationButton"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { usePrevious } from "@hooks/index"
+import SeachBar from "@components/SeachBar"
 import {
   BackgroundIMG,
   HeaderBar,
@@ -24,7 +25,7 @@ const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
   const isInitializedRef = useRef(false)
   const { multiSessionData, fetchStatus, isLastPage } = useMultiSessionState()
-  // const [searchValue, setSearchValue] = useState("")
+  const [searchValue, setSearchValue] = useState("")
   const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
   const prevNetworkSymbol = usePrevious(networkSymbol)
@@ -53,13 +54,15 @@ const Home: React.FC = () => {
           </Subheader>
         </Header>
         <HeaderBarContainer>
-          {/* <ButtonsWhite>Filter</ButtonsWhite>
-          <SearchBar
+          <ButtonsWhite>Filter</ButtonsWhite>
+          <SeachBar
             input={searchValue}
-            changeInput={input => setSearchValue(input)}
-            placeholder={"Find something"}
-            onEnter={() => {}}
-          /> */}
+            changeInput={(input) => setSearchValue(input)}
+            placeholder="Find something"
+            onEnter={() => {
+              console.log("Enter", search)
+            }}
+          />
           <Button
             style={{ display: "flex", alignItems: "center" }}
             as={Link}
