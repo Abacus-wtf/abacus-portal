@@ -40,6 +40,10 @@ export const Title = styled.h2`
   font-size: 1.5rem;
   text-align: left;
   margin: 0px !important;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 export const MainContainer = styled(Col)`

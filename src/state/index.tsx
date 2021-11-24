@@ -10,14 +10,14 @@ const store = configureStore({
     application,
     sessionData,
     transactions,
-    miscData
+    miscData,
   },
   middleware: getDefaultMiddleware => [
     ...getDefaultMiddleware({
       thunk: false,
       immutableCheck: false,
       serializableCheck: false,
-    })
+    }),
   ],
 })
 

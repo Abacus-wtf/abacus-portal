@@ -1,59 +1,27 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
-import BackgroundSource from "@images/title_bg.png"
 import Button, { ButtonsWhite } from "@components/Button"
 import SearchBar from "@components/SeachBar"
 import Card from "@components/Card"
-import { useGetMultiSessionData } from "@state/sessionData/hooks"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
+import {
+  useGetMultiSessionData,
+  useMultiSessionState,
+  useMultiSessionData,
+} from "@state/sessionData/hooks"
 import _ from "lodash"
 import Link from "gatsby-link"
+import { PromiseStatus } from "@models/PromiseStatus"
+import { BackgroundIMG, HeaderBar, CardContainer, Header, HeaderBarContainer } from "./Home.styles"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { useActiveWeb3React } from "@hooks/index"
 
-const BackgroundIMG = styled.img.attrs({
-  src: BackgroundSource,
-})`
-  position: absolute;
-  transform: rotate(30deg);
-  filter: blur(4px);
-  opacity: 0.4;
-  height: 450px;
-  z-index: -1;
-  top: 0;
-`
-
-const HeaderBar = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  margin-bottom: 45px;
-`
-
-const HeaderBarContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  grid-gap: 12px;
-  max-height: 38px;
-`
-
-const CardContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 20px;
-  row-gap: 40px;
-`
-
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
-  const multiSessionData = useSelector<
-    AppState,
-    AppState["sessionData"]["multiSessionData"]
-  >(state => state.sessionData.multiSessionData)
+  const multiSessionData = useMultiSessionData()
   const [searchValue, setSearchValue] = useState("")
+  const multiSessionState = useMultiSessionState()
+  const isLoading = multiSessionState.fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
 
   useEffect(() => {
@@ -66,21 +34,21 @@ const Home: React.FC = () => {
     <UniversalContainer>
       <BackgroundIMG />
       <HeaderBar>
-        <div>
+        <Header>
           <Title>Highlighted</Title>
           <Subheader>
             Browse {multiSessionData ? multiSessionData.length : "-"} Total
             Sessions
           </Subheader>
-        </div>
+        </Header>
         <HeaderBarContainer>
-          {/*<ButtonsWhite>Filter</ButtonsWhite>
+          {/* <ButtonsWhite>Filter</ButtonsWhite>
           <SearchBar
             input={searchValue}
             changeInput={input => setSearchValue(input)}
             placeholder={"Find something"}
             onEnter={() => {}}
-          />*/}
+          /> */}
           <Button
             style={{ display: "flex", alignItems: "center" }}
             as={Link}
@@ -90,13 +58,13 @@ const Home: React.FC = () => {
           </Button>
         </HeaderBarContainer>
       </HeaderBar>
-      {multiSessionData === null ? (
+      {isLoading ? (
         <UniversalContainer style={{ alignItems: "center" }}>
           Loading... {/* TODO: find a loader */}
         </UniversalContainer>
       ) : (
         <CardContainer>
-          {_.map(multiSessionData, i => (
+          {_.map(multiSessionData, (i) => (
             <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
           ))}
         </CardContainer>
