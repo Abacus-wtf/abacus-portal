@@ -60,6 +60,14 @@ interface CreateSessionItems {
   nonce: number
 }
 
+type CreateSessionForm<Elements> = Elements & {
+  nftAddress: HTMLInputElement
+  tokenId: HTMLInputElement
+  initAppraisal: HTMLInputElement
+  votingTime: HTMLInputElement
+  initBounty: HTMLInputElement
+}
+
 const CreateSession: React.FC = () => {
   const { account } = useActiveWeb3React()
   const [openModal, setOpenModal] = useState(false)
@@ -75,15 +83,16 @@ const CreateSession: React.FC = () => {
     const pricingSession = getPricingSessionContract(
       ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
-    const nftAddress = e.target.nftAddress.value
-    const tokenId = e.target.tokenId.value
-    const initAppraisal = e.target.initAppraisal.value
-    const votingTime = Number(e.target.votingTime.value)
+    const formElements = e.target as CreateSessionForm<typeof e.target>
+    const nftAddress = formElements.nftAddress.value
+    const tokenId = formElements.tokenId.value
+    const initAppraisal = formElements.initAppraisal.value
+    const votingTime = Number(formElements.votingTime.value)
     const bounty =
-      e.target.initBounty.value === "" ||
-      Number(e.target.initBounty.value) === 0
+      formElements.initBounty.value === "" ||
+      Number(formElements.initBounty.value) === 0
         ? undefined
-        : e.target.initBounty.value
+        : formElements.initBounty.value
 
     const meta = await openseaGet(`asset/${nftAddress}/${tokenId}`)
 
@@ -117,7 +126,7 @@ const CreateSession: React.FC = () => {
           img: meta.image_url,
           name: meta.name,
           collection: meta.collection.name,
-          nonce: Number(nonce),
+          nonce: Number(nonce) + 1,
         })
       },
       bounty
