@@ -20,7 +20,6 @@ import {
   openseaGetMany,
   OpenSeaGetResponse,
   shortenAddress,
-  hashValues,
 } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import { PromiseStatus } from "@models/PromiseStatus"
@@ -533,12 +532,6 @@ export const useGetCurrentSessionData = () => {
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
 
-      const hash = hashValues({
-        address,
-        nonce,
-        tokenId,
-      })
-
       const URL = `asset/${address}/${tokenId}`
       const [
         pricingSessionMetadata,
@@ -548,10 +541,10 @@ export const useGetCurrentSessionData = () => {
         finalAppraisalValue,
       ] = await Promise.all([
         openseaGet(URL),
-        pricingSession.methods.NftSessionCore(hash).call(),
+        pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
         pricingSession.methods.getStatus(address, tokenId).call(),
-        pricingSession.methods.NftSessionCheck(hash).call(),
-        pricingSession.methods.finalAppraisalValue(hash).call(),
+        pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
+        pricingSession.methods.finalAppraisalValue(nonce, address, tokenId).call(),
       ])
 
       let ethUsd
