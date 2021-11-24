@@ -141,7 +141,7 @@ const Navbar = ({ location }) => {
             </HeaderLink>
             {/* <HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
             Claim Pool
-          </HeaderLink> */}
+            </HeaderLink> */}
             {/* <HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()>
             My Sessions
           </HeaderLink>
