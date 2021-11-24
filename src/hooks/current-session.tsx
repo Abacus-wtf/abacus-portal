@@ -179,6 +179,8 @@ export const useOnWeightVote = () => {
         parseEther("" + appraisalValue),
         seed,
       ]
+      console.log('args', args)
+      console.log('account', account)
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {

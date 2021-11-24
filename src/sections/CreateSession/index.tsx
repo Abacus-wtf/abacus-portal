@@ -102,24 +102,25 @@ const CreateSession: React.FC = () => {
       tokenId,
       initAppraisal,
       Math.round(votingTime * 3600),
-      () => toggle(),
+      async () => {
+        const nonce = await pricingSession.methods
+          .nftNonce(nftAddress, tokenId)
+          .call()
+        setNewSesh({
+          nftAddress,
+          tokenId,
+          initAppraisal,
+          bounty,
+          votingTime,
+          img: meta.image_url,
+          name: meta.name,
+          collection: meta.collection.name,
+          nonce: Number(nonce),
+        })
+        toggle()
+      },
       bounty
     )
-
-    const nonce = await pricingSession.methods
-      .nftNonce(nftAddress, tokenId)
-      .call()
-    setNewSesh({
-      nftAddress,
-      tokenId,
-      initAppraisal,
-      bounty,
-      votingTime,
-      img: meta.image_url,
-      name: meta.name,
-      collection: meta.collection.name,
-      nonce: Number(nonce),
-    })
   }
 
   return (

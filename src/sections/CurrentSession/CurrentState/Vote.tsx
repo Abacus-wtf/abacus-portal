@@ -182,7 +182,7 @@ const Vote: FunctionComponent = () => {
             It seems you've already voted, or you're not logged in
           </Tooltip>
         </VerticalContainer>
-        <ListGroup style={{ marginTop: 35 }}>
+        {/*<ListGroup style={{ marginTop: 35 }}>
           <ListGroupItem>
             <InputWithTitle
               title="Add to Bounty"
@@ -210,9 +210,9 @@ const Vote: FunctionComponent = () => {
               {addToBountyPending ? "Pending..." : "Add to Bounty"}
             </Button>
           </div>
-        </ListGroup>
+        </ListGroup>*/}
         <div
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 5 }}
         >
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
