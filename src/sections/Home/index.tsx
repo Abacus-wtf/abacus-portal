@@ -1,34 +1,45 @@
-import React, { useState, useEffect } from "react"
-import styled from "styled-components"
+import React, { useEffect, useRef } from "react"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
-import Button, { ButtonsWhite } from "@components/Button"
-import SearchBar from "@components/SeachBar"
+import Button from "@components/Button"
 import Card from "@components/Card"
 import {
   useGetMultiSessionData,
   useMultiSessionState,
-  useMultiSessionData,
 } from "@state/sessionData/hooks"
 import _ from "lodash"
 import Link from "gatsby-link"
 import { PromiseStatus } from "@models/PromiseStatus"
-import { BackgroundIMG, HeaderBar, CardContainer, Header, HeaderBarContainer } from "./Home.styles"
+import PaginationButton from "@components/PaginationButton"
 import { useGetCurrentNetwork } from "@state/application/hooks"
-import { useActiveWeb3React } from "@hooks/index"
+import { usePrevious } from "@hooks/index"
+import {
+  BackgroundIMG,
+  HeaderBar,
+  CardContainer,
+  Header,
+  HeaderBarContainer,
+} from "./Home.styles"
 
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
-  const multiSessionData = useMultiSessionData()
-  const [searchValue, setSearchValue] = useState("")
-  const multiSessionState = useMultiSessionState()
-  const isLoading = multiSessionState.fetchStatus === PromiseStatus.Pending
+  const isInitializedRef = useRef(false)
+  const { multiSessionData, fetchStatus, isLastPage } = useMultiSessionState()
+  // const [searchValue, setSearchValue] = useState("")
+  const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
+  const prevNetworkSymbol = usePrevious(networkSymbol)
+  const isNewNetwork = networkSymbol !== prevNetworkSymbol
 
   useEffect(() => {
-    if (networkSymbol) {
+    if (isNewNetwork) {
+      isInitializedRef.current = false
+    }
+
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true
       getMultiSessionData()
     }
-  }, [networkSymbol])
+  }, [getMultiSessionData, isNewNetwork])
 
   return (
     <UniversalContainer>
@@ -58,16 +69,23 @@ const Home: React.FC = () => {
           </Button>
         </HeaderBarContainer>
       </HeaderBar>
-      {isLoading ? (
+
+      <CardContainer>
+        {_.map(multiSessionData, (i) => (
+          <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
+        ))}
+      </CardContainer>
+      <UniversalContainer style={{ alignItems: "center", marginTop: "10px" }}>
+        <PaginationButton
+          isLastPage={isLastPage}
+          isLoading={isLoading}
+          getNextPage={getMultiSessionData}
+        />
+      </UniversalContainer>
+      {isLoading && (
         <UniversalContainer style={{ alignItems: "center" }}>
           Loading... {/* TODO: find a loader */}
         </UniversalContainer>
-      ) : (
-        <CardContainer>
-          {_.map(multiSessionData, (i) => (
-            <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
-          ))}
-        </CardContainer>
       )}
     </UniversalContainer>
   )

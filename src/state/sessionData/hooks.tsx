@@ -26,17 +26,6 @@ import { formatEther } from "ethers/lib/utils"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import {
-  GET_PRICING_SESSIONS,
-  GetPricingSessionsQueryResponse,
-  GetPricingSessionQueryResponse,
-  SubgraphPricingSession,
-  GET_PRICING_SESSION,
-  GetActiveSessionsQueryResponse,
-  GET_ACTIVE_SESSIONS,
-  GetMySessionsQueryResponse,
-  GET_MY_SESSIONS,
-} from "./queries"
-import {
   SessionData,
   CurrentSessionState,
   UserState,
@@ -55,7 +44,25 @@ import {
   setActiveSessionsFetchStatus,
   setActiveSessionsData,
   setMySessionsData,
+  setMultipleSessionPage,
+  setMultipleSessionIsLastPage,
+  setMySessionsPage,
+  setMySessionsIsLastPage,
+  setActiveSessionsPage,
+  setActiveSessionsIsLastPage,
 } from "./actions"
+import {
+  GET_PRICING_SESSIONS,
+  GetPricingSessionsQueryResponse,
+  GetPricingSessionQueryResponse,
+  SubgraphPricingSession,
+  GET_PRICING_SESSION,
+  GetActiveSessionsQueryResponse,
+  GET_ACTIVE_SESSIONS,
+  GetMySessionsQueryResponse,
+  GET_MY_SESSIONS,
+} from "./queries"
+import { PAGINATE_BY } from "./constants"
 import {
   currentSessionDataSelector,
   currentSessionStatusSelector,
@@ -96,7 +103,7 @@ const modifyTimeAndSession = (
     endTime =
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 2 * 1000
-    
+
     if (currentTime >= endTime) {
       sessionStatus = 5
     }
@@ -266,6 +273,7 @@ const parseSubgraphPricingSessions = async (
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const { page, multiSessionData } = useMultiSessionState()
   const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
@@ -279,7 +287,7 @@ export const useGetMultiSessionData = () => {
       } = await axios.post<GetPricingSessionsQueryResponse>(
         GRAPHQL_ENDPOINT(networkSymbol),
         {
-          query: GET_PRICING_SESSIONS,
+          query: GET_PRICING_SESSIONS(page),
         },
         {
           headers: {
@@ -288,17 +296,21 @@ export const useGetMultiSessionData = () => {
         }
       )
       const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-      dispatch(setMultipleSessionData(sessionData))
+      const isLastPage = sessionData.length < PAGINATE_BY
+      dispatch(setMultipleSessionData([...multiSessionData, ...sessionData]))
+      dispatch(setMultipleSessionPage(page + 1))
+      dispatch(setMultipleSessionIsLastPage(isLastPage))
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
     } catch {
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
     }
-  }, [dispatch, networkSymbol])
+  }, [dispatch, page, multiSessionData, networkSymbol])
 }
 
 export const useGetMySessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { account } = useActiveWeb3React()
+  const { page, data } = useMySessionsState()
   const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
@@ -315,7 +327,7 @@ export const useGetMySessionsData = () => {
       } = await axios.post<GetMySessionsQueryResponse>(
         GRAPHQL_ENDPOINT(networkSymbol),
         {
-          query: GET_MY_SESSIONS(account.toLowerCase()),
+          query: GET_MY_SESSIONS(account.toLowerCase(), page),
         },
         {
           headers: {
@@ -326,20 +338,22 @@ export const useGetMySessionsData = () => {
       if (user) {
         const { creatorOf: pricingSessions } = user
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-        dispatch(setMySessionsData(sessionData))
-      } else {
-        dispatch(setMySessionsData([]))
+        const isLastPage = sessionData.length < PAGINATE_BY
+        dispatch(setMySessionsData([...data, ...sessionData]))
+        dispatch(setMySessionsPage(page + 1))
+        dispatch(setMySessionsIsLastPage(isLastPage))
       }
       dispatch(setMySessionsFetchStatus(PromiseStatus.Resolved))
     } catch {
       dispatch(setMySessionsFetchStatus(PromiseStatus.Rejected))
     }
-  }, [account, dispatch, networkSymbol])
+  }, [dispatch, account, page, data, networkSymbol])
 }
 
 export const useGetActiveSessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { account } = useActiveWeb3React()
+  const { page, data } = useActiveSessionsState()
   const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
@@ -356,7 +370,7 @@ export const useGetActiveSessionsData = () => {
       } = await axios.post<GetActiveSessionsQueryResponse>(
         GRAPHQL_ENDPOINT(networkSymbol),
         {
-          query: GET_ACTIVE_SESSIONS(account.toLowerCase()),
+          query: GET_ACTIVE_SESSIONS(account.toLowerCase(), page),
         },
         {
           headers: {
@@ -368,15 +382,16 @@ export const useGetActiveSessionsData = () => {
         const { votes } = user
         const pricingSessions = _.map(votes, (i) => i.pricingSession)
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-        dispatch(setActiveSessionsData(sessionData))
-      } else {
-        dispatch(setActiveSessionsData([]))
+        const isLastPage = sessionData.length < PAGINATE_BY
+        dispatch(setActiveSessionsData([...data, ...sessionData]))
+        dispatch(setActiveSessionsPage(page + 1))
+        dispatch(setActiveSessionsIsLastPage(isLastPage))
       }
       dispatch(setActiveSessionsFetchStatus(PromiseStatus.Resolved))
     } catch {
       dispatch(setActiveSessionsFetchStatus(PromiseStatus.Rejected))
     }
-  }, [account, dispatch, networkSymbol])
+  }, [dispatch, account, page, data, networkSymbol])
 }
 
 type GetUserStatusParams = {
