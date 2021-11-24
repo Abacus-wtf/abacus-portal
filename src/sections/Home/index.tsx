@@ -1,54 +1,65 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { Title, Subheader, UniversalContainer } from "@components/global.styles"
-import Button, { ButtonsWhite } from "@components/Button"
-import SearchBar from "@components/SeachBar"
+import Button from "@components/Button"
 import Card from "@components/Card"
 import {
   useGetMultiSessionData,
   useMultiSessionState,
 } from "@state/sessionData/hooks"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import _ from "lodash"
 import Link from "gatsby-link"
 import { PromiseStatus } from "@models/PromiseStatus"
-import { BackgroundIMG, HeaderBar, CardContainer } from "./Home.styles"
 import PaginationButton from "@components/PaginationButton"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { usePrevious } from "@hooks/index"
+import {
+  BackgroundIMG,
+  HeaderBar,
+  CardContainer,
+  Header,
+  HeaderBarContainer,
+} from "./Home.styles"
 
 const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
   const isInitializedRef = useRef(false)
-  const { multiSessionData, fetchStatus, isLastPage, page } =
-    useMultiSessionState()
-  const [searchValue, setSearchValue] = useState("")
+  const { multiSessionData, fetchStatus, isLastPage } = useMultiSessionState()
+  // const [searchValue, setSearchValue] = useState("")
   const isLoading = fetchStatus === PromiseStatus.Pending
+  const networkSymbol = useGetCurrentNetwork()
+  const prevNetworkSymbol = usePrevious(networkSymbol)
+  const isNewNetwork = networkSymbol !== prevNetworkSymbol
 
   useEffect(() => {
+    if (isNewNetwork) {
+      isInitializedRef.current = false
+    }
+
     if (!isInitializedRef.current) {
       isInitializedRef.current = true
       getMultiSessionData()
     }
-  }, [getMultiSessionData])
+  }, [getMultiSessionData, isNewNetwork])
 
   return (
     <UniversalContainer>
       <BackgroundIMG />
       <HeaderBar>
-        <div>
+        <Header>
           <Title>Highlighted</Title>
           <Subheader>
             Browse {multiSessionData ? multiSessionData.length : "-"} Total
             Sessions
           </Subheader>
-        </div>
-        {/*<HeaderBarContainer>
-          <ButtonsWhite>Filter</ButtonsWhite>
+        </Header>
+        <HeaderBarContainer>
+          {/* <ButtonsWhite>Filter</ButtonsWhite>
           <SearchBar
             input={searchValue}
             changeInput={input => setSearchValue(input)}
             placeholder={"Find something"}
             onEnter={() => {}}
-          />
+          /> */}
           <Button
             style={{ display: "flex", alignItems: "center" }}
             as={Link}
@@ -56,7 +67,7 @@ const Home: React.FC = () => {
           >
             Create Session
           </Button>
-        </HeaderBarContainer>*/}
+        </HeaderBarContainer>
       </HeaderBar>
 
       <CardContainer>

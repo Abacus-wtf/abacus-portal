@@ -2,7 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import Countdown from "react-countdown"
 import { User } from "react-feather"
-import EthSymbol from "@images/eth_symbol.svg"
+import EthSymbol from "@images/ETH.svg"
 import { Text, ImageContainer } from "@components/global.styles"
 import Link from "gatsby-link"
 import { SessionData } from "@state/sessionData/reducer"
@@ -60,6 +60,8 @@ const BoldText = styled(Text)`
   font-weight: bold;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 80%;
+  overflow: hidden;
 `
 
 const SubText = styled(Text)`
@@ -111,14 +113,14 @@ export default (props: SessionData) => {
             {props.nftName} #{props.tokenId}
           </BoldText>
           <EthText>
-            <img style={{ height: 15 }} src={EthSymbol} /> {props.totalStaked}
+            <img style={{ height: 15 }} src={EthSymbol} /> {props.finalAppraisalValue !== undefined ? props.finalAppraisalValue : props.totalStaked}
           </EthText>
         </TextContainer>
         <TextContainer>
           <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
             {props.collectionTitle}
           </SubText>
-          <SubText>Total Staked</SubText>
+          <SubText>{props.finalAppraisalValue !== undefined ? 'Final Appraisal' : 'Total Staked'}</SubText>
         </TextContainer>
       </OuterTextContainer>
     </CardContainer>

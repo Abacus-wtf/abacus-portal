@@ -1,11 +1,12 @@
 import { getAddress } from "@ethersproject/address"
-import { OPENSEA_LINK } from "@config/constants"
+import { OPENSEA_LINK, web3Eth } from "@config/constants"
 import axios, { AxiosResponse } from "axios"
 import axiosRetry from "axios-retry"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Web3Provider, JsonRpcSigner } from "@ethersproject/providers"
 import { Contract } from "@ethersproject/contracts"
 import { AddressZero } from "@ethersproject/constants"
+import { keccak256 } from "@ethersproject/keccak256"
 
 axiosRetry(axios, { retries: 3 })
 
@@ -20,7 +21,7 @@ export function isAddress(value: any): string | false {
 export function shortenAddress(address: string, chars = 4): string {
   const parsed = isAddress(address)
   if (!parsed) {
-    throw Error(`Invalid 'address' parameter '${address}'.`)
+    return ''
   }
   return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`
 }
@@ -72,7 +73,15 @@ export async function openseaGetMany(pricingSessions: OpenSeaGetManyParams) {
     .map(session => `token_ids=${session.tokenId}&`)
     .toString()}`
   const result = await openseaGet<OpenSeaGetResponse>(URL.replaceAll(",", ""))
-  return result
+  return result    
+}
+
+export function hashValues({nonce, address, tokenId}: {nonce: number, address: string, tokenId: string}) {
+  const encodedParams = web3Eth.eth.abi.encodeParameters(
+    [ "uint", "address", "uint"],
+    [nonce, address, tokenId]
+  )
+  return keccak256(encodedParams.slice(0, 66) + encodedParams.slice(90, encodedParams.length))
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {

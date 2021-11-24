@@ -115,7 +115,11 @@ const Claim: FunctionComponent = () => {
                 onClaim()
               }}
             >
-              {isPending ? "Pending..." : "Claim Reward"}
+              {isPending 
+                ? "Pending..." 
+                : userStatus === UserState.CompletedClaim
+                ? "Claimed Reward"
+                : "Claim Reward"}
             </Button>
             <Tooltip
               open={isToolTipOpen}

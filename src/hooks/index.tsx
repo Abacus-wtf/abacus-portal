@@ -3,11 +3,11 @@ import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 import { NetworkContextName } from "@config/constants"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { web3 } from "@config/constants"
+import { web3, web3Eth } from "@config/constants"
 import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { calculateGasMargin } from "@config/utils"
-import { useToggleWalletModal } from "@state/application/hooks"
+import { useToggleWalletModal, useGetCurrentNetwork } from "@state/application/hooks"
 import {
   useCurrentSessionData,
   useGetCurrentSessionData,
@@ -37,9 +37,21 @@ export function useActiveWeb3React(): Web3ReactContextInterface<
 }
 
 export function useWeb3Contract(ABI: any) {
+  const networkSymbol = useGetCurrentNetwork()
   return useCallback(
     (address: string) => {
-      const contract = new web3.eth.Contract(ABI, address)
+      const Web3 = web3(networkSymbol)
+      const contract = new Web3.eth.Contract(ABI, address)
+      return contract
+    },
+    [ABI, networkSymbol]
+  )
+}
+
+export function useWeb3EthContract(ABI: any) {
+  return useCallback(
+    (address: string) => {
+      const contract = new web3Eth.eth.Contract(ABI, address)
       return contract
     },
     [ABI]
