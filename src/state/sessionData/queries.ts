@@ -1,3 +1,4 @@
+import { gql } from "graphql-request"
 import { PAGINATE_BY } from "./constants"
 
 export type SubgraphPricingSession = {
@@ -17,31 +18,55 @@ export type SubgraphPricingSession = {
 }
 
 export type GetPricingSessionsQueryResponse = {
-  data: {
-    pricingSessions: SubgraphPricingSession[]
-  }
+  pricingSessions: SubgraphPricingSession[]
 }
 
-export const GET_PRICING_SESSIONS = (page: number) => `
-  query GetPricingSessions {
-    pricingSessions(first: ${PAGINATE_BY}, orderBy: createdAt, skip: ${
-  page * PAGINATE_BY
-}) {
-      id
-      nftAddress
-      tokenId
-      nonce
-      finalAppraisalValue
-      totalStaked
-      bounty
-      votingTime
-      endTime
-      sessionStatus
-      timeFinalAppraisalSet
-      numParticipants
+export type GetPricingSessionsVariables = {
+  first: number
+  skip: number
+}
+
+export type PricingSessionFilters = {
+  nftAddress?: string
+  tokenId?: string
+  sessionStatuses?: number[]
+}
+
+export const GET_PRICING_SESSIONS = (filters: PricingSessionFilters) => {
+  const where =
+    filters.nftAddress || filters.tokenId || filters.sessionStatuses
+      ? `{
+          ${filters.nftAddress ? `nftAddress: "${filters.nftAddress}",` : ""}
+          ${filters.tokenId ? `tokenId: ${filters.tokenId},` : ""}
+          ${
+            filters.sessionStatuses
+              ? `sessionStatus_in: [${filters.sessionStatuses}],`
+              : ""
+          }
+        }`
+      : null
+
+  const query = gql`
+    query GetPricingSessions($first: Int!, $skip: Int!) {
+      pricingSessions(first: $first, orderBy: createdAt, skip: $skip, where: ${where}) {
+        id
+        nftAddress
+        tokenId
+        nonce
+        finalAppraisalValue
+        totalStaked
+        bounty
+        votingTime
+        endTime
+        sessionStatus
+        timeFinalAppraisalSet
+        numParticipants
+      }
     }
-  }
-`
+  `
+  console.log(query)
+  return query
+}
 
 export type GetPricingSessionQueryResponse = {
   data: {

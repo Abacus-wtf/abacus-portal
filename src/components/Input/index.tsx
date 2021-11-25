@@ -3,8 +3,8 @@ import styled from "styled-components"
 import { FormInput } from "shards-react"
 import { Label } from "../global.styles"
 
-export const MainInput = styled(FormInput).attrs(props => {
-  size: props.size || "sm"
+export const MainInput = styled(FormInput).attrs((props) => {
+  props.size || "sm"
 })`
   border: #c3c8d7;
   border-radius: 53px;
@@ -36,15 +36,39 @@ export const MainInput = styled(FormInput).attrs(props => {
   }
 `
 
+type ContainerProps = {
+  type: string
+}
+const Container = styled.div<ContainerProps>`
+  display: flex;
+  flex-direction: ${({ type }) => (type === "checkbox" ? "row" : "column")};
+  align-items: ${({ type }) => (type === "checkbox" ? "center" : "flex-start")};
+`
+
 interface InputWithTitle extends React.ComponentProps<FormInput> {
   title: string
+  id: string
+  type?: string
 }
 
-export const InputWithTitle = (props: InputWithTitle) => {
-  return (
-    <>
-      <Label>{props.title}</Label>
-      <MainInput style={{ borderRadius: 0 }} size={"lg"} {...props} />
-    </>
-  )
+export const InputWithTitle = ({
+  title,
+  type,
+  id,
+  ...props
+}: InputWithTitle) => (
+  <Container type={type}>
+    <Label htmlFor={id}>{title}</Label>
+    <MainInput
+      id={id}
+      style={{ borderRadius: 0 }}
+      size="lg"
+      type={type}
+      {...props}
+    />
+  </Container>
+)
+
+InputWithTitle.defaultProps = {
+  type: "",
 }

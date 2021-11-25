@@ -1,7 +1,8 @@
-import { useCallback } from "react"
+import { useCallback, useRef } from "react"
 import { AppState, AppDispatch } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
+import { request } from "graphql-request"
 import {
   useWeb3Contract,
   useActiveWeb3React,
@@ -60,6 +61,8 @@ import {
   GET_ACTIVE_SESSIONS,
   GetMySessionsQueryResponse,
   GET_MY_SESSIONS,
+  GetPricingSessionsVariables,
+  PricingSessionFilters,
 } from "./queries"
 import { PAGINATE_BY } from "./constants"
 import {
@@ -272,38 +275,49 @@ const parseSubgraphPricingSessions = async (
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const filtersRef = useRef("")
   const { page, multiSessionData } = useMultiSessionState()
   const networkSymbol = useGetCurrentNetwork()
 
-  return useCallback(async () => {
-    dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
+  return useCallback(
+    async (filters: PricingSessionFilters) => {
+      if (!networkSymbol) {
+        return
+      }
+      const stringFilters = JSON.stringify(filters)
+      let currentPage = page
+      let currentData = multiSessionData
+      if (stringFilters !== filtersRef.current) {
+        currentPage = 0
+        currentData = []
+        dispatch(setMultipleSessionData([]))
+      }
+      filtersRef.current = stringFilters
+      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
+      const variables: GetPricingSessionsVariables = {
+        first: PAGINATE_BY,
+        skip: currentPage * PAGINATE_BY,
+      }
 
-    try {
-      const {
-        data: {
-          data: { pricingSessions },
-        },
-      } = await axios.post<GetPricingSessionsQueryResponse>(
-        GRAPHQL_ENDPOINT(networkSymbol),
-        {
-          query: GET_PRICING_SESSIONS(page),
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      )
-      const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-      const isLastPage = sessionData.length < PAGINATE_BY
-      dispatch(setMultipleSessionData([...multiSessionData, ...sessionData]))
-      dispatch(setMultipleSessionPage(page + 1))
-      dispatch(setMultipleSessionIsLastPage(isLastPage))
-      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
-    } catch {
-      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
-    }
-  }, [dispatch, page, multiSessionData, networkSymbol])
+      try {
+        const { pricingSessions } =
+          await request<GetPricingSessionsQueryResponse>(
+            GRAPHQL_ENDPOINT(networkSymbol),
+            GET_PRICING_SESSIONS(filters),
+            variables
+          )
+        const sessionData = await parseSubgraphPricingSessions(pricingSessions)
+        const isLastPage = sessionData.length < PAGINATE_BY
+        dispatch(setMultipleSessionData([...currentData, ...sessionData]))
+        dispatch(setMultipleSessionPage(currentPage + 1))
+        dispatch(setMultipleSessionIsLastPage(isLastPage))
+        dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
+      } catch {
+        dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
+      }
+    },
+    [dispatch, page, multiSessionData, networkSymbol]
+  )
 }
 
 export const useGetMySessionsData = () => {
@@ -544,7 +558,9 @@ export const useGetCurrentSessionData = () => {
         pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
         pricingSession.methods.getStatus(address, tokenId).call(),
         pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
-        pricingSession.methods.finalAppraisalValue(nonce, address, tokenId).call(),
+        pricingSession.methods
+          .finalAppraisalValue(nonce, address, tokenId)
+          .call(),
       ])
 
       let ethUsd

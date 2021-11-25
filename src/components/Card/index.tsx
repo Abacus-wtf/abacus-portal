@@ -6,6 +6,7 @@ import EthSymbol from "@images/ETH.svg"
 import { Text, ImageContainer } from "@components/global.styles"
 import Link from "gatsby-link"
 import { SessionData } from "@state/sessionData/reducer"
+import { IS_PRODUCTION } from "@config/constants"
 
 const CardContainer = styled.div`
   width: 100%;
@@ -80,47 +81,71 @@ const EthText = styled(BoldText)`
   margin-bottom: -1px;
 `
 
-export default (props: SessionData) => {
+const LinkElement = IS_PRODUCTION ? Link : "a"
+
+export default ({
+  address,
+  tokenId,
+  nonce,
+  img,
+  endTime,
+  numPpl,
+  nftName,
+  finalAppraisalValue,
+  totalStaked,
+  collectionTitle,
+}: SessionData) => {
+  const linkAddress = `/current-session?address=${address}&tokenId=${tokenId}&nonce=${nonce}`
+  const cardContainerProps = IS_PRODUCTION
+    ? {
+        to: linkAddress,
+      }
+    : {
+        href: linkAddress,
+      }
   return (
-    <CardContainer
-      as={Link}
-      to={`/current-session?address=${props.address}&tokenId=${props.tokenId}&nonce=${props.nonce}`}
-    >
-      <ImageContainer src={props.img}>
+    <CardContainer as={LinkElement} {...cardContainerProps}>
+      <ImageContainer src={img}>
         <MiniText>
           <Countdown
-            date={props.endTime}
+            date={endTime}
             renderer={({ hours, minutes, seconds, completed }) => {
               if (completed) {
                 return <>Completed</>
-              } else {
-                return (
-                  <span>
-                    {hours}:{minutes}:{seconds}
-                  </span>
-                )
               }
+              return (
+                <span>
+                  {hours}:{minutes}:{seconds}
+                </span>
+              )
             }}
           />
         </MiniText>
         <MiniText>
-          <UserStyled /> {props.numPpl}
+          <UserStyled /> {numPpl}
         </MiniText>
       </ImageContainer>
       <OuterTextContainer>
         <TextContainer>
           <BoldText>
-            {props.nftName} #{props.tokenId}
+            {nftName} #{tokenId}
           </BoldText>
           <EthText>
-            <img style={{ height: 15 }} src={EthSymbol} /> {props.finalAppraisalValue !== undefined ? props.finalAppraisalValue : props.totalStaked}
+            <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
+            {finalAppraisalValue !== undefined
+              ? finalAppraisalValue
+              : totalStaked}
           </EthText>
         </TextContainer>
         <TextContainer>
           <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
-            {props.collectionTitle}
+            {collectionTitle}
           </SubText>
-          <SubText>{props.finalAppraisalValue !== undefined ? 'Final Appraisal' : 'Total Staked'}</SubText>
+          <SubText>
+            {finalAppraisalValue !== undefined
+              ? "Final Appraisal"
+              : "Total Staked"}
+          </SubText>
         </TextContainer>
       </OuterTextContainer>
     </CardContainer>
