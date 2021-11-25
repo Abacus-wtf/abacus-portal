@@ -7,7 +7,7 @@ import {
   useMultiSessionState,
 } from "@state/sessionData/hooks"
 import _ from "lodash"
-import Link from "gatsby-link"
+import { Link } from "gatsby"
 import { PromiseStatus } from "@models/PromiseStatus"
 import PaginationButton from "@components/PaginationButton"
 import { useGetCurrentNetwork } from "@state/application/hooks"
@@ -77,7 +77,12 @@ const Home: React.FC = () => {
 
       <CardContainer>
         {_.map(multiSessionData, (i) => (
-          <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
+          <Link
+            to={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
+            key={`${i.address}-${i.tokenId}-${i.nonce}`}
+          >
+            <Card {...i} />
+          </Link>
         ))}
       </CardContainer>
       <UniversalContainer style={{ alignItems: "center", marginTop: "10px" }}>

@@ -4,9 +4,7 @@ import Countdown from "react-countdown"
 import { User } from "react-feather"
 import EthSymbol from "@images/ETH.svg"
 import { Text, ImageContainer } from "@components/global.styles"
-import Link from "gatsby-link"
 import { SessionData } from "@state/sessionData/reducer"
-import { IS_PRODUCTION } from "@config/constants"
 
 const CardContainer = styled.div`
   width: 100%;
@@ -81,12 +79,8 @@ const EthText = styled(BoldText)`
   margin-bottom: -1px;
 `
 
-const LinkElement = IS_PRODUCTION ? Link : "a"
-
 export default ({
-  address,
   tokenId,
-  nonce,
   img,
   endTime,
   numPpl,
@@ -94,60 +88,50 @@ export default ({
   finalAppraisalValue,
   totalStaked,
   collectionTitle,
-}: SessionData) => {
-  const linkAddress = `/current-session?address=${address}&tokenId=${tokenId}&nonce=${nonce}`
-  const cardContainerProps = IS_PRODUCTION
-    ? {
-        to: linkAddress,
-      }
-    : {
-        href: linkAddress,
-      }
-  return (
-    <CardContainer as={LinkElement} {...cardContainerProps}>
-      <ImageContainer src={img}>
-        <MiniText>
-          <Countdown
-            date={endTime}
-            renderer={({ hours, minutes, seconds, completed }) => {
-              if (completed) {
-                return <>Completed</>
-              }
-              return (
-                <span>
-                  {hours}:{minutes}:{seconds}
-                </span>
-              )
-            }}
-          />
-        </MiniText>
-        <MiniText>
-          <UserStyled /> {numPpl}
-        </MiniText>
-      </ImageContainer>
-      <OuterTextContainer>
-        <TextContainer>
-          <BoldText>
-            {nftName} #{tokenId}
-          </BoldText>
-          <EthText>
-            <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
-            {finalAppraisalValue !== undefined
-              ? finalAppraisalValue
-              : totalStaked}
-          </EthText>
-        </TextContainer>
-        <TextContainer>
-          <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
-            {collectionTitle}
-          </SubText>
-          <SubText>
-            {finalAppraisalValue !== undefined
-              ? "Final Appraisal"
-              : "Total Staked"}
-          </SubText>
-        </TextContainer>
-      </OuterTextContainer>
-    </CardContainer>
-  )
-}
+}: SessionData) => (
+  <CardContainer>
+    <ImageContainer src={img}>
+      <MiniText>
+        <Countdown
+          date={endTime}
+          renderer={({ hours, minutes, seconds, completed }) => {
+            if (completed) {
+              return <>Completed</>
+            }
+            return (
+              <span>
+                {hours}:{minutes}:{seconds}
+              </span>
+            )
+          }}
+        />
+      </MiniText>
+      <MiniText>
+        <UserStyled /> {numPpl}
+      </MiniText>
+    </ImageContainer>
+    <OuterTextContainer>
+      <TextContainer>
+        <BoldText>
+          {nftName} #{tokenId}
+        </BoldText>
+        <EthText>
+          <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
+          {finalAppraisalValue !== undefined
+            ? finalAppraisalValue
+            : totalStaked}
+        </EthText>
+      </TextContainer>
+      <TextContainer>
+        <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
+          {collectionTitle}
+        </SubText>
+        <SubText>
+          {finalAppraisalValue !== undefined
+            ? "Final Appraisal"
+            : "Total Staked"}
+        </SubText>
+      </TextContainer>
+    </OuterTextContainer>
+  </CardContainer>
+)

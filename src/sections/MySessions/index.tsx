@@ -11,9 +11,10 @@ import {
 } from "@state/sessionData/hooks"
 import _ from "lodash"
 import { PromiseStatus } from "@models/PromiseStatus"
-import { HeaderBar, CardContainer } from "../Home/Home.styles"
 import PaginationButton from "@components/PaginationButton"
 import { useActiveWeb3React } from "@hooks/index"
+import { Link } from "gatsby"
+import { HeaderBar, CardContainer } from "../Home/Home.styles"
 
 const HeaderBarStyled = styled(HeaderBar)`
   flex-direction: column;
@@ -60,11 +61,9 @@ const MySessions: React.FC = () => {
           initializedMySessionsRef.current = true
           getMySessionsData()
         }
-      } else {
-        if (!initializedActiveSessionsRef.current) {
-          initializedActiveSessionsRef.current = true
-          getActiveSessionsData()
-        }
+      } else if (!initializedActiveSessionsRef.current) {
+        initializedActiveSessionsRef.current = true
+        getActiveSessionsData()
       }
     }
   }, [isMySessions, getMySessionsData, getActiveSessionsData, account])
@@ -91,7 +90,12 @@ const MySessions: React.FC = () => {
             )}
             <CardContainer>
               {_.map(data, (i) => (
-                <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
+                <Link
+                  to={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
+                  key={`${i.address}-${i.tokenId}-${i.nonce}`}
+                >
+                  <Card {...i} />
+                </Link>
               ))}
             </CardContainer>
           </>
