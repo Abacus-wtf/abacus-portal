@@ -26,7 +26,7 @@ import {
   useCurrentSessionData,
   useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
-import { hashValues } from "@config/utils"
+import { encodeSessionData } from "@config/utils"
 import SessionCountdown from "./SessionCountdown"
 import {
   VerticalContainer,
@@ -49,12 +49,13 @@ const Weigh: FunctionComponent = () => {
   const [passwordValue, setPasswordValue] = useState("")
 
   useEffect(() => {
-    const hash = hashValues({
-      address: sessionData.address,
+    const encodedVals = encodeSessionData({
+      account: account,
+      nftAddress: sessionData.address,
       tokenId: sessionData.tokenId,
-      nonce: sessionData.nonce,
+      nonce: sessionData.nonce
     })
-    const itemsString = localStorage.getItem(hash)
+    const itemsString = localStorage.getItem(encodedVals)
     if (itemsString && account) {
       try {
         const items = JSON.parse(itemsString)

@@ -29,7 +29,7 @@ import {
   useOnUpdateVote,
   useOnAddToBountyVote,
 } from "@hooks/current-session"
-import { keccak256 } from "@ethersproject/keccak256"
+import {hashValues} from '@config/utils'
 import _ from "lodash"
 import { parseEther } from "ethers/lib/utils"
 import HashSystem from "../hashSystem"
@@ -132,15 +132,11 @@ const Vote: FunctionComponent = () => {
         <ListGroup>
           <HashSystem
             onCreateHash={(appraisalValue, password) => {
-              let encodedParams = web3Eth.eth.abi.encodeParameters(
-                ["uint", "address", "uint"],
-                [parseEther(`${appraisalValue}`), account! || "", password]
-              )
-              encodedParams =
-                encodedParams.slice(0, 64) +
-                encodedParams.slice(88, encodedParams.length)
-              console.log(keccak256(encodedParams))
-              setAppraisalHash(keccak256(encodedParams))
+              setAppraisalHash(hashValues({
+                appraisalValue: parseEther(`${appraisalValue}`),
+                account: account! || '',
+                password: password
+              }))
             }}
           />
           <ListGroupItem>

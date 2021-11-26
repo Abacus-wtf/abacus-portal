@@ -643,10 +643,6 @@ export const useGetCurrentSessionData = () => {
         userStatus,
         sessionStatus,
       }
-      console.log(Date.now(), 'date now')
-      console.log(currentSessionData.sessionData.endTime, 'time left')
-      console.log(currentSessionData.sessionData.endTime - Date.now(), 'time left')
-      console.log(currentSessionData, 'currentsessiondata')
       dispatch(getCurrentSessionData(currentSessionData))
       dispatch(setCurrentSessionFetchStatus(PromiseStatus.Resolved))
     },

@@ -44,7 +44,6 @@ const CurrentSession = ({ location }) => {
         String(tokenId),
         Number(nonce)
       )
-      console.log(sessionData)
       if (claimData === null) {
         await setPayoutData(account)
       }
