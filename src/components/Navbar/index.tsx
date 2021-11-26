@@ -134,16 +134,16 @@ const Navbar = ({ location }) => {
             </HeaderLink>
             <HeaderLink
               as={Link}
-              to="/"
-              active={(location.pathname === "/").toString()}
+              to="/auction"
+              active={(location.pathname === "/auction").toString()}
             >
               Auction
             </HeaderLink>
-            {/* <HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
-            Claim Pool
-          </HeaderLink> */}
             <HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()}>
-            My Sessions
+              My Sessions
+            </HeaderLink>
+            <HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
+            Claim {`&`} Deposit
             </HeaderLink>
           </ListSection>
           <ListSectionSelector>

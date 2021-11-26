@@ -23,6 +23,7 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
+import {useSetPayoutData, useClaimPayoutData} from '@state/miscData/hooks'
 
 const CurrentSession = ({ location }) => {
   // const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
@@ -33,6 +34,8 @@ const CurrentSession = ({ location }) => {
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
+  const claimData = useClaimPayoutData()
+  const setPayoutData = useSetPayoutData()
 
   useEffect(() => {
     const loadData = async () => {
@@ -41,6 +44,7 @@ const CurrentSession = ({ location }) => {
         String(tokenId),
         Number(nonce)
       )
+      console.log(sessionData)
     }
 
     if (!address || !tokenId || !nonce) {

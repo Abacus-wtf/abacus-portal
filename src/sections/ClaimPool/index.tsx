@@ -12,15 +12,15 @@ import {
   VerticalContainer,
 } from "../CurrentSession/CurrentSession.styles"
 import { InputWithTitle } from "@components/Input"
-import { useOnClaimPayout } from "@hooks/claim-pool"
+import { useOnClaimPayout, useOnDepositPrincipal, useOnClaimPrincipalAmount } from "@hooks/claim-pool"
 import {useSetPayoutData, useClaimPayoutData} from '@state/miscData/hooks'
 import _ from "lodash"
 import { useActiveWeb3React } from "@hooks/index"
 import { SmallUniversalContainer } from "@components/global.styles"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
-import { useWeb3Contract } from "@hooks/index"
 import styled from 'styled-components'
 import { Title } from "@components/global.styles"
+import {useGetCurrentNetwork} from '@state/application/hooks'
 
 const MaxWidthItem = styled(ListGroupItem)`
   width: 100%;
@@ -30,12 +30,18 @@ const ClaimPool: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const [ethWithdrawalVal, setEthWithdrawalVal] = useState('')
   const [abcWithdrawalVal, setAbcWithdrawalVal] = useState('')
+  const [ethDepositVal, setEthDepositVal] = useState('')
+  const [claimPrincipalVal, setClaimPrincipalVal] = useState('')
   const [isEthButtonTrigger, setIsEthButtonTrigger] = useState(true)
   const [isLoading, setLoading] = useState(false)
+  const networkSymbol = useGetCurrentNetwork()
+  
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
 
   const { onClaim, isPending } = useOnClaimPayout()
+  const { onDeposit, isPending: isPendingDeposit } = useOnDepositPrincipal()
+  const { onClaimPrincipal, isPending: isPendingClaimPrincipal } = useOnClaimPrincipalAmount()
 
   const isEthPending = isPending && isEthButtonTrigger
   const isAbcPending = isPending && !isEthButtonTrigger
@@ -46,10 +52,10 @@ const ClaimPool: FunctionComponent = () => {
       await setPayoutData(account)
       setLoading(false)
     }
-    if (account !== null && account !== undefined && claimData === null) {
+    if (account !== null && account !== undefined && claimData === null && networkSymbol !== null) {
       loadData()
     }
-  }, [account])
+  }, [account, networkSymbol])
 
   if (!account) {
     return (
@@ -74,6 +80,72 @@ const ClaimPool: FunctionComponent = () => {
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <VerticalContainer style={{ maxWidth: 800 }}>
+        <Title>Deposit</Title>
+        <HorizontalListGroup>
+          <MaxWidthItem>
+            <InputWithTitle
+              title={"Current Credit"}
+              id={"ethCredit"}
+              placeholder="0"
+              value={`${claimData.ethCredit} ETH`}
+              disabled
+            />
+          </MaxWidthItem>
+        </HorizontalListGroup>
+        <HorizontalListGroup>
+          <MaxWidthItem>
+            <InputWithTitle
+              title={"ETH Deposit Amount"}
+              id={"ethDeposit"}
+              placeholder="0"
+              value={ethDepositVal}
+              onChange={(e) => setEthDepositVal(e.target.value)}
+            />
+          </MaxWidthItem>
+          <MaxWidthItem>
+            <InputWithTitle
+              title={"Claim Principal"}
+              id={"claimPrincipal"}
+              placeholder="0"
+              value={claimPrincipalVal}
+              onChange={(e) => setClaimPrincipalVal(e.target.value)}
+            />
+          </MaxWidthItem>
+        </HorizontalListGroup>
+        <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
+          <HorizontalListGroup>
+            <div
+              style={{ padding: "0 8px 16px", width: "100%" }}
+              id={"depositEth"}
+            >
+              <Button
+                disabled={isPendingDeposit || ethDepositVal === '' || isNaN(Number(ethDepositVal))}
+                style={{ width: "100%" }}
+                type="button"
+                onClick={() => {
+                  onDeposit(ethDepositVal)
+                }}
+              >
+                {isPendingDeposit ? "Pending..." : "Deposit ETH"}
+              </Button>
+            </div>
+            <div
+              style={{ padding: "0 8px", width: "100%" }}
+              id={"claimPrincipalAmount"}
+            >
+              <Button
+                disabled={isPendingClaimPrincipal || claimPrincipalVal === '' || isNaN(Number(claimPrincipalVal))}
+                style={{ width: "100%" }}
+                type="button"
+                onClick={() => {
+                  onClaimPrincipal(claimPrincipalVal)
+                }}
+              >
+                {isPendingClaimPrincipal ? "Pending..." : "Claim Principal Amount"}
+              </Button>
+            </div>
+          </HorizontalListGroup>
+          </VerticalContainer>
         <Title>Claim Rewards</Title>
         <HorizontalListGroup>
           <MaxWidthItem>

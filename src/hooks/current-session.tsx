@@ -79,8 +79,8 @@ export const useOnSubmitVote = () => {
       )
       method = pricingSessionContract.setVote
       estimate = pricingSessionContract.estimateGas.setVote
-      args = [sessionData.address, Number(sessionData.tokenId), hash]
-      value = parseEther(stake)
+      args = [sessionData.address, Number(sessionData.tokenId), parseEther(stake), hash]
+      value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
           summary: "Submit Vote",
