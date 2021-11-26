@@ -139,13 +139,12 @@ const Navbar = ({ location }) => {
             >
               Auction
             </HeaderLink>
+            <HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()}>
+              My Sessions
+            </HeaderLink>
             <HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
             Claim {`&`} Deposit
             </HeaderLink>
-            {/* <HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()>
-            My Sessions
-          </HeaderLink>
-          */}
           </ListSection>
           <ListSectionSelector>
             <NetworkSelectorButton />

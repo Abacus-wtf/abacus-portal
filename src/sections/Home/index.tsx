@@ -1,17 +1,23 @@
-import React, { useEffect, useRef } from "react"
-import { Title, Subheader, UniversalContainer } from "@components/global.styles"
-import Button from "@components/Button"
+import React, { useState, useEffect, useRef } from "react"
+import {
+  Title,
+  Subheader,
+  UniversalContainer,
+  Label,
+} from "@components/global.styles"
+import Button, { ButtonsWhite } from "@components/Button"
 import Card from "@components/Card"
 import {
   useGetMultiSessionData,
   useMultiSessionState,
 } from "@state/sessionData/hooks"
 import _ from "lodash"
-import Link from "gatsby-link"
+import { Link } from "gatsby"
 import { PromiseStatus } from "@models/PromiseStatus"
 import PaginationButton from "@components/PaginationButton"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { usePrevious } from "@hooks/index"
+import FilterModal from "@components/FilterModal"
 import {
   BackgroundIMG,
   HeaderBar,
@@ -24,7 +30,8 @@ const Home: React.FC = () => {
   const getMultiSessionData = useGetMultiSessionData()
   const isInitializedRef = useRef(false)
   const { multiSessionData, fetchStatus, isLastPage } = useMultiSessionState()
-  // const [searchValue, setSearchValue] = useState("")
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [filters, setFilters] = useState<string | null>(null)
   const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
   const prevNetworkSymbol = usePrevious(networkSymbol)
@@ -37,7 +44,7 @@ const Home: React.FC = () => {
 
     if (!isInitializedRef.current) {
       isInitializedRef.current = true
-      getMultiSessionData()
+      getMultiSessionData(null)
     }
   }, [getMultiSessionData, isNewNetwork])
 
@@ -53,13 +60,15 @@ const Home: React.FC = () => {
           </Subheader>
         </Header>
         <HeaderBarContainer>
-          {/* <ButtonsWhite>Filter</ButtonsWhite>
-          <SearchBar
-            input={searchValue}
-            changeInput={input => setSearchValue(input)}
-            placeholder={"Find something"}
-            onEnter={() => {}}
-          /> */}
+          <ButtonsWhite onClick={() => setFilterOpen(true)}>
+            Filter
+          </ButtonsWhite>
+          <FilterModal
+            open={filterOpen}
+            toggle={() => setFilterOpen(false)}
+            applyFilters={getMultiSessionData}
+            setFilters={setFilters}
+          />
           <Button
             style={{ display: "flex", alignItems: "center" }}
             as={Link}
@@ -72,14 +81,24 @@ const Home: React.FC = () => {
 
       <CardContainer>
         {_.map(multiSessionData, (i) => (
-          <Card key={`${i.address}-${i.tokenId}-${i.nonce}`} {...i} />
+          <a
+            href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
+            key={`${i.address}-${i.tokenId}-${i.nonce}`}
+          >
+            <Card {...i} />
+          </a>
         ))}
       </CardContainer>
       <UniversalContainer style={{ alignItems: "center", marginTop: "10px" }}>
+        {!isLoading &&
+          multiSessionData.length === 0 &&
+          isInitializedRef.current && (
+            <Label>No Results! Try changing the filters.</Label>
+          )}
         <PaginationButton
           isLastPage={isLastPage}
           isLoading={isLoading}
-          getNextPage={getMultiSessionData}
+          getNextPage={() => getMultiSessionData(filters)}
         />
       </UniversalContainer>
       {isLoading && (
