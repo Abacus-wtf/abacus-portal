@@ -62,6 +62,8 @@ import {
   GetMySessionsQueryResponse,
   GET_MY_SESSIONS,
   GetPricingSessionsVariables,
+  GetMySessionsVariables,
+  GetActiveSessionsVariables,
 } from "./queries"
 import { PAGINATE_BY } from "./constants"
 import {
@@ -320,45 +322,58 @@ export const useGetMultiSessionData = () => {
 
 export const useGetMySessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const whereRef = useRef(null)
   const { account } = useActiveWeb3React()
   const { page, data } = useMySessionsState()
   const networkSymbol = useGetCurrentNetwork()
 
-  return useCallback(async () => {
-    if (!account) {
-      return
-    }
-    dispatch(setMySessionsFetchStatus(PromiseStatus.Pending))
-
-    try {
-      const {
-        data: {
-          data: { user },
-        },
-      } = await axios.post<GetMySessionsQueryResponse>(
-        GRAPHQL_ENDPOINT(networkSymbol),
-        {
-          query: GET_MY_SESSIONS(account.toLowerCase(), page),
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      )
-      if (user) {
-        const { creatorOf: pricingSessions } = user
-        const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-        const isLastPage = sessionData.length < PAGINATE_BY
-        dispatch(setMySessionsData([...data, ...sessionData]))
-        dispatch(setMySessionsPage(page + 1))
-        dispatch(setMySessionsIsLastPage(isLastPage))
+  return useCallback(
+    async (where: string | null) => {
+      if (!account || !networkSymbol) {
+        return
       }
-      dispatch(setMySessionsFetchStatus(PromiseStatus.Resolved))
-    } catch {
-      dispatch(setMySessionsFetchStatus(PromiseStatus.Rejected))
-    }
-  }, [dispatch, account, page, data, networkSymbol])
+      dispatch(setMySessionsFetchStatus(PromiseStatus.Pending))
+      let currentPage = page
+      let currentData = data
+      if (where !== whereRef.current) {
+        currentPage = 0
+        currentData = []
+        dispatch(setMySessionsData(currentData))
+      }
+      whereRef.current = where
+      const variables: GetMySessionsVariables = {
+        userId: account,
+        first: PAGINATE_BY,
+        skip: currentPage * PAGINATE_BY,
+      }
+
+      try {
+        const { user } = await request<GetMySessionsQueryResponse>(
+          GRAPHQL_ENDPOINT(networkSymbol),
+          GET_MY_SESSIONS(where),
+          variables
+        )
+        if (user) {
+          const { creatorOf: pricingSessions } = user
+          const sessionData = await parseSubgraphPricingSessions(
+            pricingSessions
+          )
+          const isLastPage = sessionData.length < PAGINATE_BY
+          dispatch(setMySessionsData([...currentData, ...sessionData]))
+          dispatch(setMySessionsPage(currentPage + 1))
+          dispatch(setMySessionsIsLastPage(isLastPage))
+        } else {
+          dispatch(setMySessionsData([]))
+          dispatch(setMySessionsPage(0))
+          dispatch(setMySessionsIsLastPage(true))
+        }
+        dispatch(setMySessionsFetchStatus(PromiseStatus.Resolved))
+      } catch {
+        dispatch(setMySessionsFetchStatus(PromiseStatus.Rejected))
+      }
+    },
+    [dispatch, account, page, data, networkSymbol]
+  )
 }
 
 export const useGetActiveSessionsData = () => {
@@ -368,26 +383,22 @@ export const useGetActiveSessionsData = () => {
   const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(async () => {
-    if (!account) {
+    if (!account || !networkSymbol) {
       return
     }
     dispatch(setActiveSessionsFetchStatus(PromiseStatus.Pending))
 
+    const variables: GetActiveSessionsVariables = {
+      userId: "0x4af8c784213a4c2f2a2681c3b3a62104cf5239a8", // account,
+      first: PAGINATE_BY,
+      skip: page * PAGINATE_BY,
+    }
+
     try {
-      const {
-        data: {
-          data: { user },
-        },
-      } = await axios.post<GetActiveSessionsQueryResponse>(
+      const { user } = await request<GetActiveSessionsQueryResponse>(
         GRAPHQL_ENDPOINT(networkSymbol),
-        {
-          query: GET_ACTIVE_SESSIONS(account.toLowerCase(), page),
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-        }
+        GET_ACTIVE_SESSIONS,
+        variables
       )
       if (user) {
         const { votes } = user
@@ -397,6 +408,10 @@ export const useGetActiveSessionsData = () => {
         dispatch(setActiveSessionsData([...data, ...sessionData]))
         dispatch(setActiveSessionsPage(page + 1))
         dispatch(setActiveSessionsIsLastPage(isLastPage))
+      } else {
+        dispatch(setActiveSessionsData([]))
+        dispatch(setActiveSessionsPage(0))
+        dispatch(setActiveSessionsIsLastPage(true))
       }
       dispatch(setActiveSessionsFetchStatus(PromiseStatus.Resolved))
     } catch {

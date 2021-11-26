@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react"
-import { Title, Subheader, UniversalContainer } from "@components/global.styles"
+import {
+  Title,
+  Subheader,
+  UniversalContainer,
+  Label,
+} from "@components/global.styles"
 import Button, { ButtonsWhite } from "@components/Button"
 import Card from "@components/Card"
 import {
@@ -76,15 +81,20 @@ const Home: React.FC = () => {
 
       <CardContainer>
         {_.map(multiSessionData, (i) => (
-          <Link
-            to={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
+          <a
+            href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
             key={`${i.address}-${i.tokenId}-${i.nonce}`}
           >
             <Card {...i} />
-          </Link>
+          </a>
         ))}
       </CardContainer>
       <UniversalContainer style={{ alignItems: "center", marginTop: "10px" }}>
+        {!isLoading &&
+          multiSessionData.length === 0 &&
+          isInitializedRef.current && (
+            <Label>No Results! Try changing the filters.</Label>
+          )}
         <PaginationButton
           isLastPage={isLastPage}
           isLoading={isLoading}

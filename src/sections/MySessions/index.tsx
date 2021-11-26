@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react"
 import styled from "styled-components"
 import { Title, UniversalContainer } from "@components/global.styles"
-import Button from "@components/Button"
+import Button, { ButtonsWhite } from "@components/Button"
 import Card from "@components/Card"
 import {
   useActiveSessionsState,
@@ -14,15 +14,19 @@ import { PromiseStatus } from "@models/PromiseStatus"
 import PaginationButton from "@components/PaginationButton"
 import { useActiveWeb3React } from "@hooks/index"
 import { Link } from "gatsby"
+import FilterModal from "@components/FilterModal"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 import { HeaderBar, CardContainer } from "../Home/Home.styles"
 
 const HeaderBarStyled = styled(HeaderBar)`
   flex-direction: column;
   grid-gap: 15px;
+  justify-content: space-between;
 `
 
 const TabContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   grid-gap: 24px;
 `
 
@@ -44,29 +48,42 @@ const MySessions: React.FC = () => {
   const [isMySessions, setIsMySessions] = useState(true)
   const initializedMySessionsRef = useRef(false)
   const initializedActiveSessionsRef = useRef(false)
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [filters, setFilters] = useState(null)
   const { account } = useActiveWeb3React()
   const getMySessionsData = useGetMySessionsData()
   const getActiveSessionsData = useGetActiveSessionsData()
   const mySessionsState = useMySessionsState()
   const activeSessionsState = useActiveSessionsState()
+  const networkSymbol = useGetCurrentNetwork()
   const { fetchStatus, data, errorMessage, isLastPage } = isMySessions
     ? mySessionsState
     : activeSessionsState
   const isLoading = fetchStatus === PromiseStatus.Pending
 
   useEffect(() => {
-    if (account) {
+    if (account && networkSymbol) {
       if (isMySessions) {
         if (!initializedMySessionsRef.current) {
           initializedMySessionsRef.current = true
-          getMySessionsData()
+          getMySessionsData(null)
         }
       } else if (!initializedActiveSessionsRef.current) {
         initializedActiveSessionsRef.current = true
         getActiveSessionsData()
       }
     }
-  }, [isMySessions, getMySessionsData, getActiveSessionsData, account])
+  }, [
+    isMySessions,
+    getMySessionsData,
+    getActiveSessionsData,
+    account,
+    networkSymbol,
+  ])
+
+  useEffect(() => {
+    setFilters(null)
+  }, [isMySessions])
 
   const getNextPage = isMySessions ? getMySessionsData : getActiveSessionsData
 
@@ -90,12 +107,12 @@ const MySessions: React.FC = () => {
             )}
             <CardContainer>
               {_.map(data, (i) => (
-                <Link
-                  to={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
+                <a
+                  href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
                   key={`${i.address}-${i.tokenId}-${i.nonce}`}
                 >
                   <Card {...i} />
-                </Link>
+                </a>
               ))}
             </CardContainer>
           </>
@@ -108,18 +125,32 @@ const MySessions: React.FC = () => {
       <HeaderBarStyled>
         <Title>Sessions</Title>
         <TabContainer>
-          <TabButton
-            active={isMySessions}
-            onClick={() => setIsMySessions(true)}
-          >
-            My Sessions
-          </TabButton>
-          <TabButton
-            active={!isMySessions}
-            onClick={() => setIsMySessions(false)}
-          >
-            Activity
-          </TabButton>
+          <div>
+            <TabButton
+              active={isMySessions}
+              onClick={() => setIsMySessions(true)}
+            >
+              My Sessions
+            </TabButton>
+            <TabButton
+              active={!isMySessions}
+              onClick={() => setIsMySessions(false)}
+            >
+              Activity
+            </TabButton>
+          </div>
+          {isMySessions && (
+            <ButtonsWhite onClick={() => setFilterOpen(true)}>
+              Filter
+            </ButtonsWhite>
+          )}
+          <FilterModal
+            open={filterOpen}
+            toggle={() => setFilterOpen(false)}
+            applyFilters={getNextPage}
+            setFilters={setFilters}
+            prefix={isMySessions ? "" : "pricingSession"}
+          />
         </TabContainer>
       </HeaderBarStyled>
       {MySessionsContent}
@@ -127,7 +158,7 @@ const MySessions: React.FC = () => {
         <PaginationButton
           isLastPage={isLastPage}
           isLoading={isLoading}
-          getNextPage={getNextPage}
+          getNextPage={() => getNextPage(filters)}
         />
       </UniversalContainer>
       {isLoading && (

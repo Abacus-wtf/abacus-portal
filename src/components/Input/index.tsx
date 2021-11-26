@@ -3,9 +3,7 @@ import styled from "styled-components"
 import { FormInput } from "shards-react"
 import { Label } from "../global.styles"
 
-export const MainInput = styled(FormInput).attrs((props) => {
-  props.size || "sm"
-})`
+export const MainInput = styled(FormInput).attrs((props) => props.size || "sm")`
   border: #c3c8d7;
   border-radius: 53px;
   padding: 0px;
@@ -40,9 +38,10 @@ type ContainerProps = {
   type: string
 }
 const Container = styled.div<ContainerProps>`
-  display: flex;
-  flex-direction: ${({ type }) => (type === "checkbox" ? "row" : "column")};
+  display: ${({ type }) => (type === "checkbox" ? "grid" : "flex")};
+  flex-direction: ${({ type }) => (type === "checkbox" ? "" : "column")};
   align-items: ${({ type }) => (type === "checkbox" ? "center" : "flex-start")};
+  grid-template-columns: 1fr 1fr;
 `
 
 interface InputWithTitle extends React.ComponentProps<FormInput> {

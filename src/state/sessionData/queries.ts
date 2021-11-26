@@ -1,5 +1,4 @@
 import { gql } from "graphql-request"
-import { PAGINATE_BY } from "./constants"
 
 export type SubgraphPricingSession = {
   id: string
@@ -111,19 +110,27 @@ export const GET_PRICING_SESSION = (id: string) => `
 `
 
 export type GetMySessionsQueryResponse = {
-  data: {
-    user: {
-      creatorOf: SubgraphPricingSession[]
-    } | null
-  }
+  user: {
+    creatorOf: SubgraphPricingSession[]
+  } | null
 }
 
-export const GET_MY_SESSIONS = (userId: string, page: number) => `
-  query GetMySessions {
-    user(id: "${userId}") {
-      creatorOf(first: ${PAGINATE_BY}, orderBy: createdAt, skip: ${
-  page * PAGINATE_BY
-}) {
+export type GetMySessionsVariables = {
+  userId: string
+  first: number
+  skip: number
+}
+
+export const GET_MY_SESSIONS = (where: string | null) => gql`
+  query GetMySessions($userId: ID!, $first: Int!, $skip: Int!) {
+    user(id: $userId) {
+      creatorOf(
+        first: $first
+        orderBy: createdAt
+        orderDirection: desc
+        skip: $skip
+        where: ${where}
+      ) {
         id
         nftAddress
         tokenId
@@ -142,17 +149,21 @@ export const GET_MY_SESSIONS = (userId: string, page: number) => `
 `
 
 export type GetActiveSessionsQueryResponse = {
-  data: {
-    user: {
-      votes: { pricingSession: SubgraphPricingSession }[]
-    } | null
-  }
+  user: {
+    votes: { pricingSession: SubgraphPricingSession }[]
+  } | null
 }
 
-export const GET_ACTIVE_SESSIONS = (userId: string, page: number) => `
-  query GetActiveSessions {
-    user(id: "${userId}") {
-      votes(first: ${PAGINATE_BY}, skip: ${page * PAGINATE_BY}) {
+export type GetActiveSessionsVariables = {
+  userId: string
+  first: number
+  skip: number
+}
+
+export const GET_ACTIVE_SESSIONS = gql`
+  query GetActiveSessions($userId: ID!, $first: Int!, $skip: Int!) {
+    user(id: $userId) {
+      votes(first: $first, skip: $skip) {
         pricingSession {
           id
           nftAddress

@@ -8,6 +8,7 @@ import { Modal, ModalBody, ListGroupItem, ListGroup, Form } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import Button from "@components/Button"
 import { SessionState } from "@state/sessionData/reducer"
+import { Label } from "../global.styles"
 
 const StyledModalBody = styled(ModalBody)`
   overflow-y: scroll;
@@ -18,11 +19,19 @@ const StyledModalBody = styled(ModalBody)`
   }
 `
 
+const StyledSessionStateContainer = styled.div`
+  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+`
+
 type FilterModalProps = {
   open: boolean
   toggle: () => void
   applyFilters: (where: string | null) => Promise<void>
   setFilters: (where: string | null) => void
+  prefix?: string
 }
 
 type FilterForm<Elements> = Elements & {
@@ -46,6 +55,7 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
   toggle,
   applyFilters,
   setFilters,
+  prefix,
 }) => {
   const [nftAddressValue, setNftAddressValue] = useState("")
   const [tokenIdValue, setTokenIdValue] = useState("")
@@ -74,7 +84,7 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
         sessionStatus: statuses,
       }),
     }
-    const where = pricingSessionWhere(filters)
+    const where = pricingSessionWhere(filters, prefix)
     applyFilters(where)
     setFilters(where)
     toggle()
@@ -104,61 +114,71 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
                 onChange={(e) => setTokenIdValue(e.target.value)}
               />
             </ListGroupItem>
-            <ListGroupItem>
-              <InputWithTitle
-                title="Vote"
-                id={INPUT_IDS.Vote}
-                type="checkbox"
-                checked={sessionStatuses.has(SessionState.Vote)}
-                onChange={toggleSessionState(SessionState.Vote)}
-              />
-            </ListGroupItem>
-            <ListGroupItem>
-              <InputWithTitle
-                title="Weigh"
-                id={INPUT_IDS.Weigh}
-                type="checkbox"
-                checked={sessionStatuses.has(SessionState.Weigh)}
-                onChange={toggleSessionState(SessionState.Weigh)}
-              />
-            </ListGroupItem>
-            <ListGroupItem>
-              <InputWithTitle
-                title="Set Final Appraisal"
-                id={INPUT_IDS.SetFinalAppraisal}
-                type="checkbox"
-                checked={sessionStatuses.has(SessionState.SetFinalAppraisal)}
-                onChange={toggleSessionState(SessionState.SetFinalAppraisal)}
-              />
-            </ListGroupItem>
-            <ListGroupItem>
-              <InputWithTitle
-                title="Harvest"
-                id={INPUT_IDS.Harvest}
-                type="checkbox"
-                checked={sessionStatuses.has(SessionState.Harvest)}
-                onChange={toggleSessionState(SessionState.Harvest)}
-              />
-            </ListGroupItem>
-            <ListGroupItem>
-              <InputWithTitle
-                title="Claim"
-                id={INPUT_IDS.Claim}
-                type="checkbox"
-                checked={sessionStatuses.has(SessionState.Claim)}
-                onChange={toggleSessionState(SessionState.Claim)}
-              />
-            </ListGroupItem>
-            <ListGroupItem>
-              <InputWithTitle
-                title="Complete"
-                id={INPUT_IDS.Complete}
-                type="checkbox"
-                checked={sessionStatuses.has(SessionState.Complete)}
-                onChange={toggleSessionState(SessionState.Complete)}
-              />
-            </ListGroupItem>
           </ListGroup>
+          <Label htmlFor="session-state" style={{ margin: "25px 0 5px 5px" }}>
+            Session Status:
+          </Label>
+          <StyledSessionStateContainer id="session-state">
+            <ListGroup>
+              <ListGroupItem>
+                <InputWithTitle
+                  title="Vote"
+                  id={INPUT_IDS.Vote}
+                  type="checkbox"
+                  checked={sessionStatuses.has(SessionState.Vote)}
+                  onChange={toggleSessionState(SessionState.Vote)}
+                />
+              </ListGroupItem>
+              <ListGroupItem>
+                <InputWithTitle
+                  title="Weigh"
+                  id={INPUT_IDS.Weigh}
+                  type="checkbox"
+                  checked={sessionStatuses.has(SessionState.Weigh)}
+                  onChange={toggleSessionState(SessionState.Weigh)}
+                />
+              </ListGroupItem>
+              <ListGroupItem>
+                <InputWithTitle
+                  title="Set Final"
+                  id={INPUT_IDS.SetFinalAppraisal}
+                  type="checkbox"
+                  checked={sessionStatuses.has(SessionState.SetFinalAppraisal)}
+                  onChange={toggleSessionState(SessionState.SetFinalAppraisal)}
+                />
+              </ListGroupItem>
+            </ListGroup>
+            <ListGroup>
+              <ListGroupItem>
+                <InputWithTitle
+                  title="Harvest"
+                  id={INPUT_IDS.Harvest}
+                  type="checkbox"
+                  checked={sessionStatuses.has(SessionState.Harvest)}
+                  onChange={toggleSessionState(SessionState.Harvest)}
+                />
+              </ListGroupItem>
+              <ListGroupItem>
+                <InputWithTitle
+                  title="Claim"
+                  id={INPUT_IDS.Claim}
+                  type="checkbox"
+                  checked={sessionStatuses.has(SessionState.Claim)}
+                  onChange={toggleSessionState(SessionState.Claim)}
+                />
+              </ListGroupItem>
+              <ListGroupItem>
+                <InputWithTitle
+                  title="Complete"
+                  id={INPUT_IDS.Complete}
+                  type="checkbox"
+                  checked={sessionStatuses.has(SessionState.Complete)}
+                  onChange={toggleSessionState(SessionState.Complete)}
+                />
+              </ListGroupItem>
+            </ListGroup>
+          </StyledSessionStateContainer>
+
           <Button style={{ width: "100%", marginTop: "15px" }} type="submit">
             Apply Filters
           </Button>
@@ -166,6 +186,10 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
       </StyledModalBody>
     </Modal>
   )
+}
+
+FilterModal.defaultProps = {
+  prefix: "",
 }
 
 export default FilterModal
