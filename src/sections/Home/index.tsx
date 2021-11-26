@@ -69,13 +69,13 @@ const Home: React.FC = () => {
             applyFilters={getMultiSessionData}
             setFilters={setFilters}
           />
-          <Button
-            style={{ display: "flex", alignItems: "center" }}
-            as={Link}
-            to="/create-session"
-          >
-            Create Session
-          </Button>
+          <a href='/create-session'>
+            <Button
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              Create Session
+            </Button>
+          </a>
         </HeaderBarContainer>
       </HeaderBar>
 

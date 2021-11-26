@@ -13,7 +13,6 @@ import { useActiveWeb3React, useWeb3Contract } from "@hooks/index"
 import { useOnCreateNewSession } from "@hooks/create-sessions"
 import { ZERO_ADDRESS, ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import { openseaGet, shortenAddress } from "@config/utils"
-import Link from "gatsby-link"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import {
@@ -166,13 +165,13 @@ const CreateSession: React.FC = () => {
                   title="Voting Time"
                   value={`${newSesh.votingTime} hours`}
                 />
-                <Button
-                  as={Link}
-                  style={{ width: "100%", textAlign: "center" }}
-                  to={`/current-session?address=${newSesh.nftAddress}&tokenId=${newSesh.tokenId}&nonce=${newSesh.nonce}`}
-                >
-                  Go to session
-                </Button>
+                <a href={`/current-session?address=${newSesh.nftAddress}&tokenId=${newSesh.tokenId}&nonce=${newSesh.nonce}`}>
+                  <Button
+                    style={{ width: "100%", textAlign: "center" }}
+                  >
+                    Go to session
+                  </Button>
+                </a>
               </VerticalSmallGapContainer>
             </SplitContainer>
           )}

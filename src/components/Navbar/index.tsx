@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
-import Link from "gatsby-link"
 import { Row } from "shards-react"
 import { useActiveWeb3React, usePrevious } from "@hooks/index"
 import { shortenAddress } from "@config/utils"
@@ -15,7 +14,7 @@ const RowStyled = styled(Row)`
   margin: 0;
 `
 
-const Logo = styled(Link)`
+const Logo = styled.a`
   font-size: 1.5rem;
   font-weight: 500;
   color: ${({ theme }) => theme.colors.text1};
@@ -119,30 +118,36 @@ const Navbar = ({ location }) => {
   return (
     <RowStyled>
       <NavbarContainer>
-        <Logo to="/">Abacus</Logo>
+        <Logo href="/">Abacus</Logo>
         <MobileNavButton onClick={() => setMenuOpen((open) => !open)}>
           {menuOpen ? <X /> : <Menu />}
         </MobileNavButton>
         <LinkList menuOpen={menuOpen}>
           <ListSection>
             <HeaderLink
-              as={Link}
-              to="/"
+              as={'a'}
+              href="/"
               active={(location.pathname === "/").toString()}
             >
               Explore
             </HeaderLink>
             <HeaderLink
-              as={Link}
-              to="/auction"
+              as={'a'}
+              href="/auction"
               active={(location.pathname === "/auction").toString()}
             >
               Auction
             </HeaderLink>
-            <HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()}>
+            <HeaderLink 
+              as={'a'}
+              href="/my-sessions"
+              active={(location.pathname === '/my-sessions').toString()}>
               My Sessions
             </HeaderLink>
-            <HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
+            <HeaderLink 
+              as={'a'} 
+              href="/claim-pool" 
+              active={(location.pathname === '/claim-pool').toString()}>
             Claim {`&`} Deposit
             </HeaderLink>
           </ListSection>

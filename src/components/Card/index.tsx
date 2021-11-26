@@ -93,7 +93,7 @@ export default ({
     <ImageContainer src={img}>
       <MiniText>
         <Countdown
-          date={endTime}
+          date={endTime*1000}
           renderer={({ hours, minutes, seconds, completed }) => {
             if (completed) {
               return <>Completed</>

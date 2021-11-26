@@ -86,7 +86,7 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
         sessionStatus: statuses,
       }),
     }
-    const where = pricingSessionWhere(filters, prefix)
+    const where = pricingSessionWhere(filters)
     applyFilters(where)
     setFilters(where)
     toggle()

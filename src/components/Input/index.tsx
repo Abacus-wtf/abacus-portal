@@ -3,11 +3,19 @@ import styled from "styled-components"
 import { FormInput } from "shards-react"
 import { Label } from "../global.styles"
 
-export const MainInput = styled(FormInput).attrs((props) => props.size || "sm")`
+export const MainInput = styled(FormInput).attrs((props) => {
+  return {
+    size: props.size || "sm",
+    inputtype: props.inputtype,
+    ...props
+  }
+})`
   border: #c3c8d7;
   border-radius: 53px;
   padding: 0px;
-  width: ${({ type }) => (type === "checkbox" ? "20px" : "auto")};
+  ${({ inputtype }) => inputtype === "checkbox" && `
+    width: 20px;
+  `};
 
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
@@ -63,7 +71,7 @@ export const InputWithTitle = ({
       id={id}
       style={{ borderRadius: 0 }}
       size="lg"
-      type={type}
+      inputtype={type}
       {...props}
     />
   </Container>
