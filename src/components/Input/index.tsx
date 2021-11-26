@@ -7,6 +7,7 @@ export const MainInput = styled(FormInput).attrs((props) => props.size || "sm")`
   border: #c3c8d7;
   border-radius: 53px;
   padding: 0px;
+  width: ${({ type }) => (type === "checkbox" ? "20px" : "auto")};
 
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
@@ -38,10 +39,10 @@ type ContainerProps = {
   type: string
 }
 const Container = styled.div<ContainerProps>`
-  display: ${({ type }) => (type === "checkbox" ? "grid" : "flex")};
+  display: flex;
   flex-direction: ${({ type }) => (type === "checkbox" ? "" : "column")};
   align-items: ${({ type }) => (type === "checkbox" ? "center" : "flex-start")};
-  grid-template-columns: 1fr 1fr;
+  justify-content: ${({ type }) => (type === "checkbox" ? "space-between" : "center")};
 `
 
 interface InputWithTitle extends React.ComponentProps<FormInput> {
@@ -57,7 +58,7 @@ export const InputWithTitle = ({
   ...props
 }: InputWithTitle) => (
   <Container type={type}>
-    <Label htmlFor={id}>{title}</Label>
+    <Label style={{marginBottom: type === 'checkbox' ? 0 : 10}} htmlFor={id}>{title}</Label>
     <MainInput
       id={id}
       style={{ borderRadius: 0 }}

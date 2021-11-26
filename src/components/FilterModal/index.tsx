@@ -20,6 +20,8 @@ const StyledModalBody = styled(ModalBody)`
 `
 
 const StyledSessionStateContainer = styled.div`
+  grid-gap: 10px;
+  margin: 10px 0px;
   @media ${({ theme }) => theme.mediaMin.splitCenter} {
     display: grid;
     grid-template-columns: 1fr 1fr;

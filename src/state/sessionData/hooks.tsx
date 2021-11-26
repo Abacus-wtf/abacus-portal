@@ -342,7 +342,7 @@ export const useGetMySessionsData = () => {
       }
       whereRef.current = where
       const variables: GetMySessionsVariables = {
-        userId: account,
+        userId: account.toLowerCase(),
         first: PAGINATE_BY,
         skip: currentPage * PAGINATE_BY,
       }
@@ -398,7 +398,7 @@ export const useGetActiveSessionsData = () => {
       }
       whereRef.current = where
       const variables: GetActiveSessionsVariables = {
-        userId: account,
+        userId: account.toLowerCase(),
         first: PAGINATE_BY,
         skip: currentPage * PAGINATE_BY,
       }
