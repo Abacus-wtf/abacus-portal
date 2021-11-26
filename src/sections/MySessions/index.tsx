@@ -70,7 +70,7 @@ const MySessions: React.FC = () => {
         }
       } else if (!initializedActiveSessionsRef.current) {
         initializedActiveSessionsRef.current = true
-        getActiveSessionsData()
+        getActiveSessionsData(null)
       }
     }
   }, [
@@ -139,11 +139,9 @@ const MySessions: React.FC = () => {
               Activity
             </TabButton>
           </div>
-          {isMySessions && (
-            <ButtonsWhite onClick={() => setFilterOpen(true)}>
-              Filter
-            </ButtonsWhite>
-          )}
+          <ButtonsWhite onClick={() => setFilterOpen(true)}>
+            Filter
+          </ButtonsWhite>
           <FilterModal
             open={filterOpen}
             toggle={() => setFilterOpen(false)}

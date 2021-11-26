@@ -150,7 +150,7 @@ export const GET_MY_SESSIONS = (where: string | null) => gql`
 
 export type GetActiveSessionsQueryResponse = {
   user: {
-    votes: { pricingSession: SubgraphPricingSession }[]
+    pricingSessionsVotedIn: SubgraphPricingSession[]
   } | null
 }
 
@@ -160,24 +160,28 @@ export type GetActiveSessionsVariables = {
   skip: number
 }
 
-export const GET_ACTIVE_SESSIONS = gql`
+export const GET_ACTIVE_SESSIONS = (where: string | null) => gql`
   query GetActiveSessions($userId: ID!, $first: Int!, $skip: Int!) {
     user(id: $userId) {
-      votes(first: $first, skip: $skip) {
-        pricingSession {
-          id
-          nftAddress
-          tokenId
-          nonce
-          finalAppraisalValue
-          totalStaked
-          bounty
-          votingTime
-          endTime
-          sessionStatus
-          timeFinalAppraisalSet
-          numParticipants
-        }
+      pricingSessionsVotedIn(
+        first: $first
+        orderBy: createdAt
+        orderDirection: desc
+        skip: $skip
+        where: ${where}
+      ) {
+        id
+        nftAddress
+        tokenId
+        nonce
+        finalAppraisalValue
+        totalStaked
+        bounty
+        votingTime
+        endTime
+        sessionStatus
+        timeFinalAppraisalSet
+        numParticipants
       }
     }
   }
