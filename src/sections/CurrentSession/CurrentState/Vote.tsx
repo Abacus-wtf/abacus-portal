@@ -39,6 +39,7 @@ import {
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
+import {useClaimPayoutData} from '@state/miscData/hooks'
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
@@ -46,6 +47,7 @@ const Vote: FunctionComponent = () => {
 
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
+  const claimData = useClaimPayoutData()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -87,7 +89,7 @@ const Vote: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-
+          const stake = Number(e.target.stake?.value)
           if (
             Number(e.target.appraisalValue?.value) >= sessionData.maxAppraisal
           ) {
@@ -96,8 +98,17 @@ const Vote: FunctionComponent = () => {
             )
             return
           }
+          
+          if (
+            stake > Number(claimData.ethCredit)
+          ) {
+            alert(
+              `You tried to stake with a higher number than your credit amount. To increase your credit amount, visit the 'Claim & Deposit' page!`
+            )
+            return
+          }
 
-          if (Number(e.target.stake?.value) < 0.005) {
+          if (stake < 0.005) {
             alert(
               `The min amount of eth you can stake is .005 Ether. You tried staking ${Number(
                 e.target.stake.value
@@ -128,6 +139,7 @@ const Vote: FunctionComponent = () => {
               encodedParams =
                 encodedParams.slice(0, 64) +
                 encodedParams.slice(88, encodedParams.length)
+              console.log(keccak256(encodedParams))
               setAppraisalHash(keccak256(encodedParams))
             }}
           />
@@ -143,7 +155,7 @@ const Vote: FunctionComponent = () => {
           {userStatus !== UserState.CompletedVote ? (
             <ListGroupItem>
               <InputWithTitle
-                title="Stake"
+                title={`Stake - Max: ${!claimData ? '-' : claimData.ethCredit} ETH`}
                 id="stake"
                 value={stakeVal}
                 onChange={(e) => setStakeVal(e.target.value)}

@@ -95,13 +95,15 @@ export const useSetPayoutData = () => {
 
   return useCallback(async (account: string) => {
     const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
-    const [ethPayout, ethToAbc] = await Promise.all([
+    const [ethPayout, ethToAbc, principalStored] = await Promise.all([
       pricingSessionContract.methods.profitStored(account).call(),
       pricingSessionContract.methods.ethToAbc().call(),
+      pricingSessionContract.methods.principalStored(account).call(),
     ])
     const eth = Number(formatEther(ethPayout))
     const abc = Number(formatEther(ethToAbc * ethPayout))
-    dispatch(setClaimData({ethPayout: eth, abcPayout: abc}))
+    const ethCredit = Number(formatEther(principalStored))
+    dispatch(setClaimData({ethPayout: eth, abcPayout: abc, ethCredit}))
   }, [dispatch, networkSymbol, chainId])
 }
 
