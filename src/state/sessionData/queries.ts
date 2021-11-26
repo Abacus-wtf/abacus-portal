@@ -28,45 +28,62 @@ export type GetPricingSessionsVariables = {
 
 export type PricingSessionFilters = {
   nftAddress?: string
-  tokenId?: string
-  sessionStatuses?: number[]
+  tokenId?: number
+  sessionStatus?: number[]
 }
 
-export const GET_PRICING_SESSIONS = (filters: PricingSessionFilters) => {
-  const where =
-    filters.nftAddress || filters.tokenId || filters.sessionStatuses
-      ? `{
-          ${filters.nftAddress ? `nftAddress: "${filters.nftAddress}",` : ""}
-          ${filters.tokenId ? `tokenId: ${filters.tokenId},` : ""}
-          ${
-            filters.sessionStatuses
-              ? `sessionStatus_in: [${filters.sessionStatuses}],`
-              : ""
-          }
-        }`
-      : null
-
-  const query = gql`
-    query GetPricingSessions($first: Int!, $skip: Int!) {
-      pricingSessions(first: $first, orderBy: createdAt, skip: $skip, where: ${where}) {
-        id
-        nftAddress
-        tokenId
-        nonce
-        finalAppraisalValue
-        totalStaked
-        bounty
-        votingTime
-        endTime
-        sessionStatus
-        timeFinalAppraisalSet
-        numParticipants
-      }
+export const pricingSessionWhere = (
+  filters: PricingSessionFilters
+): string | null => {
+  const hasFilters = Object.values(filters).some((filter) =>
+    Boolean(Array.isArray(filter) ? filter.length : filter)
+  )
+  if (!hasFilters) {
+    return null
+  }
+  const filterString = Object.keys(filters).reduce((acc, filter) => {
+    const filterValue = filters[filter]
+    switch (typeof filterValue) {
+      case "string":
+        return `${acc}${filter}: "${filterValue}",`
+      case "number":
+        return `${acc}${filter}: ${filterValue},`
+      case "object":
+        if (Array.isArray(filterValue)) {
+          return `${acc}${filter}_in: [${filterValue}],`
+        }
+        return acc
+      default:
+        return acc
     }
-  `
-  console.log(query)
-  return query
+  }, "")
+  return `{ ${filterString} }`
 }
+
+export const GET_PRICING_SESSIONS = (where: string | null) => gql`
+  query GetPricingSessions($first: Int!, $skip: Int!) {
+    pricingSessions(
+      first: $first
+      orderBy: createdAt
+      orderDirection: desc
+      skip: $skip
+      where: ${where}
+    ) {
+      id
+      nftAddress
+      tokenId
+      nonce
+      finalAppraisalValue
+      totalStaked
+      bounty
+      votingTime
+      endTime
+      sessionStatus
+      timeFinalAppraisalSet
+      numParticipants
+    }
+  }
+`
 
 export type GetPricingSessionQueryResponse = {
   data: {

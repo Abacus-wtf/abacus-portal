@@ -13,7 +13,6 @@ import PaginationButton from "@components/PaginationButton"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { usePrevious } from "@hooks/index"
 import FilterModal from "@components/FilterModal"
-import { PricingSessionFilters } from "@state/sessionData/queries"
 import {
   BackgroundIMG,
   HeaderBar,
@@ -27,7 +26,7 @@ const Home: React.FC = () => {
   const isInitializedRef = useRef(false)
   const { multiSessionData, fetchStatus, isLastPage } = useMultiSessionState()
   const [filterOpen, setFilterOpen] = useState(false)
-  const [filters, setFilters] = useState<PricingSessionFilters>({})
+  const [filters, setFilters] = useState<string | null>(null)
   const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
   const prevNetworkSymbol = usePrevious(networkSymbol)
@@ -40,7 +39,7 @@ const Home: React.FC = () => {
 
     if (!isInitializedRef.current) {
       isInitializedRef.current = true
-      getMultiSessionData({})
+      getMultiSessionData(null)
     }
   }, [getMultiSessionData, isNewNetwork])
 

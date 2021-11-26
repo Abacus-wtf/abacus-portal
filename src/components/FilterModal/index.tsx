@@ -1,4 +1,7 @@
-import { PricingSessionFilters } from "@state/sessionData/queries"
+import {
+  PricingSessionFilters,
+  pricingSessionWhere,
+} from "@state/sessionData/queries"
 import React, { FunctionComponent, FormEvent, useState } from "react"
 import styled from "styled-components"
 import { Modal, ModalBody, ListGroupItem, ListGroup, Form } from "shards-react"
@@ -18,8 +21,8 @@ const StyledModalBody = styled(ModalBody)`
 type FilterModalProps = {
   open: boolean
   toggle: () => void
-  applyFilters: (filters: PricingSessionFilters) => Promise<void>
-  setFilters: (filters: PricingSessionFilters) => void
+  applyFilters: (where: string | null) => Promise<void>
+  setFilters: (where: string | null) => void
 }
 
 type FilterForm<Elements> = Elements & {
@@ -65,14 +68,15 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
     >
     const statuses = Array.from(sessionStatuses)
     const filters: PricingSessionFilters = {
-      ...(tokenId.value && { tokenId: tokenId.value }),
+      ...(tokenId.value && { tokenId: Number(tokenId.value) }),
       ...(nftAddress.value && { nftAddress: nftAddress.value }),
       ...(statuses.length && {
-        sessionStatuses: statuses,
+        sessionStatus: statuses,
       }),
     }
-    applyFilters(filters)
-    setFilters(filters)
+    const where = pricingSessionWhere(filters)
+    applyFilters(where)
+    setFilters(where)
     toggle()
   }
 

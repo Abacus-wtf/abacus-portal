@@ -62,7 +62,6 @@ import {
   GetMySessionsQueryResponse,
   GET_MY_SESSIONS,
   GetPricingSessionsVariables,
-  PricingSessionFilters,
 } from "./queries"
 import { PAGINATE_BY } from "./constants"
 import {
@@ -275,24 +274,23 @@ const parseSubgraphPricingSessions = async (
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const filtersRef = useRef("")
+  const whereRef = useRef("")
   const { page, multiSessionData } = useMultiSessionState()
   const networkSymbol = useGetCurrentNetwork()
 
   return useCallback(
-    async (filters: PricingSessionFilters) => {
+    async (where: string | null) => {
       if (!networkSymbol) {
         return
       }
-      const stringFilters = JSON.stringify(filters)
       let currentPage = page
       let currentData = multiSessionData
-      if (stringFilters !== filtersRef.current) {
+      if (where !== whereRef.current) {
         currentPage = 0
         currentData = []
         dispatch(setMultipleSessionData([]))
       }
-      filtersRef.current = stringFilters
+      whereRef.current = where
       dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
       const variables: GetPricingSessionsVariables = {
         first: PAGINATE_BY,
@@ -303,7 +301,7 @@ export const useGetMultiSessionData = () => {
         const { pricingSessions } =
           await request<GetPricingSessionsQueryResponse>(
             GRAPHQL_ENDPOINT(networkSymbol),
-            GET_PRICING_SESSIONS(filters),
+            GET_PRICING_SESSIONS(where),
             variables
           )
         const sessionData = await parseSubgraphPricingSessions(pricingSessions)
