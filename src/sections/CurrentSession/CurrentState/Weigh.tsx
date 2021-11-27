@@ -92,15 +92,13 @@ const Weigh: FunctionComponent = () => {
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
           const cb = (hash) => {
-            const hashedMessage = web3Eth.eth.abi.encodeParameters(
-              ["address", "uint256", "uint256"],
-              [
-                sessionData.address,
-                Number(sessionData.tokenId),
-                sessionData.nonce,
-              ]
-            )
-            localStorage.setItem(hashedMessage, "")
+            const encodedVals = encodeSessionData({
+              nonce: sessionData.nonce,
+              nftAddress: sessionData.address,
+              tokenId: sessionData.tokenId,
+              account: account
+            })
+            localStorage.setItem(encodedVals, "")
           }
           await onWeightVote(appraisalValue, passwordValue, cb)
         }}
