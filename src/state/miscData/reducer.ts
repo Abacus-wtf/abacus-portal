@@ -29,6 +29,7 @@ export interface AuctionData {
 export interface ClaimData {
   ethPayout: number
   abcPayout: number
+  ethCredit: number
 }
 
 interface AuctionState {

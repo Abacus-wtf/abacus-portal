@@ -6,7 +6,7 @@ import { HorizontalListGroupModified } from "./CurrentSession.styles"
 import { useActiveWeb3React } from "@hooks/index"
 import {web3Eth} from "@config/constants"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
-import { hashValues } from "@config/utils"
+import { encodeSessionData } from "@config/utils"
 
 interface HashSystem {
   onCreateHash: (appraisalValue: number, password: number) => void
@@ -35,34 +35,35 @@ export default ({ onCreateHash }: HashSystem) => {
     }
     setIsAppraisalValid(true)
     setIsPasswordValid(true)
-
-    const hash = hashValues({
-      address: sessionData.address,
+    
+    const encodedVals = encodeSessionData({
+      account: account,
+      nftAddress: sessionData.address,
       tokenId: sessionData.tokenId,
       nonce: sessionData.nonce
     })
-    localStorage.setItem(
-      hash,
-      JSON.stringify({
-        appraisal: Number(appraisalValue),
-        password: Number(passwordValue),
-      })
-    )
+
+    localStorage.setItem(encodedVals, JSON.stringify({
+      password: Number(passwordValue),
+      appraisal: Number(appraisalValue)
+    }))
+
     onCreateHash(Number(appraisalValue), Number(passwordValue))
   }
 
   useEffect(() => {
-    const hash = hashValues({
-      address: sessionData.address,
+    const encodedVals = encodeSessionData({
+      account: account,
+      nftAddress: sessionData.address,
       tokenId: sessionData.tokenId,
       nonce: sessionData.nonce
     })
-    const itemsString = localStorage.getItem(hash)
+    const itemsString = localStorage.getItem(encodedVals)
     if (itemsString !== null && account) {
       const items = JSON.parse(itemsString)
       setPasswordValue(items.password)
       setAppraisalValue(items.appraisal)
-      onCreateHash(Number(appraisalValue), Number(passwordValue))
+      onCreateHash(Number(items.appraisal), Number(items.password))
     } else if (
       !isNaN(Number(passwordValue)) &&
       !isNaN(Number(appraisalValue)) &&

@@ -29,7 +29,7 @@ import {
   useOnUpdateVote,
   useOnAddToBountyVote,
 } from "@hooks/current-session"
-import { keccak256 } from "@ethersproject/keccak256"
+import {hashValues} from '@config/utils'
 import _ from "lodash"
 import { parseEther } from "ethers/lib/utils"
 import HashSystem from "../hashSystem"
@@ -39,6 +39,7 @@ import {
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
+import {useClaimPayoutData} from '@state/miscData/hooks'
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
@@ -46,6 +47,7 @@ const Vote: FunctionComponent = () => {
 
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
+  const claimData = useClaimPayoutData()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -87,7 +89,7 @@ const Vote: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-
+          const stake = Number(e.target.stake?.value)
           if (
             Number(e.target.appraisalValue?.value) >= sessionData.maxAppraisal
           ) {
@@ -96,8 +98,17 @@ const Vote: FunctionComponent = () => {
             )
             return
           }
+          
+          if (
+            stake > Number(claimData.ethCredit)
+          ) {
+            alert(
+              `You tried to stake with a higher number than your credit amount. To increase your credit amount, visit the 'Claim & Deposit' page!`
+            )
+            return
+          }
 
-          if (Number(e.target.stake?.value) < 0.005) {
+          if (stake < 0.005) {
             alert(
               `The min amount of eth you can stake is .005 Ether. You tried staking ${Number(
                 e.target.stake.value
@@ -121,14 +132,11 @@ const Vote: FunctionComponent = () => {
         <ListGroup>
           <HashSystem
             onCreateHash={(appraisalValue, password) => {
-              let encodedParams = web3Eth.eth.abi.encodeParameters(
-                ["uint", "address", "uint"],
-                [parseEther(`${appraisalValue}`), account! || "", password]
-              )
-              encodedParams =
-                encodedParams.slice(0, 64) +
-                encodedParams.slice(88, encodedParams.length)
-              setAppraisalHash(keccak256(encodedParams))
+              setAppraisalHash(hashValues({
+                appraisalValue: parseEther(`${appraisalValue}`),
+                account: account! || '',
+                password: password
+              }))
             }}
           />
           <ListGroupItem>
@@ -143,7 +151,7 @@ const Vote: FunctionComponent = () => {
           {userStatus !== UserState.CompletedVote ? (
             <ListGroupItem>
               <InputWithTitle
-                title="Stake"
+                title={`Stake - Max: ${!claimData ? '-' : claimData.ethCredit} ETH`}
                 id="stake"
                 value={stakeVal}
                 onChange={(e) => setStakeVal(e.target.value)}
@@ -182,7 +190,7 @@ const Vote: FunctionComponent = () => {
             It seems you've already voted, or you're not logged in
           </Tooltip>
         </VerticalContainer>
-        <ListGroup style={{ marginTop: 35 }}>
+        {/*<ListGroup style={{ marginTop: 35 }}>
           <ListGroupItem>
             <InputWithTitle
               title="Add to Bounty"
@@ -210,9 +218,9 @@ const Vote: FunctionComponent = () => {
               {addToBountyPending ? "Pending..." : "Add to Bounty"}
             </Button>
           </div>
-        </ListGroup>
+        </ListGroup>*/}
         <div
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 5 }}
         >
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants

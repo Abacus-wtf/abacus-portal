@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
-import Link from "gatsby-link"
 import { Row } from "shards-react"
 import { useActiveWeb3React, usePrevious } from "@hooks/index"
 import { shortenAddress } from "@config/utils"
@@ -15,7 +14,7 @@ const RowStyled = styled(Row)`
   margin: 0;
 `
 
-const Logo = styled(Link)`
+const Logo = styled.a`
   font-size: 1.5rem;
   font-weight: 500;
   color: ${({ theme }) => theme.colors.text1};
@@ -108,8 +107,6 @@ const Navbar = ({ location }) => {
   const toggleWalletModal = useToggleWalletModal()
   const prevLocation = usePrevious(location)
 
-  // @TODO: UPDATE AUCTION HERE
-
   useEffect(() => {
     if (location !== prevLocation) {
       setMenuOpen(false)
@@ -119,33 +116,38 @@ const Navbar = ({ location }) => {
   return (
     <RowStyled>
       <NavbarContainer>
-        <Logo to="/">Abacus</Logo>
+        <Logo href="/">Abacus</Logo>
         <MobileNavButton onClick={() => setMenuOpen((open) => !open)}>
           {menuOpen ? <X /> : <Menu />}
         </MobileNavButton>
         <LinkList menuOpen={menuOpen}>
           <ListSection>
             <HeaderLink
-              as={Link}
-              to="/"
+              as={'a'}
+              href="/"
               active={(location.pathname === "/").toString()}
             >
               Explore
             </HeaderLink>
             <HeaderLink
-              as={Link}
-              to="/"
-              active={(location.pathname === "/").toString()}
+              as={'a'}
+              href="/auction"
+              active={(location.pathname.includes("/auction")).toString()}
             >
               Auction
             </HeaderLink>
-            {/* <HeaderLink as={Link} to="/claim-pool" active={(location.pathname === '/claim-pool').toString()}>
-            Claim Pool
-            </HeaderLink> */}
-            {/* <HeaderLink as={Link} to="/my-sessions" active={(location.pathname === '/my-sessions').toString()>
-            My Sessions
-          </HeaderLink>
-          */}
+            <HeaderLink 
+              as={'a'}
+              href="/my-sessions"
+              active={(location.pathname.includes("/my-sessions")).toString()}>
+              My Sessions
+            </HeaderLink>
+            <HeaderLink 
+              as={'a'} 
+              href="/claim-pool" 
+              active={(location.pathname.includes('/claim-pool')).toString()}>
+              Claim {`&`} Deposit
+            </HeaderLink>
           </ListSection>
           <ListSectionSelector>
             <NetworkSelectorButton />
