@@ -107,8 +107,6 @@ const Navbar = ({ location }) => {
   const toggleWalletModal = useToggleWalletModal()
   const prevLocation = usePrevious(location)
 
-  // @TODO: UPDATE AUCTION HERE
-
   useEffect(() => {
     if (location !== prevLocation) {
       setMenuOpen(false)
@@ -134,21 +132,21 @@ const Navbar = ({ location }) => {
             <HeaderLink
               as={'a'}
               href="/auction"
-              active={(location.pathname === "/auction").toString()}
+              active={(location.pathname.includes("/auction")).toString()}
             >
               Auction
             </HeaderLink>
             <HeaderLink 
               as={'a'}
               href="/my-sessions"
-              active={(location.pathname === '/my-sessions').toString()}>
+              active={(location.pathname.includes("/my-sessions")).toString()}>
               My Sessions
             </HeaderLink>
             <HeaderLink 
               as={'a'} 
               href="/claim-pool" 
-              active={(location.pathname === '/claim-pool').toString()}>
-            Claim {`&`} Deposit
+              active={(location.pathname.includes('/claim-pool')).toString()}>
+              Claim {`&`} Deposit
             </HeaderLink>
           </ListSection>
           <ListSectionSelector>
