@@ -508,7 +508,8 @@ export const useGetCurrentSessionDataGRT = () => {
           collectionTitle: asset.asset_contract.name,
           totalStaked: Number(formatEther(pricingSession.totalStaked)),
           totalStakedInUSD:
-            Number(formatEther(pricingSession.totalStaked)) * ethUsd,
+            Number(formatEther(pricingSession.totalStaked)) * Number(ethUsd),
+            bountyInUSD: Number(formatEther(pricingSession.bounty)) * Number(ethUsd),
           bounty: Number(formatEther(pricingSession.bounty)),
           nftName: asset.name,
           finalAppraisalValue:
@@ -612,6 +613,9 @@ export const useGetCurrentSessionData = () => {
         totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
         totalStakedInUSD:
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
+          Number(ethUsd),
+        bountyInUSD:
+          Number(formatEther(pricingSessionCore.bounty)) *
           Number(ethUsd),
         nftName: pricingSessionMetadata?.name,
         address,
