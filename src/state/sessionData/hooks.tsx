@@ -248,7 +248,8 @@ const parseSubgraphPricingSessions = async (
     (session): SessionData => {
       const asset = findAsset(assets, session)
       return {
-        img: asset.image_preview_url || asset.image_url,
+        image_url: asset.image_preview_url || asset.image_url,
+        animation_url: null,
         endTime: Number(session.endTime),
         numPpl: Number(session.numParticipants),
         collectionTitle: asset.asset_contract.name,
@@ -502,7 +503,8 @@ export const useGetCurrentSessionDataGRT = () => {
         )
 
         const sessionData: SessionData = {
-          img: asset.image_preview_url || asset.image_url,
+          image_url: asset.image_preview_url || asset.image_url,
+          animation_url: asset.animation_url || null,
           endTime: Number(endTime),
           numPpl: Number(pricingSession.numParticipants),
           collectionTitle: asset.asset_contract.name,
@@ -604,9 +606,8 @@ export const useGetCurrentSessionData = () => {
       )
       const sessionData: SessionData = {
         bounty: Number(formatEther(pricingSessionCore.bounty)),
-        img:
-          pricingSessionMetadata?.image_url ||
-          pricingSessionMetadata?.image_preview_url,
+        image_url: pricingSessionMetadata?.image_preview_url || pricingSessionMetadata?.image_url,
+        animation_url: pricingSessionMetadata?.animation_url || null,
         endTime,
         numPpl: Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,

@@ -7,7 +7,7 @@ import {
   SplitContainer,
   VerticalContainer,
   VerticalSmallGapContainer,
-  SquareImageContainer,
+  FileContainer,
   SubText,
 } from "../CurrentSession/CurrentSession.styles"
 import RightSection from "./RightSection"
@@ -61,7 +61,7 @@ const Auction = () => {
       {optionalInfo ? (
         <SplitContainer>
           <VerticalContainer>
-            <SquareImageContainer src={optionalInfo.img} />
+            <FileContainer {...optionalInfo} />
             <ButtonsWhite
               style={{ borderRadius: 8 }}
               target={"_blank"}

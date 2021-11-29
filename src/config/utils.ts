@@ -29,6 +29,7 @@ export function shortenAddress(address: string, chars = 4): string {
 export type OpenSeaAsset = {
   image_preview_url?: string
   image_url: string
+  animation_url: string | null
   asset_contract: {
     name: string
     address: string

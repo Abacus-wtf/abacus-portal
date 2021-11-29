@@ -1,3 +1,4 @@
+import React from 'react'
 import styled from "styled-components"
 import { ListGroupItem } from "shards-react"
 import { Text } from "@components/global.styles"
@@ -37,6 +38,19 @@ export const SquareImageContainer = styled(ImageContainer)`
     padding-bottom: 100%;
   }
 `
+
+export const FileContainer = (props: {animation_url: string | null, image_url: string}) => {
+  if (props.animation_url) {
+    const format = props.animation_url.slice(-3)
+    if (format === 'mp4' || format === 'ogg' || props.animation_url.slice(-4) === 'webm') {
+      return <SquareImageContainer muted controls as={'video'} src={props.animation_url}/>
+    } else {
+      return <SquareImageContainer as={'iframe'} src={props.animation_url}/>
+    }
+  }
+
+  return <SquareImageContainer src={props.image_url} />
+}
 
 export const SubText = styled(Text)`
   color: ${({ theme }) => theme.colors.text2};
