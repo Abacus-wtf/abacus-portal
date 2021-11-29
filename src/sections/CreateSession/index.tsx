@@ -18,7 +18,7 @@ import { useGetCurrentNetwork } from "@state/application/hooks"
 import {
   SplitContainer,
   VerticalSmallGapContainer,
-  SquareImageContainer,
+  FileContainer,
   SubText as SubTitle,
 } from "../CurrentSession/CurrentSession.styles"
 
@@ -53,7 +53,8 @@ interface CreateSessionItems {
   initAppraisal: string
   votingTime: number
   bounty?: string
-  img: string
+  image_url: string
+  animation_url: string | null
   name: string
   collection: string
   nonce: number
@@ -111,7 +112,8 @@ const CreateSession: React.FC = () => {
           initAppraisal,
           bounty,
           votingTime,
-          img: meta.image_url,
+          image_url: meta.image_url,
+          animation_url: meta.animation_url || null,
           name: meta.name,
           collection: meta.collection.name,
           nonce: Number(nonce),
@@ -129,11 +131,8 @@ const CreateSession: React.FC = () => {
           {newSesh === null ? null : (
             <SplitContainer>
               <VerticalSmallGapContainer>
-                <SquareImageContainer
-                  src={newSesh.img}
-                  style={{ marginBottom: 15 }}
-                />
-                <SubTitle>{newSesh.collection}</SubTitle>
+                <FileContainer {...newSesh} />
+                <SubTitle style={{marginTop: 15}}>{newSesh.collection}</SubTitle>
                 <Title>
                   {newSesh.name} #{newSesh.tokenId}
                 </Title>

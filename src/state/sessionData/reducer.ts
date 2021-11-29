@@ -43,7 +43,8 @@ export enum UserState {
 }
 
 export interface SessionData {
-  img: any
+  image_url: string
+  animation_url: string | null
   endTime: number
   numPpl: number
   collectionTitle: string

@@ -19,7 +19,7 @@ import {
   SplitContainer,
   VerticalContainer,
   VerticalSmallGapContainer,
-  SquareImageContainer,
+  FileContainer,
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
@@ -89,7 +89,7 @@ const CurrentSession = ({ location }) => {
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <SplitContainer>
         <VerticalContainer>
-          <SquareImageContainer src={sessionData.img} />
+          <FileContainer {...sessionData} />
           <ButtonsWhite
             style={{ borderRadius: 8 }}
             target="_blank"
