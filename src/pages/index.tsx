@@ -12,7 +12,7 @@ const IndexPage = (props: any) => {
 
   return (
     <GlobalLayout {...props}>
-      <Auction />
+      <Home />
     </GlobalLayout>
   )
 }
