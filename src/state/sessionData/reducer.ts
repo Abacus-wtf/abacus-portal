@@ -49,6 +49,7 @@ export interface SessionData {
   collectionTitle: string
   totalStaked: number
   bounty: number
+  bountyInUSD?: number
   nftName: string
   address: string
   tokenId: string

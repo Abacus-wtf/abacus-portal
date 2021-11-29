@@ -52,6 +52,6 @@ export const HorizontalListGroupModified = styled(HorizontalListGroup)`
 `
 
 export const ListGroupItemMinWidth = styled(ListGroupItem)`
-  padding-right: 50px;
+  padding-right: 20px;
   min-width: fit-content;
 `
