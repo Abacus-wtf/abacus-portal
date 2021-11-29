@@ -8,7 +8,7 @@ import styled from "styled-components"
 export const HorizontalListGroup = styled(ListGroup)`
   flex-direction: row;
   width: 100%;
-  overflow: visible;
+  overflow: scroll;
 
   .list-group-item {
     border-top-width: 1px;
