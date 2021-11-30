@@ -268,7 +268,7 @@ const parseSubgraphPricingSessions = async (
           asset?.owner?.user && asset?.owner?.user?.username
             ? asset?.owner?.user?.username
             : shortenAddress(asset?.owner?.address),
-        maxAppraisal: Number(session?.maxAppraisal),
+        maxAppraisal: Number(formatEther(session?.maxAppraisal)),
       }
     }
   )
@@ -526,7 +526,7 @@ export const useGetCurrentSessionDataGRT = () => {
             asset?.owner?.user && asset?.owner?.user?.username
               ? asset?.owner?.user?.username
               : shortenAddress(asset?.owner?.address),
-          maxAppraisal: Number(pricingSession?.maxAppraisal),
+          maxAppraisal: Number(formatEther(pricingSession?.maxAppraisal)),
         }
 
         const userStatus = await getUserStatus({
@@ -632,7 +632,7 @@ export const useGetCurrentSessionData = () => {
             ? pricingSessionMetadata?.owner?.user?.username
             : shortenAddress(pricingSessionMetadata?.owner?.address),
         ownerAddress: pricingSessionMetadata?.owner?.address,
-        maxAppraisal: Number(pricingSessionCore.maxAppraisal),
+        maxAppraisal: Number(formatEther(pricingSessionCore.maxAppraisal)),
       }
 
       const userStatus = await getUserStatus({
