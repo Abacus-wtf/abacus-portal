@@ -81,7 +81,7 @@ const EthText = styled(BoldText)`
 
 export default ({
   tokenId,
-  img,
+  image_url,
   endTime,
   numPpl,
   nftName,
@@ -90,7 +90,7 @@ export default ({
   collectionTitle,
 }: SessionData) => (
   <CardContainer>
-    <ImageContainer src={img}>
+    <ImageContainer src={image_url}>
       <MiniText>
         <Countdown
           date={endTime*1000}
