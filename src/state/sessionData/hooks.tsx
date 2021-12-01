@@ -611,9 +611,9 @@ export const useGetCurrentSessionData = () => {
         endTime,
         numPpl: Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,
-        totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
+        totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)) -  Number(formatEther(pricingSessionCore.bounty)),
         totalStakedInUSD:
-          Number(formatEther(pricingSessionCore.totalSessionStake)) *
+          (Number(formatEther(pricingSessionCore.totalSessionStake)) - Number(formatEther(pricingSessionCore.bounty)))*
           Number(ethUsd),
         bountyInUSD:
           Number(formatEther(pricingSessionCore.bounty)) *
