@@ -61,7 +61,10 @@ const GlobalLayout: React.FC = (props: any) => {
       <GlobalStyles />
       <Helmet title="Abacus Protocol" />
       <Helmet>
-        <meta name="twitter:card" content="Abacus Protocol - A permissionless NFT Valuation tool"></meta>
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="Abacus Portal" />
+        <meta name="twitter:title" content="Abacus Protocol" />
+        <meta name="twitter:description" content="A permissionless NFT valuation tool" />
       </Helmet>
       <StyledContainer>
         <Navbar location={props.location} />
