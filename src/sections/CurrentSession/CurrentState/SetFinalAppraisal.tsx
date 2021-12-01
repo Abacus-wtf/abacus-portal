@@ -14,7 +14,7 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem, Form, Tooltip } from "shards-react"
-import { VerticalContainer, SubText } from "../CurrentSession.styles"
+import { VerticalContainer, SubText, ListGroupItemMinWidth } from "../CurrentSession.styles"
 import {
   useCanUserInteract,
   useCurrentSessionData,
@@ -43,7 +43,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
   return (
     <>
       <HorizontalListGroup>
-        <ListGroupItem style={{ width: "100%" }}>
+        <ListGroupItemMinWidth>
           <Label>Total Staked</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
             {sessionData.totalStaked} ETH
@@ -56,7 +56,21 @@ const SetFinalAppraisal: FunctionComponent = () => {
             })}
             )
           </ListGroupSubtext>
-        </ListGroupItem>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Bounty</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.bounty} ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.bountyInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
       </HorizontalListGroup>
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
