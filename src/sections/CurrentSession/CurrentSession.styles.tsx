@@ -42,7 +42,9 @@ export const SquareImageContainer = styled(ImageContainer)`
 export const FileContainer = (props: {animation_url: string | null, image_url: string}) => {
   if (props.animation_url) {
     const format = props.animation_url.slice(-3)
-    if (format === 'mp4' || format === 'ogg' || props.animation_url.slice(-4) === 'webm') {
+    if (format === 'gif') {
+      return <SquareImageContainer src={props.animation_url} />
+    } else if (format === 'mp4' || format === 'ogg'|| props.animation_url.slice(-4) === 'webm') {
       return <SquareImageContainer muted controls as={'video'} src={props.animation_url}/>
     } else {
       return <SquareImageContainer as={'iframe'} src={props.animation_url}/>
