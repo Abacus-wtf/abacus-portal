@@ -109,7 +109,7 @@ const CurrentSession = ({ location }) => {
               Owned by{" "}
               <OutboundLink
                 target="_blank"
-                href={`https://opensea.io/assets/${sessionData.ownerAddress}`}
+                href={`https://opensea.io/${sessionData.ownerAddress}`}
               >
                 {sessionData.owner}
               </OutboundLink>
