@@ -84,20 +84,29 @@ const CurrentSession = ({ location }) => {
       </SmallUniversalContainer>
     )
   }
-
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <SplitContainer>
         <VerticalContainer>
           <FileContainer {...sessionData} />
-          <ButtonsWhite
-            style={{ borderRadius: 8 }}
-            target="_blank"
-            href={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
-            as={OutboundLink}
-          >
-            OpenSea
-          </ButtonsWhite>
+          <div style={{display: 'flex', gridGap: 15}}>
+            <ButtonsWhite
+              style={{ borderRadius: 8 }}
+              target="_blank"
+              href={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
+              as={OutboundLink}
+            >
+              OpenSea
+            </ButtonsWhite>
+            <ButtonsWhite
+              style={{ borderRadius: 8 }}
+              target="_blank"
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://app.abacus.wtf/current-session?address=${sessionData.address}&tokenId=${sessionData.tokenId}&nonce=${sessionData.nonce}`)}&text=Just%20submitted%20my%20appraisal%20for%20${sessionData.collectionTitle}%20%23${sessionData.tokenId}%20on%20Abacus!&via=abacus_wtf`}
+              as={OutboundLink}
+            >
+              Share
+            </ButtonsWhite>
+          </div>
         </VerticalContainer>
         <VerticalContainer>
           <VerticalSmallGapContainer>
