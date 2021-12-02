@@ -502,6 +502,14 @@ export const useGetCurrentSessionDataGRT = () => {
           pricingSession
         )
 
+        let guessedAppraisal = -1
+        if (sessionStatus >= SessionState.Harvest && account) {
+          const index = _.findIndex(pricingSession.participants, (participant) => participant.user.id === account.toLowerCase())
+          if (index !== -1) {
+            guessedAppraisal = Number(formatEther(pricingSession.participants[index].appraisal))
+          }
+        }
+
         const sessionData: SessionData = {
           image_url: asset.image_preview_url || asset.image_url,
           animation_url: asset.animation_url || null,
@@ -527,8 +535,8 @@ export const useGetCurrentSessionDataGRT = () => {
               ? asset?.owner?.user?.username
               : shortenAddress(asset?.owner?.address),
           maxAppraisal: Number(formatEther(pricingSession?.maxAppraisal)),
+          guessedAppraisal
         }
-
         const userStatus = await getUserStatus({
           address,
           account,
@@ -580,7 +588,7 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         getStatus,
         pricingSessionCheck,
-        finalAppraisalValue,
+        finalAppraisalValue
       ] = await Promise.all([
         openseaGet(URL),
         pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
@@ -589,6 +597,17 @@ export const useGetCurrentSessionData = () => {
         pricingSession.methods
           .finalAppraisalValue(nonce, address, tokenId)
           .call(),
+        axios.post<GetPricingSessionQueryResponse>(
+          GRAPHQL_ENDPOINT(networkSymbol),
+          {
+            query: GET_PRICING_SESSION(`${address}/${tokenId}/${nonce}`),
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        ),
       ])
 
       let ethUsd

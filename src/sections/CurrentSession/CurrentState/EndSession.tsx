@@ -48,7 +48,10 @@ const EndSession: FunctionComponent = () => {
         <ListGroupItemMinWidth>
           <Label>Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.bounty} ETH
+            {sessionData.bounty.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($

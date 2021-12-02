@@ -22,14 +22,7 @@ import {
 import { User } from "react-feather"
 import _ from "lodash"
 import { useOnSetFinalAppraisal } from "@hooks/current-session"
-
-export const CallToActionCopy = styled.p`
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  text-align: center;
-  font-size: ${({ theme }) => theme.copy.large};
-`
+import {CallToActionCopy} from '../CurrentSession.styles'
 
 const SetFinalAppraisal: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
@@ -63,7 +56,10 @@ const SetFinalAppraisal: FunctionComponent = () => {
         <ListGroupItemMinWidth>
           <Label>Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.bounty} ETH
+            {sessionData.bounty.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($

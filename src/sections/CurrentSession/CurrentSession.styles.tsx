@@ -5,6 +5,14 @@ import { Text } from "@components/global.styles"
 import { ImageContainer } from "@components/global.styles"
 import { HorizontalListGroup } from "@components/ListGroupMods"
 
+export const CallToActionCopy = styled.p`
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  font-size: ${({ theme }) => theme.copy.large};
+`
+
 export const SplitContainer = styled.div`
   display: grid;
   grid-template-columns: 4fr 3fr;

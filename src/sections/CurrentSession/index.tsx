@@ -31,8 +31,8 @@ const CurrentSession = ({ location }) => {
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
-  const { address, tokenId, nonce } = queryString.parse(location.search)
   const isLoading = fetchStatus === PromiseStatus.Pending
+  const { address, tokenId, nonce } = queryString.parse(location.search)
   const networkSymbol = useGetCurrentNetwork()
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
