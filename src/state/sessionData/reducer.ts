@@ -58,6 +58,7 @@ export interface SessionData {
   ownerAddress: string
   nonce: number
   maxAppraisal: number
+  guessedAppraisal?: number
   finalAppraisalValue?: number
   totalStakedInUSD?: number
 }

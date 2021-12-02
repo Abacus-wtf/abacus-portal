@@ -14,6 +14,13 @@ export type SubgraphPricingSession = {
   numParticipants: number
   timeFinalAppraisalSet: number
   maxAppraisal: number
+  participants: {
+    user: {
+      id: string
+    },
+    appraisal: string
+    amountStaked: string
+  }[]
 }
 
 export type GetPricingSessionsQueryResponse = {
@@ -81,6 +88,13 @@ export const GET_PRICING_SESSIONS = (where: string | null) => gql`
       timeFinalAppraisalSet
       numParticipants
       maxAppraisal
+      participants {
+        user {
+          id
+        }
+        amountStaked
+        appraisal
+      }
     }
   }
 `
@@ -107,6 +121,13 @@ export const GET_PRICING_SESSION = (id: string) => `
       timeFinalAppraisalSet
       numParticipants
       maxAppraisal
+      participants {
+        user {
+          id
+        }
+        amountStaked
+        appraisal
+      }
     }
   }
 `
@@ -146,6 +167,13 @@ export const GET_MY_SESSIONS = (where: string | null) => gql`
         timeFinalAppraisalSet
         numParticipants
         maxAppraisal
+        participants {
+          user {
+            id
+          }
+          amountStaked
+          appraisal
+        }
       }
     }
   }
@@ -186,6 +214,13 @@ export const GET_ACTIVE_SESSIONS = (where: string | null) => gql`
         timeFinalAppraisalSet
         numParticipants
         maxAppraisal
+        participants {
+          user {
+            id
+          }
+          amountStaked
+          appraisal
+        }
       }
     }
   }
