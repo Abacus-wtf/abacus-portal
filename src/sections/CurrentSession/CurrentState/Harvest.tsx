@@ -25,7 +25,6 @@ import {
   useCanUserInteract,
   useCurrentSessionData,
   useCurrentSessionUserStatus,
-  useSetCongratsMessage
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
@@ -42,7 +41,6 @@ const CallToActionSmall = styled(CallToActionCopy)`
 `
 
 const Harvest: FunctionComponent = () => {
-  const setCongratsMessage = useSetCongratsMessage()
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
   const { account } = useActiveWeb3React()
@@ -51,15 +49,6 @@ const Harvest: FunctionComponent = () => {
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
   const { onHarvest, isPending } = useOnHarvest()
-
-  useEffect(() => {
-    const loadData = async () => {
-      await setCongratsMessage()
-    }
-    if (account && !sessionData.guessedAppraisal) {
-      loadData()
-    }
-  }, [account])
 
   const theme = useContext(ThemeContext)
   return (

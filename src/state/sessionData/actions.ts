@@ -17,9 +17,6 @@ export const setUserStatus = createAction<CurrentSessionState["userStatus"]>(
 export const setClaimPosition = createAction<ClaimState>(
   "sessionData/setClaimPosition"
 )
-export const setCongratsMessage = createAction<number>(
-  "sessionData/setCongratsMessage"
-)
 export const setMultipleSessionData = createAction<SessionData[]>(
   "sessionData/setMultipleSessionData"
 )
