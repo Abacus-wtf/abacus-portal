@@ -118,8 +118,14 @@ export default ({
         <EthText>
           <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
           {finalAppraisalValue !== undefined
-            ? finalAppraisalValue
-            : totalStaked}
+            ? finalAppraisalValue.toLocaleString("en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 4,
+                                  })
+            : totalStaked.toLocaleString("en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 4,
+                                  })}
         </EthText>
       </TextContainer>
       <TextContainer>
