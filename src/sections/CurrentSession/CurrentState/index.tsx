@@ -10,7 +10,6 @@ import SessionCompleted from "./SessionCompleted"
 
 const CurrentState: FunctionComponent = () => {
   const status = useCurrentSessionStatus()
-
   switch (status) {
     case SessionState.Vote:
       return <Vote />

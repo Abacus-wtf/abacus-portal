@@ -20,6 +20,7 @@ import {
   setMultipleSessionIsLastPage,
   setMySessionsIsLastPage,
   setActiveSessionsIsLastPage,
+  setCongratsMessage
 } from "./actions"
 import _ from "lodash"
 import { PromiseStatus } from "@models/PromiseStatus"
@@ -215,5 +216,8 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(setActiveSessionsIsLastPage, (state, action) => {
       state.activeSessionsState.isLastPage = action.payload
+    })
+    .addCase(setCongratsMessage, (state, action) => {
+      state.currentSessionData.sessionData.guessedAppraisal = action.payload
     })
 )

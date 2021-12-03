@@ -50,6 +50,7 @@ import {
   setMySessionsIsLastPage,
   setActiveSessionsPage,
   setActiveSessionsIsLastPage,
+  setCongratsMessage
 } from "./actions"
 import {
   GET_PRICING_SESSIONS,
@@ -211,7 +212,6 @@ export const useRetrieveClaimData = () => {
       pricingSession.methods.ethToAbc().call(),
       pricingSession.methods.NftSessionCore(sessionData.nonce, sessionData.address, sessionData.tokenId).call(),
     ])
-    console.log(core)
 
     const claimData: ClaimState = {
       abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
@@ -460,6 +460,37 @@ const getUserStatus = async ({
   return Number(getVoterCheck)
 }
 
+export const useSetCongratsMessage = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const sessionData = useCurrentSessionData()
+  const { account } = useActiveWeb3React()
+  const networkSymbol = useGetCurrentNetwork()
+
+  return useCallback(async () => {
+    const data = await axios.post<GetPricingSessionQueryResponse>(
+      GRAPHQL_ENDPOINT(networkSymbol),
+      {
+        query: GET_PRICING_SESSION(`${sessionData.address}/${sessionData.tokenId}/${sessionData.nonce}`),
+      },
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    )
+    const { pricingSession } = data.data.data
+
+    let guessedAppraisal = -1
+    if (account) {
+      const index = _.findIndex(pricingSession.participants, (participant) => participant.user.id === account.toLowerCase())
+      if (index !== -1) {
+        guessedAppraisal = Number(formatEther(pricingSession.participants[index].appraisal))
+      }
+    }
+    dispatch(setCongratsMessage(guessedAppraisal))
+  }, [dispatch])
+}
+
 export const useGetCurrentSessionDataGRT = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
@@ -506,7 +537,6 @@ export const useGetCurrentSessionDataGRT = () => {
         let guessedAppraisal = -1
         if (sessionStatus >= SessionState.Harvest && account) {
           const index = _.findIndex(pricingSession.participants, (participant) => participant.user.id === account.toLowerCase())
-          console.log(pricingSession.participants)
           if (index !== -1) {
             guessedAppraisal = Number(formatEther(pricingSession.participants[index].appraisal))
           }
