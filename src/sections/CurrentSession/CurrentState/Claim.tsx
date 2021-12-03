@@ -107,8 +107,8 @@ const Claim: FunctionComponent = () => {
         </ListGroupItem>
         <ListGroupItem>
           <InputWithTitle
-            title={"Total Profit"}
-            id={"totalProfit"}
+            title={"Total Reward Left"}
+            id={"totalRewardLeft"}
             placeholder="0"
             value={claimData ? `${claimData.totalProfit.toLocaleString("en-US", {
               minimumFractionDigits: 2,
