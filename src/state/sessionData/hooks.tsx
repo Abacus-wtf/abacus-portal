@@ -620,7 +620,8 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         getStatus,
         pricingSessionCheck,
-        finalAppraisalValue
+        finalAppraisalValue,
+        grtData
       ] = await Promise.all([
         openseaGet(URL),
         pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
@@ -641,6 +642,7 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
+      const {pricingSession: pricingSessionGrt } = grtData.data.data
 
       let ethUsd
       try {
@@ -660,11 +662,13 @@ export const useGetCurrentSessionData = () => {
         image_url: pricingSessionMetadata?.image_preview_url || pricingSessionMetadata?.image_url,
         animation_url: pricingSessionMetadata?.animation_url || null,
         endTime,
-        numPpl: Number(pricingSessionCore.uniqueVoters),
+        numPpl: sessionStatus >= 2 ? Number(pricingSessionGrt.numParticipants) : Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,
-        totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
-        totalStakedInUSD:
-          Number(formatEther(pricingSessionCore.totalSessionStake))*
+        totalStaked: sessionStatus >= 2 ? Number(formatEther(pricingSessionGrt.totalStaked)) : Number(formatEther(pricingSessionCore.totalSessionStake)),
+        totalStakedInUSD: sessionStatus >= 2 ?
+          Number(formatEther(pricingSessionGrt.totalStaked)) * Number(ethUsd) 
+          : 
+          Number(formatEther(pricingSessionCore.totalSessionStake)) *
           Number(ethUsd),
         bountyInUSD:
           Number(formatEther(pricingSessionCore.bounty)) *
