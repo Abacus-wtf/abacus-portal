@@ -25,7 +25,7 @@ import {
   useCanUserInteract,
   useCurrentSessionData,
   useCurrentSessionUserStatus,
-  useGetCurrentSessionDataGRT
+  useSetCongratsMessage
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
@@ -42,7 +42,7 @@ const CallToActionSmall = styled(CallToActionCopy)`
 `
 
 const Harvest: FunctionComponent = () => {
-  const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
+  const setCongratsMessage = useSetCongratsMessage()
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
   const { account } = useActiveWeb3React()
@@ -54,9 +54,8 @@ const Harvest: FunctionComponent = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      await getCurrentSessionDataGRT(sessionData.address, sessionData.tokenId, sessionData.nonce)
+      await setCongratsMessage()
     }
-    console.log(sessionData)
     if (account && !sessionData.guessedAppraisal) {
       loadData()
     }
@@ -112,7 +111,10 @@ const Harvest: FunctionComponent = () => {
           <InputWithTitle
             title={"Final Appraisal Value"}
             id={"stake"}
-            value={sessionData.finalAppraisalValue}
+            value={`${sessionData.finalAppraisalValue.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH`}
             disabled
           />
         </ListGroupItem>
