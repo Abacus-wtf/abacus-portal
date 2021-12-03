@@ -49,8 +49,7 @@ import {
   setMySessionsPage,
   setMySessionsIsLastPage,
   setActiveSessionsPage,
-  setActiveSessionsIsLastPage,
-  setCongratsMessage
+  setActiveSessionsIsLastPage
 } from "./actions"
 import {
   GET_PRICING_SESSIONS,
@@ -460,37 +459,6 @@ const getUserStatus = async ({
   return Number(getVoterCheck)
 }
 
-export const useSetCongratsMessage = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const sessionData = useCurrentSessionData()
-  const { account } = useActiveWeb3React()
-  const networkSymbol = useGetCurrentNetwork()
-
-  return useCallback(async () => {
-    const data = await axios.post<GetPricingSessionQueryResponse>(
-      GRAPHQL_ENDPOINT(networkSymbol),
-      {
-        query: GET_PRICING_SESSION(`${sessionData.address}/${sessionData.tokenId}/${sessionData.nonce}`),
-      },
-      {
-        headers: {
-          "content-type": "application/json",
-        },
-      }
-    )
-    const { pricingSession } = data.data.data
-
-    let guessedAppraisal = -1
-    if (account) {
-      const index = _.findIndex(pricingSession.participants, (participant) => participant.user.id === account.toLowerCase())
-      if (index !== -1) {
-        guessedAppraisal = Number(formatEther(pricingSession.participants[index].appraisal))
-      }
-    }
-    dispatch(setCongratsMessage(guessedAppraisal))
-  }, [dispatch])
-}
-
 export const useGetCurrentSessionDataGRT = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
@@ -620,7 +588,8 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         getStatus,
         pricingSessionCheck,
-        finalAppraisalValue
+        finalAppraisalValue,
+        grtData
       ] = await Promise.all([
         openseaGet(URL),
         pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
@@ -641,6 +610,7 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
+      const {pricingSession: pricingSessionGrt } = grtData.data.data
 
       let ethUsd
       try {
@@ -655,16 +625,28 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         pricingSessionCheck
       )
+
+      let guessedAppraisal = -1
+      if (sessionStatus >= SessionState.Harvest && account) {
+        const index = _.findIndex(pricingSessionGrt.participants, (participant) => participant.user.id === account.toLowerCase())
+        if (index !== -1) {
+          guessedAppraisal = Number(formatEther(pricingSessionGrt.participants[index].appraisal))
+        }
+      }
+
       const sessionData: SessionData = {
         bounty: Number(formatEther(pricingSessionCore.bounty)),
         image_url: pricingSessionMetadata?.image_preview_url || pricingSessionMetadata?.image_url,
         animation_url: pricingSessionMetadata?.animation_url || null,
         endTime,
-        numPpl: Number(pricingSessionCore.uniqueVoters),
+        guessedAppraisal,
+        numPpl: sessionStatus >= 2 ? Number(pricingSessionGrt.numParticipants) : Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,
-        totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
-        totalStakedInUSD:
-          Number(formatEther(pricingSessionCore.totalSessionStake))*
+        totalStaked: sessionStatus >= 2 ? Number(formatEther(pricingSessionGrt.totalStaked)) : Number(formatEther(pricingSessionCore.totalSessionStake)),
+        totalStakedInUSD: sessionStatus >= 2 ?
+          Number(formatEther(pricingSessionGrt.totalStaked)) * Number(ethUsd) 
+          : 
+          Number(formatEther(pricingSessionCore.totalSessionStake)) *
           Number(ethUsd),
         bountyInUSD:
           Number(formatEther(pricingSessionCore.bounty)) *
