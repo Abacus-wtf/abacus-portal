@@ -204,23 +204,24 @@ export const useRetrieveClaimData = () => {
     const pricingSession = getPricingSessionContract(
       ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
-    const [getEthPayout, ethToAbc] = await Promise.all([
+    const [getEthPayout, ethToAbc, core] = await Promise.all([
       pricingSession.methods
         .getEthPayout(sessionData.address, sessionData.tokenId)
         .call(),
       pricingSession.methods.ethToAbc().call(),
+      pricingSession.methods.NftSessionCore(sessionData.nonce, sessionData.address, sessionData.tokenId).call(),
     ])
+    console.log(core)
 
     const claimData: ClaimState = {
       abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
       ethClaimAmount: Number(formatEther(getEthPayout)),
+      totalProfit: Number(formatEther(core.totalProfit))
     }
     dispatch(setClaimPosition(claimData))
   }, [
     getPricingSessionContract,
     networkSymbol,
-    sessionData.address,
-    sessionData.tokenId,
     dispatch,
   ])
 }
@@ -505,6 +506,7 @@ export const useGetCurrentSessionDataGRT = () => {
         let guessedAppraisal = -1
         if (sessionStatus >= SessionState.Harvest && account) {
           const index = _.findIndex(pricingSession.participants, (participant) => participant.user.id === account.toLowerCase())
+          console.log(pricingSession.participants)
           if (index !== -1) {
             guessedAppraisal = Number(formatEther(pricingSession.participants[index].appraisal))
           }

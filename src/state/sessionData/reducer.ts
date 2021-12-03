@@ -66,6 +66,7 @@ export interface SessionData {
 export interface ClaimState {
   ethClaimAmount: number
   abcClaimAmount: number
+  totalProfit: number
 }
 
 export interface CurrentSessionState {
