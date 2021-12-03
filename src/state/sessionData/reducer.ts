@@ -14,6 +14,12 @@ import {
   setActiveSessionsData,
   setActiveSessionsFetchStatus,
   setActiveSessionsErrorMessage,
+  setMultipleSessionPage,
+  setMySessionsPage,
+  setActiveSessionsPage,
+  setMultipleSessionIsLastPage,
+  setMySessionsIsLastPage,
+  setActiveSessionsIsLastPage
 } from "./actions"
 import _ from "lodash"
 import { PromiseStatus } from "@models/PromiseStatus"
@@ -37,12 +43,14 @@ export enum UserState {
 }
 
 export interface SessionData {
-  img: any
+  image_url: string
+  animation_url: string | null
   endTime: number
   numPpl: number
   collectionTitle: string
   totalStaked: number
   bounty: number
+  bountyInUSD?: number
   nftName: string
   address: string
   tokenId: string
@@ -50,6 +58,7 @@ export interface SessionData {
   ownerAddress: string
   nonce: number
   maxAppraisal: number
+  guessedAppraisal?: number
   finalAppraisalValue?: number
   totalStakedInUSD?: number
 }
@@ -57,6 +66,7 @@ export interface SessionData {
 export interface ClaimState {
   ethClaimAmount: number
   abcClaimAmount: number
+  totalProfit: number
 }
 
 export interface CurrentSessionState {
@@ -72,18 +82,24 @@ export interface MultiSessionState {
   multiSessionData: SessionData[] | null
   fetchStatus: PromiseStatus
   errorMessage: string | null
+  page: number
+  isLastPage: boolean
 }
 
 export interface MySessionsState {
   data: SessionData[]
   fetchStatus: PromiseStatus
   errorMessage: string | null
+  page: number
+  isLastPage: boolean
 }
 
 export interface ActiveSessionsState {
   data: SessionData[]
   fetchStatus: PromiseStatus
   errorMessage: string | null
+  page: number
+  isLastPage: boolean
 }
 
 interface SessionDataState {
@@ -99,20 +115,26 @@ export const initialState = {
     multiSessionData: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
+    page: 0,
+    isLastPage: false,
   },
   mySessionsState: {
     data: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
+    page: 0,
+    isLastPage: false,
   },
   activeSessionsState: {
     data: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
+    page: 0,
+    isLastPage: false,
   },
 } as SessionDataState
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
     .addCase(getCurrentSessionData, (state, action) => {
       state.currentSessionData = action.payload
@@ -147,6 +169,12 @@ export default createReducer(initialState, builder =>
     .addCase(setMultipleSessionErrorMessage, (state, action) => {
       state.multiSessionState.errorMessage = action.payload
     })
+    .addCase(setMultipleSessionPage, (state, action) => {
+      state.multiSessionState.page = action.payload
+    })
+    .addCase(setMultipleSessionIsLastPage, (state, action) => {
+      state.multiSessionState.isLastPage = action.payload
+    })
     .addCase(setMySessionsData, (state, action) => {
       state.mySessionsState.data = action.payload
     })
@@ -160,6 +188,12 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setMySessionsErrorMessage, (state, action) => {
       state.mySessionsState.errorMessage = action.payload
+    })
+    .addCase(setMySessionsPage, (state, action) => {
+      state.mySessionsState.page = action.payload
+    })
+    .addCase(setMySessionsIsLastPage, (state, action) => {
+      state.mySessionsState.isLastPage = action.payload
     })
     .addCase(setActiveSessionsData, (state, action) => {
       state.activeSessionsState.data = action.payload
@@ -175,5 +209,11 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setActiveSessionsErrorMessage, (state, action) => {
       state.activeSessionsState.errorMessage = action.payload
+    })
+    .addCase(setActiveSessionsPage, (state, action) => {
+      state.activeSessionsState.page = action.payload
+    })
+    .addCase(setActiveSessionsIsLastPage, (state, action) => {
+      state.activeSessionsState.isLastPage = action.payload
     })
 )

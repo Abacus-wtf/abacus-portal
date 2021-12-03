@@ -19,10 +19,11 @@ import {
   SplitContainer,
   VerticalContainer,
   VerticalSmallGapContainer,
-  SquareImageContainer,
+  FileContainer,
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
+import {useSetPayoutData, useClaimPayoutData} from '@state/miscData/hooks'
 
 const CurrentSession = ({ location }) => {
   // const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
@@ -30,9 +31,11 @@ const CurrentSession = ({ location }) => {
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
-  const { address, tokenId, nonce } = queryString.parse(location.search)
   const isLoading = fetchStatus === PromiseStatus.Pending
+  const { address, tokenId, nonce } = queryString.parse(location.search)
   const networkSymbol = useGetCurrentNetwork()
+  const claimData = useClaimPayoutData()
+  const setPayoutData = useSetPayoutData()
 
   useEffect(() => {
     const loadData = async () => {
@@ -41,6 +44,9 @@ const CurrentSession = ({ location }) => {
         String(tokenId),
         Number(nonce)
       )
+      if (claimData === null) {
+        await setPayoutData(account)
+      }
     }
 
     if (!address || !tokenId || !nonce) {
@@ -78,20 +84,29 @@ const CurrentSession = ({ location }) => {
       </SmallUniversalContainer>
     )
   }
-
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <SplitContainer>
         <VerticalContainer>
-          <SquareImageContainer src={sessionData.img} />
-          <ButtonsWhite
-            style={{ borderRadius: 8 }}
-            target="_blank"
-            href={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
-            as={OutboundLink}
-          >
-            OpenSea
-          </ButtonsWhite>
+          <FileContainer {...sessionData} />
+          <div style={{display: 'flex', gridGap: 15}}>
+            <ButtonsWhite
+              style={{ borderRadius: 8 }}
+              target="_blank"
+              href={`https://opensea.io/assets/${sessionData.address}/${sessionData.tokenId}`}
+              as={OutboundLink}
+            >
+              OpenSea
+            </ButtonsWhite>
+            <ButtonsWhite
+              style={{ borderRadius: 8 }}
+              target="_blank"
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://app.abacus.wtf/current-session?address=${sessionData.address}&tokenId=${sessionData.tokenId}&nonce=${sessionData.nonce}`)}&text=Just%20submitted%20my%20appraisal%20for%20${sessionData.collectionTitle}%20%23${sessionData.tokenId}%20on%20Abacus!&via=abacus_wtf`}
+              as={OutboundLink}
+            >
+              Share
+            </ButtonsWhite>
+          </div>
         </VerticalContainer>
         <VerticalContainer>
           <VerticalSmallGapContainer>
@@ -103,7 +118,7 @@ const CurrentSession = ({ location }) => {
               Owned by{" "}
               <OutboundLink
                 target="_blank"
-                href={`https://opensea.io/assets/${sessionData.ownerAddress}`}
+                href={`https://opensea.io/${sessionData.ownerAddress}`}
               >
                 {sessionData.owner}
               </OutboundLink>

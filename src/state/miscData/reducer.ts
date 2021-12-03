@@ -3,7 +3,8 @@ import { setAuctionData, setClaimData } from "./actions"
 import _ from "lodash"
 
 interface OptionalAuctionInfo {
-  img: any
+  image_url: string
+  animation_url: string | null
   highestNftAddress: string
   highestNftTokenId: string
   highestBidderAddress: string
@@ -29,6 +30,7 @@ export interface AuctionData {
 export interface ClaimData {
   ethPayout: number
   abcPayout: number
+  ethCredit: number
 }
 
 interface AuctionState {

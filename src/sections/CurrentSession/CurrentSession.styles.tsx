@@ -1,8 +1,17 @@
+import React from 'react'
 import styled from "styled-components"
 import { ListGroupItem } from "shards-react"
 import { Text } from "@components/global.styles"
 import { ImageContainer } from "@components/global.styles"
 import { HorizontalListGroup } from "@components/ListGroupMods"
+
+export const CallToActionCopy = styled.p`
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  font-size: ${({ theme }) => theme.copy.large};
+`
 
 export const SplitContainer = styled.div`
   display: grid;
@@ -38,6 +47,21 @@ export const SquareImageContainer = styled(ImageContainer)`
   }
 `
 
+export const FileContainer = (props: {animation_url: string | null, image_url: string}) => {
+  if (props.animation_url) {
+    const format = props.animation_url.slice(-3)
+    if (format === 'gif') {
+      return <SquareImageContainer src={props.animation_url} />
+    } else if (format === 'mp4' || format === 'ogg'|| props.animation_url.slice(-4) === 'webm') {
+      return <SquareImageContainer muted controls as={'video'} src={props.animation_url}/>
+    } else {
+      return <SquareImageContainer as={'iframe'} src={props.animation_url}/>
+    }
+  }
+
+  return <SquareImageContainer src={props.image_url} />
+}
+
 export const SubText = styled(Text)`
   color: ${({ theme }) => theme.colors.text2};
   text-align: left;
@@ -52,6 +76,6 @@ export const HorizontalListGroupModified = styled(HorizontalListGroup)`
 `
 
 export const ListGroupItemMinWidth = styled(ListGroupItem)`
-  padding-right: 50px;
+  padding-right: 20px;
   min-width: fit-content;
 `

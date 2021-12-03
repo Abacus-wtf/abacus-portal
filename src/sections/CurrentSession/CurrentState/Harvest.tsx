@@ -2,6 +2,7 @@ import React, {
   FormEvent,
   FunctionComponent,
   useContext,
+  useEffect,
   useState,
 } from "react"
 import { ThemeContext } from "styled-components"
@@ -29,10 +30,20 @@ import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnHarvest } from "@hooks/current-session"
 import _ from "lodash"
+import {CallToActionCopy} from '../CurrentSession.styles'
+import { useActiveWeb3React } from "@hooks/index"
+import styled from 'styled-components'
+
+const CallToActionSmall = styled(CallToActionCopy)`
+  margin-top: 35px;
+  font-size: 22px;
+  font-weight: bold;
+`
 
 const Harvest: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
+  const { account } = useActiveWeb3React()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -46,11 +57,31 @@ const Harvest: FunctionComponent = () => {
         <ListGroupItemMinWidth>
           <Label>Total Staked</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked} ETH
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
             {sessionData.totalStakedInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Bounty</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.bounty.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.bountyInUSD.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -69,10 +100,20 @@ const Harvest: FunctionComponent = () => {
           <InputWithTitle
             title={"Final Appraisal Value"}
             id={"stake"}
-            value={sessionData.finalAppraisalValue}
+            value={`${sessionData.finalAppraisalValue.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH`}
             disabled
           />
         </ListGroupItem>
+        <CallToActionSmall>{sessionData.guessedAppraisal && sessionData.guessedAppraisal <= sessionData.finalAppraisalValue * 1.05 && sessionData.guessedAppraisal >= sessionData.finalAppraisalValue * 0.95 
+          ? `Congrats! You appraised the NFT at ${sessionData.guessedAppraisal.toLocaleString("en-US", {minimumFractionDigits: 2,maximumFractionDigits: 2})} ETH which is within the margin of error!`
+          : sessionData.guessedAppraisal < 0
+          ? ''
+          : sessionData.guessedAppraisal 
+          ? `Sorry, you unfortunately guessed ${sessionData.guessedAppraisal.toLocaleString("en-US", {minimumFractionDigits: 2,maximumFractionDigits: 2})} ETH which is not within the margin of error. Try again next time!`
+          : ''}</CallToActionSmall>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <div style={{ width: "100%" }} id={"submitHarvestButton"}>
             <Button

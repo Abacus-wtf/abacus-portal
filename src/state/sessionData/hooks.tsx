@@ -1,7 +1,8 @@
-import { useCallback } from "react"
+import { useCallback, useRef } from "react"
 import { AppState, AppDispatch } from "@state/index"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
+import { request } from "graphql-request"
 import {
   useWeb3Contract,
   useActiveWeb3React,
@@ -20,22 +21,10 @@ import {
   openseaGetMany,
   OpenSeaGetResponse,
   shortenAddress,
-  hashValues,
 } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { useGetCurrentNetwork } from "@state/application/hooks"
-import {
-  GET_PRICING_SESSIONS,
-  GetPricingSessionsQueryResponse,
-  GetPricingSessionQueryResponse,
-  SubgraphPricingSession,
-  GET_PRICING_SESSION,
-  GetActiveSessionsQueryResponse,
-  GET_ACTIVE_SESSIONS,
-  GetMySessionsQueryResponse,
-  GET_MY_SESSIONS,
-} from "./queries"
 import {
   SessionData,
   CurrentSessionState,
@@ -55,7 +44,28 @@ import {
   setActiveSessionsFetchStatus,
   setActiveSessionsData,
   setMySessionsData,
+  setMultipleSessionPage,
+  setMultipleSessionIsLastPage,
+  setMySessionsPage,
+  setMySessionsIsLastPage,
+  setActiveSessionsPage,
+  setActiveSessionsIsLastPage
 } from "./actions"
+import {
+  GET_PRICING_SESSIONS,
+  GetPricingSessionsQueryResponse,
+  GetPricingSessionQueryResponse,
+  SubgraphPricingSession,
+  GET_PRICING_SESSION,
+  GetActiveSessionsQueryResponse,
+  GET_ACTIVE_SESSIONS,
+  GetMySessionsQueryResponse,
+  GET_MY_SESSIONS,
+  GetPricingSessionsVariables,
+  GetMySessionsVariables,
+  GetActiveSessionsVariables,
+} from "./queries"
+import { PAGINATE_BY } from "./constants"
 import {
   currentSessionDataSelector,
   currentSessionStatusSelector,
@@ -96,7 +106,7 @@ const modifyTimeAndSession = (
     endTime =
       Number(stateVals.timeFinalAppraisalSet) * 1000 +
       Number(pricingSessionData.votingTime) * 2 * 1000
-    
+
     if (currentTime >= endTime) {
       sessionStatus = 5
     }
@@ -194,23 +204,23 @@ export const useRetrieveClaimData = () => {
     const pricingSession = getPricingSessionContract(
       ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
-    const [getEthPayout, ethToAbc] = await Promise.all([
+    const [getEthPayout, ethToAbc, core] = await Promise.all([
       pricingSession.methods
         .getEthPayout(sessionData.address, sessionData.tokenId)
         .call(),
       pricingSession.methods.ethToAbc().call(),
+      pricingSession.methods.NftSessionCore(sessionData.nonce, sessionData.address, sessionData.tokenId).call(),
     ])
 
     const claimData: ClaimState = {
       abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
       ethClaimAmount: Number(formatEther(getEthPayout)),
+      totalProfit: Number(formatEther(core.totalProfit))
     }
     dispatch(setClaimPosition(claimData))
   }, [
     getPricingSessionContract,
     networkSymbol,
-    sessionData.address,
-    sessionData.tokenId,
     dispatch,
   ])
 }
@@ -238,7 +248,8 @@ const parseSubgraphPricingSessions = async (
     (session): SessionData => {
       const asset = findAsset(assets, session)
       return {
-        img: asset.image_preview_url || asset.image_url,
+        image_url: asset.image_preview_url || asset.image_url,
+        animation_url: null,
         endTime: Number(session.endTime),
         numPpl: Number(session.numParticipants),
         collectionTitle: asset.asset_contract.name,
@@ -257,7 +268,7 @@ const parseSubgraphPricingSessions = async (
           asset?.owner?.user && asset?.owner?.user?.username
             ? asset?.owner?.user?.username
             : shortenAddress(asset?.owner?.address),
-        maxAppraisal: Number(session?.maxAppraisal),
+        maxAppraisal: Number(formatEther(session?.maxAppraisal)),
       }
     }
   )
@@ -266,117 +277,160 @@ const parseSubgraphPricingSessions = async (
 
 export const useGetMultiSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const whereRef = useRef("")
+  const { page, multiSessionData } = useMultiSessionState()
   const networkSymbol = useGetCurrentNetwork()
 
-  return useCallback(async () => {
-    dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
+  return useCallback(
+    async (where: string | null) => {
+      if (!networkSymbol) {
+        return
+      }
+      let currentPage = page
+      let currentData = multiSessionData
+      if (where !== whereRef.current) {
+        currentPage = 0
+        currentData = []
+        dispatch(setMultipleSessionData([]))
+      }
+      whereRef.current = where
+      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Pending))
+      const variables: GetPricingSessionsVariables = {
+        first: PAGINATE_BY,
+        skip: currentPage * PAGINATE_BY,
+      }
 
-    try {
-      const {
-        data: {
-          data: { pricingSessions },
-        },
-      } = await axios.post<GetPricingSessionsQueryResponse>(
-        GRAPHQL_ENDPOINT(networkSymbol),
-        {
-          query: GET_PRICING_SESSIONS,
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      )
-      const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-      dispatch(setMultipleSessionData(sessionData))
-      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
-    } catch {
-      dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
-    }
-  }, [dispatch, networkSymbol])
+      try {
+        const { pricingSessions } =
+          await request<GetPricingSessionsQueryResponse>(
+            GRAPHQL_ENDPOINT(networkSymbol),
+            GET_PRICING_SESSIONS(where),
+            variables
+          )
+        const sessionData = await parseSubgraphPricingSessions(pricingSessions)
+        const isLastPage = sessionData.length < PAGINATE_BY
+        dispatch(setMultipleSessionData([...currentData, ...sessionData]))
+        dispatch(setMultipleSessionPage(currentPage + 1))
+        dispatch(setMultipleSessionIsLastPage(isLastPage))
+        dispatch(setMultipleSessionFetchStatus(PromiseStatus.Resolved))
+      } catch {
+        dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
+      }
+    },
+    [dispatch, page, multiSessionData, networkSymbol]
+  )
 }
 
 export const useGetMySessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const whereRef = useRef(null)
   const { account } = useActiveWeb3React()
+  const { page, data } = useMySessionsState()
   const networkSymbol = useGetCurrentNetwork()
 
-  return useCallback(async () => {
-    if (!account) {
-      return
-    }
-    dispatch(setMySessionsFetchStatus(PromiseStatus.Pending))
-
-    try {
-      const {
-        data: {
-          data: { user },
-        },
-      } = await axios.post<GetMySessionsQueryResponse>(
-        GRAPHQL_ENDPOINT(networkSymbol),
-        {
-          query: GET_MY_SESSIONS(account.toLowerCase()),
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      )
-      if (user) {
-        const { creatorOf: pricingSessions } = user
-        const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-        dispatch(setMySessionsData(sessionData))
-      } else {
-        dispatch(setMySessionsData([]))
+  return useCallback(
+    async (where: string | null) => {
+      if (!account || !networkSymbol) {
+        return
       }
-      dispatch(setMySessionsFetchStatus(PromiseStatus.Resolved))
-    } catch {
-      dispatch(setMySessionsFetchStatus(PromiseStatus.Rejected))
-    }
-  }, [account, dispatch, networkSymbol])
+      dispatch(setMySessionsFetchStatus(PromiseStatus.Pending))
+      let currentPage = page
+      let currentData = data
+      if (where !== whereRef.current) {
+        currentPage = 0
+        currentData = []
+        dispatch(setMySessionsData(currentData))
+      }
+      whereRef.current = where
+      const variables: GetMySessionsVariables = {
+        userId: account.toLowerCase(),
+        first: PAGINATE_BY,
+        skip: currentPage * PAGINATE_BY,
+      }
+
+      try {
+        const { user } = await request<GetMySessionsQueryResponse>(
+          GRAPHQL_ENDPOINT(networkSymbol),
+          GET_MY_SESSIONS(where),
+          variables
+        )
+        if (user) {
+          const { creatorOf: pricingSessions } = user
+          const sessionData = await parseSubgraphPricingSessions(
+            pricingSessions
+          )
+          const isLastPage = sessionData.length < PAGINATE_BY
+          dispatch(setMySessionsData([...currentData, ...sessionData]))
+          dispatch(setMySessionsPage(currentPage + 1))
+          dispatch(setMySessionsIsLastPage(isLastPage))
+        } else {
+          dispatch(setMySessionsData([]))
+          dispatch(setMySessionsPage(0))
+          dispatch(setMySessionsIsLastPage(true))
+        }
+        dispatch(setMySessionsFetchStatus(PromiseStatus.Resolved))
+      } catch {
+        dispatch(setMySessionsFetchStatus(PromiseStatus.Rejected))
+      }
+    },
+    [dispatch, account, page, data, networkSymbol]
+  )
 }
 
 export const useGetActiveSessionsData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { account } = useActiveWeb3React()
+  const whereRef = useRef(null)
+  const { page, data } = useActiveSessionsState()
   const networkSymbol = useGetCurrentNetwork()
 
-  return useCallback(async () => {
-    if (!account) {
-      return
-    }
-    dispatch(setActiveSessionsFetchStatus(PromiseStatus.Pending))
-
-    try {
-      const {
-        data: {
-          data: { user },
-        },
-      } = await axios.post<GetActiveSessionsQueryResponse>(
-        GRAPHQL_ENDPOINT(networkSymbol),
-        {
-          query: GET_ACTIVE_SESSIONS(account.toLowerCase()),
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      )
-      if (user) {
-        const { votes } = user
-        const pricingSessions = _.map(votes, (i) => i.pricingSession)
-        const sessionData = await parseSubgraphPricingSessions(pricingSessions)
-        dispatch(setActiveSessionsData(sessionData))
-      } else {
-        dispatch(setActiveSessionsData([]))
+  return useCallback(
+    async (where: string | null) => {
+      if (!account || !networkSymbol) {
+        return
       }
-      dispatch(setActiveSessionsFetchStatus(PromiseStatus.Resolved))
-    } catch {
-      dispatch(setActiveSessionsFetchStatus(PromiseStatus.Rejected))
-    }
-  }, [account, dispatch, networkSymbol])
+      dispatch(setActiveSessionsFetchStatus(PromiseStatus.Pending))
+      let currentPage = page
+      let currentData = data
+      if (where !== whereRef.current) {
+        currentPage = 0
+        currentData = []
+        dispatch(setActiveSessionsData(currentData))
+      }
+      whereRef.current = where
+      const variables: GetActiveSessionsVariables = {
+        userId: account.toLowerCase(),
+        first: PAGINATE_BY,
+        skip: currentPage * PAGINATE_BY,
+      }
+
+      try {
+        const { user } = await request<GetActiveSessionsQueryResponse>(
+          GRAPHQL_ENDPOINT(networkSymbol),
+          GET_ACTIVE_SESSIONS(where),
+          variables
+        )
+        if (user) {
+          const { pricingSessionsVotedIn } = user
+          const sessionData = await parseSubgraphPricingSessions(
+            pricingSessionsVotedIn
+          )
+          const isLastPage = sessionData.length < PAGINATE_BY
+          dispatch(setActiveSessionsData([...currentData, ...sessionData]))
+          dispatch(setActiveSessionsPage(currentPage + 1))
+          dispatch(setActiveSessionsIsLastPage(isLastPage))
+        } else {
+          dispatch(setActiveSessionsData([]))
+          dispatch(setActiveSessionsPage(0))
+          dispatch(setActiveSessionsIsLastPage(true))
+        }
+        dispatch(setActiveSessionsFetchStatus(PromiseStatus.Resolved))
+      } catch {
+        dispatch(setActiveSessionsFetchStatus(PromiseStatus.Rejected))
+      }
+    },
+    [dispatch, account, page, data, networkSymbol]
+  )
 }
 
 type GetUserStatusParams = {
@@ -448,14 +502,24 @@ export const useGetCurrentSessionDataGRT = () => {
           pricingSession
         )
 
+        let guessedAppraisal = -1
+        if (sessionStatus >= SessionState.Harvest && account) {
+          const index = _.findIndex(pricingSession.participants, (participant) => participant.user.id === account.toLowerCase())
+          if (index !== -1) {
+            guessedAppraisal = Number(formatEther(pricingSession.participants[index].appraisal))
+          }
+        }
+
         const sessionData: SessionData = {
-          img: asset.image_preview_url || asset.image_url,
+          image_url: asset.image_preview_url || asset.image_url,
+          animation_url: asset.animation_url || null,
           endTime: Number(endTime),
           numPpl: Number(pricingSession.numParticipants),
           collectionTitle: asset.asset_contract.name,
           totalStaked: Number(formatEther(pricingSession.totalStaked)),
           totalStakedInUSD:
-            Number(formatEther(pricingSession.totalStaked)) * ethUsd,
+            Number(formatEther(pricingSession.totalStaked)) * Number(ethUsd),
+            bountyInUSD: Number(formatEther(pricingSession.bounty)) * Number(ethUsd),
           bounty: Number(formatEther(pricingSession.bounty)),
           nftName: asset.name,
           finalAppraisalValue:
@@ -470,9 +534,9 @@ export const useGetCurrentSessionDataGRT = () => {
             asset?.owner?.user && asset?.owner?.user?.username
               ? asset?.owner?.user?.username
               : shortenAddress(asset?.owner?.address),
-          maxAppraisal: Number(pricingSession?.maxAppraisal),
+          maxAppraisal: Number(formatEther(pricingSession?.maxAppraisal)),
+          guessedAppraisal
         }
-
         const userStatus = await getUserStatus({
           address,
           account,
@@ -518,12 +582,6 @@ export const useGetCurrentSessionData = () => {
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
 
-      const hash = hashValues({
-        address,
-        nonce,
-        tokenId,
-      })
-
       const URL = `asset/${address}/${tokenId}`
       const [
         pricingSessionMetadata,
@@ -531,13 +589,28 @@ export const useGetCurrentSessionData = () => {
         getStatus,
         pricingSessionCheck,
         finalAppraisalValue,
+        grtData
       ] = await Promise.all([
         openseaGet(URL),
-        pricingSession.methods.NftSessionCore(hash).call(),
+        pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
         pricingSession.methods.getStatus(address, tokenId).call(),
-        pricingSession.methods.NftSessionCheck(hash).call(),
-        pricingSession.methods.finalAppraisalValue(hash).call(),
+        pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
+        pricingSession.methods
+          .finalAppraisalValue(nonce, address, tokenId)
+          .call(),
+        axios.post<GetPricingSessionQueryResponse>(
+          GRAPHQL_ENDPOINT(networkSymbol),
+          {
+            query: GET_PRICING_SESSION(`${address}/${tokenId}/${nonce}`),
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        ),
       ])
+      const {pricingSession: pricingSessionGrt } = grtData.data.data
 
       let ethUsd
       try {
@@ -552,17 +625,31 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         pricingSessionCheck
       )
+
+      let guessedAppraisal = -1
+      if (sessionStatus >= SessionState.Harvest && account) {
+        const index = _.findIndex(pricingSessionGrt.participants, (participant) => participant.user.id === account.toLowerCase())
+        if (index !== -1) {
+          guessedAppraisal = Number(formatEther(pricingSessionGrt.participants[index].appraisal))
+        }
+      }
+
       const sessionData: SessionData = {
         bounty: Number(formatEther(pricingSessionCore.bounty)),
-        img:
-          pricingSessionMetadata?.image_url ||
-          pricingSessionMetadata?.image_preview_url,
+        image_url: pricingSessionMetadata?.image_preview_url || pricingSessionMetadata?.image_url,
+        animation_url: pricingSessionMetadata?.animation_url || null,
         endTime,
-        numPpl: Number(pricingSessionCore.uniqueVoters),
+        guessedAppraisal,
+        numPpl: sessionStatus >= 2 ? Number(pricingSessionGrt.numParticipants) : Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,
-        totalStaked: Number(formatEther(pricingSessionCore.totalSessionStake)),
-        totalStakedInUSD:
+        totalStaked: sessionStatus >= 2 ? Number(formatEther(pricingSessionGrt.totalStaked)) : Number(formatEther(pricingSessionCore.totalSessionStake)),
+        totalStakedInUSD: sessionStatus >= 2 ?
+          Number(formatEther(pricingSessionGrt.totalStaked)) * Number(ethUsd) 
+          : 
           Number(formatEther(pricingSessionCore.totalSessionStake)) *
+          Number(ethUsd),
+        bountyInUSD:
+          Number(formatEther(pricingSessionCore.bounty)) *
           Number(ethUsd),
         nftName: pricingSessionMetadata?.name,
         address,
@@ -578,7 +665,7 @@ export const useGetCurrentSessionData = () => {
             ? pricingSessionMetadata?.owner?.user?.username
             : shortenAddress(pricingSessionMetadata?.owner?.address),
         ownerAddress: pricingSessionMetadata?.owner?.address,
-        maxAppraisal: Number(pricingSessionCore.maxAppraisal),
+        maxAppraisal: Number(formatEther(pricingSessionCore.maxAppraisal)),
       }
 
       const userStatus = await getUserStatus({

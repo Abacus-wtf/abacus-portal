@@ -63,7 +63,8 @@ export const useSetAuctionData = () => {
       const nftMetadata = await openseaGet(URL)
 
       optionalInfo = {
-        img: nftMetadata?.image_url || nftMetadata?.image_preview_url,
+        image_url: nftMetadata?.image_url || nftMetadata?.image_preview_url,
+        animation_url: nftMetadata?.animation_url || null,
         highestBidderAddress: highestBidder,
         highestNftAddress: highestBidderUserVote.nftAddress,
         highestNftTokenId: highestBidderUserVote.tokenid,
@@ -95,13 +96,15 @@ export const useSetPayoutData = () => {
 
   return useCallback(async (account: string) => {
     const pricingSessionContract = getPricingSessionContract(ABC_PRICING_SESSION_ADDRESS(networkSymbol))
-    const [ethPayout, ethToAbc] = await Promise.all([
+    const [ethPayout, ethToAbc, principalStored] = await Promise.all([
       pricingSessionContract.methods.profitStored(account).call(),
       pricingSessionContract.methods.ethToAbc().call(),
+      pricingSessionContract.methods.principalStored(account).call(),
     ])
     const eth = Number(formatEther(ethPayout))
-    const abc = Number(formatEther(ethToAbc * ethPayout))
-    dispatch(setClaimData({ethPayout: eth, abcPayout: abc}))
+    const abc = Number(formatEther(ethToAbc))*Number(formatEther(ethPayout))
+    const ethCredit = Number(formatEther(principalStored))
+    dispatch(setClaimData({ethPayout: eth, abcPayout: abc, ethCredit}))
   }, [dispatch, networkSymbol, chainId])
 }
 

@@ -12,7 +12,7 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, Tooltip } from "shards-react"
+import { ListGroupItem, Tooltip, ListGroup } from "shards-react"
 import {
   VerticalContainer,
   SubText,
@@ -50,7 +50,7 @@ const Claim: FunctionComponent = () => {
 
   useEffect(() => {
     retrieveClaimData()
-  })
+  }, [])
 
   const theme = useContext(ThemeContext)
   return (
@@ -59,7 +59,10 @@ const Claim: FunctionComponent = () => {
         <ListGroupItemMinWidth>
           <Label>Total Staked</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked} ETH
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -70,18 +73,52 @@ const Claim: FunctionComponent = () => {
             )
           </ListGroupSubtext>
         </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Bounty</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.bounty.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.bountyInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
         <SessionCountdown />
       </HorizontalListGroup>
 
-      <ListGroupItem>
-        <InputWithTitle
-          title={"Final Appraisal Value"}
-          id={"stake"}
-          value={sessionData.finalAppraisalValue}
-          disabled
-        />
-      </ListGroupItem>
-      <HorizontalListGroup>
+      <ListGroup>
+        <ListGroupItem>
+          <InputWithTitle
+            title={"Final Appraisal Value"}
+            id={"stake"}
+            value={`${sessionData.finalAppraisalValue.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH`}
+            disabled
+          />
+        </ListGroupItem>
+        <ListGroupItem>
+          <InputWithTitle
+            title={"Total Reward Left"}
+            id={"totalRewardLeft"}
+            placeholder="0"
+            value={claimData ? `${claimData.totalProfit.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH` : "-"}
+            disabled
+          />
+        </ListGroupItem>
+      </ListGroup>
+      {/*<HorizontalListGroup>
         <ListGroupItem>
           <InputWithTitle
             title={"ETH Payout"}
@@ -100,7 +137,7 @@ const Claim: FunctionComponent = () => {
             disabled
           />
         </ListGroupItem>
-      </HorizontalListGroup>
+      </HorizontalListGroup>*/}
       <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
         <HorizontalListGroup>
           <div

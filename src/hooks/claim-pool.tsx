@@ -60,3 +60,101 @@ export const useOnClaimPayout = () => {
     isPending,
   }
 }
+
+
+export const useOnClaimPrincipalAmount = () => {
+  const { account, library } = useActiveWeb3React()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    ReloadDataType.ClaimPool
+  )
+  const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
+
+  const onClaimPrincipal = useCallback(
+    async (amount: string) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const pricingSessionContract = getContract(
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ABC_PRICING_SESSION_ABI,
+        library,
+        account
+      )
+      method = pricingSessionContract.claimPrincipalUsed
+      estimate = pricingSessionContract.estimateGas.claimPrincipalUsed
+      args = [
+        parseEther(amount)
+      ]
+      value = null
+      const txnCb = async (response: any) => {
+        addTransaction(response, {
+          summary: "Claim Principal Amount",
+        })
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        cb: txnCb,
+      })
+    },
+    [account, library, sessionData, networkSymbol]
+  )
+  return {
+    onClaimPrincipal,
+    isPending,
+  }
+}
+
+
+export const useOnDepositPrincipal = () => {
+  const { account, library } = useActiveWeb3React()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    ReloadDataType.ClaimPool
+  )
+  const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
+
+  const onDeposit = useCallback(
+    async (amount: string) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const pricingSessionContract = getContract(
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ABC_PRICING_SESSION_ABI,
+        library,
+        account
+      )
+      method = pricingSessionContract.depositPrincipal
+      estimate = pricingSessionContract.estimateGas.depositPrincipal
+      args = []
+      value = parseEther(amount)
+      const txnCb = async (response: any) => {
+        addTransaction(response, {
+          summary: "Deposit Principal",
+        })
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        cb: txnCb,
+      })
+    },
+    [account, library, sessionData, networkSymbol]
+  )
+  return {
+    onDeposit,
+    isPending,
+  }
+}

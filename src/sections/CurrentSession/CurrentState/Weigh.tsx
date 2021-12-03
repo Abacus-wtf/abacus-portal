@@ -26,7 +26,7 @@ import {
   useCurrentSessionData,
   useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
-import { hashValues } from "@config/utils"
+import { encodeSessionData } from "@config/utils"
 import SessionCountdown from "./SessionCountdown"
 import {
   VerticalContainer,
@@ -49,12 +49,13 @@ const Weigh: FunctionComponent = () => {
   const [passwordValue, setPasswordValue] = useState("")
 
   useEffect(() => {
-    const hash = hashValues({
-      address: sessionData.address,
+    const encodedVals = encodeSessionData({
+      account: account,
+      nftAddress: sessionData.address,
       tokenId: sessionData.tokenId,
-      nonce: sessionData.nonce,
+      nonce: sessionData.nonce
     })
-    const itemsString = localStorage.getItem(hash)
+    const itemsString = localStorage.getItem(encodedVals)
     if (itemsString && account) {
       try {
         const items = JSON.parse(itemsString)
@@ -74,11 +75,31 @@ const Weigh: FunctionComponent = () => {
         <ListGroupItemMinWidth>
           <Label>Total Staked</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked} ETH
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
             {sessionData.totalStakedInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Bounty</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.bounty.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.bountyInUSD.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -91,15 +112,13 @@ const Weigh: FunctionComponent = () => {
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
           const cb = (hash) => {
-            const hashedMessage = web3Eth.eth.abi.encodeParameters(
-              ["address", "uint256", "uint256"],
-              [
-                sessionData.address,
-                Number(sessionData.tokenId),
-                sessionData.nonce,
-              ]
-            )
-            localStorage.setItem(hashedMessage, "")
+            const encodedVals = encodeSessionData({
+              nonce: sessionData.nonce,
+              nftAddress: sessionData.address,
+              tokenId: sessionData.tokenId,
+              account: account
+            })
+            localStorage.setItem(encodedVals, "")
           }
           await onWeightVote(appraisalValue, passwordValue, cb)
         }}

@@ -29,6 +29,7 @@ export function shortenAddress(address: string, chars = 4): string {
 export type OpenSeaAsset = {
   image_preview_url?: string
   image_url: string
+  animation_url: string | null
   asset_contract: {
     name: string
     address: string
@@ -104,21 +105,21 @@ export async function openseaGetMany(pricingSessions: OpenSeaGetManyParams) {
   return result
 }
 
-export function hashValues({
-  nonce,
-  address,
-  tokenId,
-}: {
-  nonce: number
-  address: string
-  tokenId: string
-}) {
-  const encodedParams = web3Eth.eth.abi.encodeParameters(
+export function hashValues({appraisalValue, account, password}: {appraisalValue: BigNumber, account: string, password: number}) {
+  let encodedParams = web3Eth.eth.abi.encodeParameters(
     ["uint", "address", "uint"],
-    [nonce, address, tokenId]
+    [appraisalValue, account, password]
   )
-  return keccak256(
-    encodedParams.slice(0, 66) + encodedParams.slice(90, encodedParams.length)
+  encodedParams =
+    encodedParams.slice(0, 64) +
+    encodedParams.slice(88, encodedParams.length)
+  return keccak256(encodedParams)
+}
+
+export function encodeSessionData({account, nftAddress, nonce, tokenId}: {account: string, nftAddress: string, nonce: number, tokenId: string}) {
+  return web3Eth.eth.abi.encodeParameters(
+    ["uint", 'address', "address", "uint"],
+    [nonce, nftAddress, account, tokenId]
   )
 }
 

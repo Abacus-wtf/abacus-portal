@@ -14,7 +14,7 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem, Form, Tooltip } from "shards-react"
-import { VerticalContainer, SubText } from "../CurrentSession.styles"
+import { VerticalContainer, SubText, ListGroupItemMinWidth } from "../CurrentSession.styles"
 import {
   useCanUserInteract,
   useCurrentSessionData,
@@ -22,14 +22,7 @@ import {
 import { User } from "react-feather"
 import _ from "lodash"
 import { useOnSetFinalAppraisal } from "@hooks/current-session"
-
-export const CallToActionCopy = styled.p`
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  text-align: center;
-  font-size: ${({ theme }) => theme.copy.large};
-`
+import {CallToActionCopy} from '../CurrentSession.styles'
 
 const SetFinalAppraisal: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
@@ -43,10 +36,13 @@ const SetFinalAppraisal: FunctionComponent = () => {
   return (
     <>
       <HorizontalListGroup>
-        <ListGroupItem style={{ width: "100%" }}>
+        <ListGroupItemMinWidth>
           <Label>Total Staked</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked} ETH
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -56,7 +52,24 @@ const SetFinalAppraisal: FunctionComponent = () => {
             })}
             )
           </ListGroupSubtext>
-        </ListGroupItem>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Bounty</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.bounty.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })} ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.bountyInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
       </HorizontalListGroup>
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {

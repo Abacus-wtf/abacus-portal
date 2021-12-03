@@ -13,13 +13,12 @@ import { useActiveWeb3React, useWeb3Contract } from "@hooks/index"
 import { useOnCreateNewSession } from "@hooks/create-sessions"
 import { ZERO_ADDRESS, ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import { openseaGet, shortenAddress } from "@config/utils"
-import Link from "gatsby-link"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import {
   SplitContainer,
   VerticalSmallGapContainer,
-  SquareImageContainer,
+  FileContainer,
   SubText as SubTitle,
 } from "../CurrentSession/CurrentSession.styles"
 
@@ -54,7 +53,8 @@ interface CreateSessionItems {
   initAppraisal: string
   votingTime: number
   bounty?: string
-  img: string
+  image_url: string
+  animation_url: string | null
   name: string
   collection: string
   nonce: number
@@ -115,19 +115,23 @@ const CreateSession: React.FC = () => {
       tokenId,
       initAppraisal,
       Math.round(votingTime * 3600),
-      () => {
-        toggle()
+      async () => {
+        const nonce = await pricingSession.methods
+          .nftNonce(nftAddress, tokenId)
+          .call()
         setNewSesh({
           nftAddress,
           tokenId,
           initAppraisal,
           bounty,
           votingTime,
-          img: meta.image_url,
+          image_url: meta.image_url,
+          animation_url: meta.animation_url || null,
           name: meta.name,
           collection: meta.collection.name,
-          nonce: Number(nonce) + 1,
+          nonce: Number(nonce),
         })
+        toggle()
       },
       bounty
     )
@@ -140,11 +144,8 @@ const CreateSession: React.FC = () => {
           {newSesh === null ? null : (
             <SplitContainer>
               <VerticalSmallGapContainer>
-                <SquareImageContainer
-                  src={newSesh.img}
-                  style={{ marginBottom: 15 }}
-                />
-                <SubTitle>{newSesh.collection}</SubTitle>
+                <FileContainer {...newSesh} />
+                <SubTitle style={{marginTop: 15}}>{newSesh.collection}</SubTitle>
                 <Title>
                   {newSesh.name} #{newSesh.tokenId}
                 </Title>
@@ -176,13 +177,13 @@ const CreateSession: React.FC = () => {
                   title="Voting Time"
                   value={`${newSesh.votingTime} hours`}
                 />
-                <Button
-                  as={Link}
-                  style={{ width: "100%", textAlign: "center" }}
-                  to={`/current-session?address=${newSesh.nftAddress}&tokenId=${newSesh.tokenId}&nonce=${newSesh.nonce}`}
-                >
-                  Go to session
-                </Button>
+                <a href={`/current-session?address=${newSesh.nftAddress}&tokenId=${newSesh.tokenId}&nonce=${newSesh.nonce}`}>
+                  <Button
+                    style={{ width: "100%", textAlign: "center" }}
+                  >
+                    Go to session
+                  </Button>
+                </a>
               </VerticalSmallGapContainer>
             </SplitContainer>
           )}
