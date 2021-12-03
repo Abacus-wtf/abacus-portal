@@ -29,4 +29,8 @@ describe("Pagination Button", () => {
     )
     expect(container.firstChild).toBeNull()
   })
+
+  it("Fails", () => {
+    expect(true).toBe(false)
+  })
 })
