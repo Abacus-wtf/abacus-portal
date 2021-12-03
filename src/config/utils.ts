@@ -21,7 +21,7 @@ export function isAddress(value: any): string | false {
 export function shortenAddress(address: string, chars = 4): string {
   const parsed = isAddress(address)
   if (!parsed) {
-    return ''
+    return ""
   }
   return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`
 }
@@ -47,6 +47,19 @@ export type OpenSeaAsset = {
   }
 }
 
+const DEFAULT_ASSET: OpenSeaAsset = {
+  image_url: "",
+  asset_contract: {
+    name: "",
+    address: "",
+  },
+  collection: {
+    name: "",
+  },
+  token_id: "",
+  name: "",
+}
+
 export type OpenSeaGetResponse = {
   assets: OpenSeaAsset[]
 }
@@ -59,22 +72,37 @@ export async function openseaGet<T = OpenSeaAsset>(input: string) {
     })
     return result.data
   } catch (e) {
-    console.log("e")
-    console.log(e)
-    return null
+    console.log("e", e)
+    return DEFAULT_ASSET
   }
+}
+
+function isOpenSeaAsset(
+  asset: OpenSeaAsset | OpenSeaGetResponse
+): asset is OpenSeaAsset {
+  return (asset as OpenSeaAsset).token_id !== undefined
 }
 
 export type OpenSeaGetManyParams = { nftAddress: string; tokenId: string }[]
 
 export async function openseaGetMany(pricingSessions: OpenSeaGetManyParams) {
   const URL = `assets?${pricingSessions
-    .map(session => `asset_contract_addresses=${session.nftAddress}&`)
+    .map((session) => `asset_contract_addresses=${session.nftAddress}&`)
     .toString()}${pricingSessions
-    .map(session => `token_ids=${session.tokenId}&`)
+    .map((session) => `token_ids=${session.tokenId}&`)
     .toString()}`
   const result = await openseaGet<OpenSeaGetResponse>(URL.replaceAll(",", ""))
-  return result    
+  if (isOpenSeaAsset(result)) {
+    const DEFAULT_OPENSEA_GET_RESPONSE: OpenSeaGetResponse = {
+      assets: pricingSessions.map((session) => ({
+        ...DEFAULT_ASSET,
+        asset_contract: { ...DEFAULT_ASSET, address: session.nftAddress },
+        token_id: session.tokenId,
+      })),
+    }
+    return DEFAULT_OPENSEA_GET_RESPONSE
+  }
+  return result
 }
 
 export function hashValues({appraisalValue, account, password}: {appraisalValue: BigNumber, account: string, password: number}) {

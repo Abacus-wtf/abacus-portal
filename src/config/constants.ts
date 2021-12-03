@@ -177,7 +177,7 @@ export interface WalletInfo {
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
-  /*INJECTED: {
+  /* INJECTED: {
     connector: injected,
     name: 'Injected',
     iconName: 'arrow-right.svg',
@@ -185,7 +185,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: '#010101',
     primary: true
-  },*/
+  }, */
   METAMASK: {
     connector: new InjectedConnector(InjectedConnectorProps),
     name: "MetaMask",

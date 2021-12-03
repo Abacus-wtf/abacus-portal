@@ -1,13 +1,14 @@
-import { Web3Provider } from "@ethersproject/providers"
+import { Web3Provider, TransactionResponse } from "@ethersproject/providers"
 import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
-import { NetworkContextName } from "@config/constants"
+import { NetworkContextName, web3, web3Eth } from "@config/constants"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { web3, web3Eth } from "@config/constants"
 import { BigNumber } from "ethers"
-import { TransactionResponse } from "@ethersproject/providers"
 import { calculateGasMargin } from "@config/utils"
-import { useToggleWalletModal, useGetCurrentNetwork } from "@state/application/hooks"
+import {
+  useToggleWalletModal,
+  useGetCurrentNetwork,
+} from "@state/application/hooks"
 import {
   useCurrentSessionData,
   useGetCurrentSessionData,
@@ -17,7 +18,7 @@ import { useSetAuctionData, useSetPayoutData } from "@state/miscData/hooks"
 export enum ReloadDataType {
   Auction,
   Session,
-  ClaimPool
+  ClaimPool,
 }
 
 export function usePrevious<Type>(value: Type) {
@@ -28,9 +29,9 @@ export function usePrevious<Type>(value: Type) {
   return ref.current
 }
 
-export function useActiveWeb3React(): Web3ReactContextInterface<
-  Web3Provider
-> & { chainId?: number } {
+export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> & {
+  chainId?: number
+} {
   const context = useWeb3ReactCore<Web3Provider>()
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
   return context.active ? context : contextNetwork
@@ -81,7 +82,16 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
         getCurrentSessionData(address, tokenId, nonce)
       }
     }
-  }, [previousIsPending, isPending, sessionData, getCurrentSessionData])
+  }, [
+    previousIsPending,
+    isPending,
+    sessionData,
+    getCurrentSessionData,
+    reloadType,
+    setAuctionData,
+    setPayoutData,
+    account,
+  ])
 
   const generalizedContractCall = useCallback(
     async ({
@@ -113,22 +123,22 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
         return
       }
       await estimate(...args, value ? { value } : {})
-        .then(estimatedGasLimit =>
+        .then((estimatedGasLimit) =>
           method(...args, {
             ...(value ? { value } : {}),
             gasLimit: calculateGasMargin(estimatedGasLimit),
-          }).then(async response => {
+          }).then(async (response) => {
             setIsPending(true)
-            cb(response)
             await response.wait()
+            cb(response)
             setIsPending(false)
           })
         )
-        .catch(error => {
+        .catch((error) => {
           console.error(error)
         })
     },
-    [account, chainId, library]
+    [account, chainId, library, toggleWalletModal]
   )
 
   return {
