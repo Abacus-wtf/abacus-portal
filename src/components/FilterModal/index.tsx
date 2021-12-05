@@ -90,6 +90,7 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
     applyFilters(where)
     setFilters(where)
     toggle()
+    console.log(prefix)
   }
 
   return (

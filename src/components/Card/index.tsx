@@ -93,7 +93,7 @@ export default ({
     <ImageContainer src={image_url}>
       <MiniText>
         <Countdown
-          date={endTime*1000}
+          date={endTime * 1000}
           renderer={({ hours, minutes, seconds, completed }) => {
             if (completed) {
               return <>Completed</>
@@ -119,13 +119,13 @@ export default ({
           <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
           {finalAppraisalValue !== undefined
             ? finalAppraisalValue.toLocaleString("en-US", {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 4,
-                                  })
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4,
+              })
             : totalStaked.toLocaleString("en-US", {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 4,
-                                  })}
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4,
+              })}
         </EthText>
       </TextContainer>
       <TextContainer>

@@ -7,22 +7,24 @@ import React, {
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
-import styled from "styled-components"
 import {
   HorizontalListGroup,
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, Form, Tooltip } from "shards-react"
-import { VerticalContainer, SubText, ListGroupItemMinWidth } from "../CurrentSession.styles"
+import { Form, Tooltip } from "shards-react"
 import {
   useCanUserInteract,
   useCurrentSessionData,
 } from "@state/sessionData/hooks"
 import { User } from "react-feather"
-import _ from "lodash"
 import { useOnSetFinalAppraisal } from "@hooks/current-session"
-import {CallToActionCopy} from '../CurrentSession.styles'
+import {
+  VerticalContainer,
+  SubText,
+  ListGroupItemMinWidth,
+  CallToActionCopy,
+} from "../CurrentSession.styles"
 
 const SetFinalAppraisal: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
@@ -42,7 +44,8 @@ const SetFinalAppraisal: FunctionComponent = () => {
             {sessionData.totalStaked.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -59,7 +62,8 @@ const SetFinalAppraisal: FunctionComponent = () => {
             {sessionData.bounty.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -79,7 +83,7 @@ const SetFinalAppraisal: FunctionComponent = () => {
       >
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <CallToActionCopy>TIME TO SET THE FINAL APPRAISAL!</CallToActionCopy>
-          <div id={"setFinalAppraisalButton"} style={{ width: "100%" }}>
+          <div id="setFinalAppraisalButton" style={{ width: "100%" }}>
             <Button
               type="submit"
               disabled={!canUserInteract || isPending}

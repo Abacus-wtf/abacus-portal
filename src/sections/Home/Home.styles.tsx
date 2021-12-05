@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components"
 import BackgroundSource from "@images/title_bg.png"
 
 export const BackgroundIMG = styled.img.attrs({
@@ -54,10 +54,9 @@ export const Header = styled.div`
   flex-direction: column;
   justify-content: center;
 
-  @media ${({theme}) => theme.media.phone} {
+  @media ${({ theme }) => theme.media.phone} {
     align-items: center;
   }
-
 `
 
 export const HeaderBarContainer = styled.div`

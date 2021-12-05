@@ -5,6 +5,4 @@ export const setAuctionData = createAction<AuctionData>(
   "miscData/setAuctionData"
 )
 
-export const setClaimData = createAction<ClaimData>(
-  "miscData/setClaimData"
-)
+export const setClaimData = createAction<ClaimData>("miscData/setClaimData")

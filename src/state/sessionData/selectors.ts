@@ -2,21 +2,23 @@ import { initialState } from "@state/sessionData/reducer"
 import { AppState } from "@state/index"
 import { PromiseStatus } from "@models/PromiseStatus"
 
-const defaultSessionData: AppState["sessionData"]["currentSessionData"]["sessionData"] = {
-  img: "",
-  endTime: 0,
-  numPpl: 0,
-  collectionTitle: "None Selected",
-  totalStaked: 0,
-  nftName: "",
-  address: "",
-  tokenId: "",
-  owner: "",
-  ownerAddress: "",
-  nonce: 0,
-  maxAppraisal: 0,
-  bounty: 0,
-}
+const defaultSessionData: AppState["sessionData"]["currentSessionData"]["sessionData"] =
+  {
+    animation_url: "",
+    image_url: "",
+    endTime: 0,
+    numPpl: 0,
+    collectionTitle: "None Selected",
+    totalStaked: 0,
+    nftName: "",
+    address: "",
+    tokenId: "",
+    owner: "",
+    ownerAddress: "",
+    nonce: 0,
+    maxAppraisal: 0,
+    bounty: 0,
+  }
 
 export const multiSessionStateSelector = (
   state: AppState

@@ -3,11 +3,7 @@ import Button from "@components/Button"
 import { HorizontalListGroup } from "@components/ListGroupMods"
 import { ListGroupItem } from "shards-react"
 import { InputWithTitle } from "@components/Input"
-import {
-  useOnClaimPayout,
-  useOnDepositPrincipal,
-  useOnClaimPrincipalAmount,
-} from "@hooks/claim-pool"
+import { useOnClaimPayout, useOnClaimPrincipalAmount } from "@hooks/claim-pool"
 import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import { useActiveWeb3React } from "@hooks/index"
 import { SmallUniversalContainer, Title } from "@components/global.styles"
@@ -20,23 +16,21 @@ const MaxWidthItem = styled(ListGroupItem)`
   width: 100%;
 `
 
-const ClaimPool: FunctionComponent = () => {
+const Legacy: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const [ethWithdrawalVal, setEthWithdrawalVal] = useState("")
   const [abcWithdrawalVal, setAbcWithdrawalVal] = useState("")
-  const [ethDepositVal, setEthDepositVal] = useState("")
   const [claimPrincipalVal, setClaimPrincipalVal] = useState("")
   const [isEthButtonTrigger, setIsEthButtonTrigger] = useState(true)
   const [isLoading, setLoading] = useState(false)
   const networkSymbol = useGetCurrentNetwork()
 
   const claimData = useClaimPayoutData()
-  const setPayoutData = useSetPayoutData()
+  const setPayoutData = useSetPayoutData(true)
 
-  const { onClaim, isPending } = useOnClaimPayout()
-  const { onDeposit, isPending: isPendingDeposit } = useOnDepositPrincipal()
+  const { onClaim, isPending } = useOnClaimPayout(true)
   const { onClaimPrincipal, isPending: isPendingClaimPrincipal } =
-    useOnClaimPrincipalAmount()
+    useOnClaimPrincipalAmount(true)
 
   const isEthPending = isPending && isEthButtonTrigger
   const isAbcPending = isPending && !isEthButtonTrigger
@@ -55,7 +49,7 @@ const ClaimPool: FunctionComponent = () => {
     ) {
       loadData()
     }
-  }, [account, networkSymbol, claimData, setPayoutData])
+  }, [account, claimData, networkSymbol, setPayoutData])
 
   if (!account) {
     return (
@@ -80,7 +74,7 @@ const ClaimPool: FunctionComponent = () => {
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <VerticalContainer style={{ maxWidth: 800 }}>
-        <Title>Deposit</Title>
+        <Title>Claim Principal</Title>
         <HorizontalListGroup>
           <MaxWidthItem>
             <InputWithTitle
@@ -92,47 +86,17 @@ const ClaimPool: FunctionComponent = () => {
             />
           </MaxWidthItem>
         </HorizontalListGroup>
-        <HorizontalListGroup>
-          <MaxWidthItem>
-            <InputWithTitle
-              title="ETH Deposit Amount"
-              id="ethDeposit"
-              placeholder="0"
-              value={ethDepositVal}
-              onChange={(e) => setEthDepositVal(e.target.value)}
-            />
-          </MaxWidthItem>
-          <MaxWidthItem>
-            <InputWithTitle
-              title="Claim Principal"
-              id="claimPrincipal"
-              placeholder="0"
-              value={claimPrincipalVal}
-              onChange={(e) => setClaimPrincipalVal(e.target.value)}
-            />
-          </MaxWidthItem>
-        </HorizontalListGroup>
-        <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
+        <ListGroupItem>
+          <InputWithTitle
+            title="Claim Principal"
+            id="claimPrincipal"
+            placeholder="0"
+            value={claimPrincipalVal}
+            onChange={(e) => setClaimPrincipalVal(e.target.value)}
+          />
+        </ListGroupItem>
+        <VerticalContainer style={{ alignItems: "center" }}>
           <HorizontalListGroup>
-            <div
-              style={{ padding: "0 8px 16px", width: "100%" }}
-              id="depositEth"
-            >
-              <Button
-                disabled={
-                  isPendingDeposit ||
-                  ethDepositVal === "" ||
-                  Number.isNaN(Number(ethDepositVal))
-                }
-                style={{ width: "100%" }}
-                type="button"
-                onClick={() => {
-                  onDeposit(ethDepositVal)
-                }}
-              >
-                {isPendingDeposit ? "Pending..." : "Deposit ETH"}
-              </Button>
-            </div>
             <div
               style={{ padding: "0 8px", width: "100%" }}
               id="claimPrincipalAmount"
@@ -156,7 +120,7 @@ const ClaimPool: FunctionComponent = () => {
             </div>
           </HorizontalListGroup>
         </VerticalContainer>
-        <Title>Claim Rewards</Title>
+        <Title style={{ marginTop: "35px !important" }}>Claim Rewards</Title>
         <HorizontalListGroup>
           <MaxWidthItem>
             <InputWithTitle
@@ -246,4 +210,4 @@ const ClaimPool: FunctionComponent = () => {
   )
 }
 
-export default ClaimPool
+export default Legacy

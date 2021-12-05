@@ -106,10 +106,6 @@ const CreateSession: React.FC = () => {
       return
     }
 
-    const nonce = await pricingSession.methods
-      .nftNonce(nftAddress, tokenId)
-      .call()
-
     onCreateNewSession(
       nftAddress,
       tokenId,
@@ -145,7 +141,9 @@ const CreateSession: React.FC = () => {
             <SplitContainer>
               <VerticalSmallGapContainer>
                 <FileContainer {...newSesh} />
-                <SubTitle style={{marginTop: 15}}>{newSesh.collection}</SubTitle>
+                <SubTitle style={{ marginTop: 15 }}>
+                  {newSesh.collection}
+                </SubTitle>
                 <Title>
                   {newSesh.name} #{newSesh.tokenId}
                 </Title>
@@ -177,10 +175,10 @@ const CreateSession: React.FC = () => {
                   title="Voting Time"
                   value={`${newSesh.votingTime} hours`}
                 />
-                <a href={`/current-session?address=${newSesh.nftAddress}&tokenId=${newSesh.tokenId}&nonce=${newSesh.nonce}`}>
-                  <Button
-                    style={{ width: "100%", textAlign: "center" }}
-                  >
+                <a
+                  href={`/current-session?address=${newSesh.nftAddress}&tokenId=${newSesh.tokenId}&nonce=${newSesh.nonce}`}
+                >
+                  <Button style={{ width: "100%", textAlign: "center" }}>
                     Go to session
                   </Button>
                 </a>

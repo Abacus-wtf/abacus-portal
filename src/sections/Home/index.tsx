@@ -12,7 +12,6 @@ import {
   useMultiSessionState,
 } from "@state/sessionData/hooks"
 import _ from "lodash"
-import { Link } from "gatsby"
 import { PromiseStatus } from "@models/PromiseStatus"
 import PaginationButton from "@components/PaginationButton"
 import { useGetCurrentNetwork } from "@state/application/hooks"
@@ -69,10 +68,8 @@ const Home: React.FC = () => {
             applyFilters={getMultiSessionData}
             setFilters={setFilters}
           />
-          <a href='/create-session'>
-            <Button
-              style={{ display: "flex", alignItems: "center" }}
-            >
+          <a href="/create-session">
+            <Button style={{ display: "flex", alignItems: "center" }}>
               Create Session
             </Button>
           </a>

@@ -17,7 +17,7 @@ export type SubgraphPricingSession = {
   participants: {
     user: {
       id: string
-    },
+    }
     appraisal: string
     amountStaked: string
   }[]

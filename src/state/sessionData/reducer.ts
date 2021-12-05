@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
+import { PromiseStatus } from "@models/PromiseStatus"
 import {
   getCurrentSessionData,
   setUserStatus,
@@ -19,10 +20,8 @@ import {
   setActiveSessionsPage,
   setMultipleSessionIsLastPage,
   setMySessionsIsLastPage,
-  setActiveSessionsIsLastPage
+  setActiveSessionsIsLastPage,
 } from "./actions"
-import _ from "lodash"
-import { PromiseStatus } from "@models/PromiseStatus"
 
 export enum SessionState {
   Vote = 0,

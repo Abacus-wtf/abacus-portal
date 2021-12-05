@@ -10,11 +10,11 @@ import {
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
-import _ from "lodash"
 import { useActiveWeb3React } from "@hooks/index"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
+import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import {
   SplitContainer,
   VerticalContainer,
@@ -23,7 +23,6 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
-import {useSetPayoutData, useClaimPayoutData} from '@state/miscData/hooks'
 
 const CurrentSession = ({ location }) => {
   // const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
@@ -63,6 +62,8 @@ const CurrentSession = ({ location }) => {
     networkSymbol,
     chainId,
     getCurrentSessionData,
+    claimData,
+    setPayoutData,
   ])
 
   if (!account) {
@@ -89,7 +90,7 @@ const CurrentSession = ({ location }) => {
       <SplitContainer>
         <VerticalContainer>
           <FileContainer {...sessionData} />
-          <div style={{display: 'flex', gridGap: 15}}>
+          <div style={{ display: "flex", gridGap: 15 }}>
             <ButtonsWhite
               style={{ borderRadius: 8 }}
               target="_blank"
@@ -101,7 +102,11 @@ const CurrentSession = ({ location }) => {
             <ButtonsWhite
               style={{ borderRadius: 8 }}
               target="_blank"
-              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://app.abacus.wtf/current-session?address=${sessionData.address}&tokenId=${sessionData.tokenId}&nonce=${sessionData.nonce}`)}&text=Just%20submitted%20my%20appraisal%20for%20${sessionData.collectionTitle}%20%23${sessionData.tokenId}%20on%20Abacus!&via=abacus_wtf`}
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                `https://app.abacus.wtf/current-session?address=${sessionData.address}&tokenId=${sessionData.tokenId}&nonce=${sessionData.nonce}`
+              )}&text=Just%20submitted%20my%20appraisal%20for%20${
+                sessionData.collectionTitle
+              }%20%23${sessionData.tokenId}%20on%20Abacus!&via=abacus_wtf`}
               as={OutboundLink}
             >
               Share

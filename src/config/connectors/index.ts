@@ -1,16 +1,11 @@
 import { Web3Provider } from "@ethersproject/providers"
-import { InjectedConnector } from "@web3-react/injected-connector"
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 import { WalletLinkConnector } from "@web3-react/walletlink-connector"
 import { PortisConnector } from "@web3-react/portis-connector"
 
+import { NetworkSymbolEnum, NetworkInfoMap } from "@config/constants"
 import { FortmaticConnector } from "./Fortmatic"
 import { NetworkConnector } from "./NetworkConnector"
-import {
-  NetworkSymbolEnum,
-  NetworkSymbol,
-  NetworkInfoMap,
-} from "@config/constants"
 
 // import {ETHER, MATIC} from "@unicly/sdk";
 // import * as process from "process";
@@ -38,9 +33,10 @@ let networkLibrary: Web3Provider | undefined
 export function getNetworkLibrary(
   networkSymbol: NetworkSymbolEnum
 ): Web3Provider {
+  networkLibrary =
+    networkLibrary ?? new Web3Provider(network(networkSymbol).provider as any)
   // const networkSymbol = useSelector((state: AppState) => state.application.networkSymbol)
-  return (networkLibrary =
-    networkLibrary ?? new Web3Provider(network(networkSymbol).provider as any))
+  return networkLibrary
 }
 
 export const InjectedConnectorProps = {

@@ -45,10 +45,13 @@ export type OpenSeaAsset = {
       username: string
     }
   }
+  permalink: string
 }
 
 const DEFAULT_ASSET: OpenSeaAsset = {
   image_url: "",
+  animation_url: "",
+  permalink: "",
   asset_contract: {
     name: "",
     address: "",
@@ -105,20 +108,37 @@ export async function openseaGetMany(pricingSessions: OpenSeaGetManyParams) {
   return result
 }
 
-export function hashValues({appraisalValue, account, password}: {appraisalValue: BigNumber, account: string, password: number}) {
+export function hashValues({
+  appraisalValue,
+  account,
+  password,
+}: {
+  appraisalValue: BigNumber
+  account: string
+  password: number
+}) {
   let encodedParams = web3Eth.eth.abi.encodeParameters(
     ["uint", "address", "uint"],
     [appraisalValue, account, password]
   )
   encodedParams =
-    encodedParams.slice(0, 64) +
-    encodedParams.slice(88, encodedParams.length)
+    encodedParams.slice(0, 64) + encodedParams.slice(88, encodedParams.length)
   return keccak256(encodedParams)
 }
 
-export function encodeSessionData({account, nftAddress, nonce, tokenId}: {account: string, nftAddress: string, nonce: number, tokenId: string}) {
+export function encodeSessionData({
+  account,
+  nftAddress,
+  nonce,
+  tokenId,
+}: {
+  account: string
+  nftAddress: string
+  nonce: number
+  tokenId: string
+}) {
   return web3Eth.eth.abi.encodeParameters(
-    ["uint", 'address', "address", "uint"],
+    ["uint", "address", "address", "uint"],
     [nonce, nftAddress, account, tokenId]
   )
 }

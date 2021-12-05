@@ -3,13 +3,15 @@ import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { parseEther } from "ethers/lib/utils"
 import { getContract, openseaGet } from "@config/utils"
-import { ABC_AUCTION_ADDRESS } from "@config/constants"
+import { ABC_AUCTION_ADDRESS, DISCORD_WEBHOOK_URL } from "@config/constants"
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
-import { ReloadDataType, useGeneralizedContractCall } from "./"
-import { useActiveWeb3React } from "@hooks/index"
+import {
+  useActiveWeb3React,
+  ReloadDataType,
+  useGeneralizedContractCall,
+} from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { sendDiscordMessage } from "utils/discord"
-import { DISCORD_WEBHOOK_URL } from "@config/constants"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
 export const useOnBid = () => {
@@ -27,10 +29,10 @@ export const useOnBid = () => {
       nftAddress: string,
       tokenId: string
     ) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+      let estimate
+      let method: (...args: any) => Promise<TransactionResponse>
+      let args: Array<BigNumber | number | string>
+      let value: BigNumber | null
 
       const auctionContract = getContract(
         ABC_AUCTION_ADDRESS(networkSymbol),
@@ -63,14 +65,13 @@ export const useOnBid = () => {
         cb: txnCb,
       })
     },
-    [account, library, networkSymbol]
+    [account, addTransaction, generalizedContractCall, library, networkSymbol]
   )
   return {
     onBid,
     isPending,
   }
 }
-
 
 export const useOnAddToBid = () => {
   const { account, library } = useActiveWeb3React()
@@ -81,15 +82,11 @@ export const useOnAddToBid = () => {
   const networkSymbol = useGetCurrentNetwork()
 
   const onAddToBid = useCallback(
-    async (
-      bid: string,
-      nftAddress: string,
-      tokenId: string
-    ) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+    async (bid: string, nftAddress: string, tokenId: string) => {
+      let estimate
+      let method: (...args: any) => Promise<TransactionResponse>
+      let args: Array<BigNumber | number | string>
+      let value: BigNumber | null
 
       const auctionContract = getContract(
         ABC_AUCTION_ADDRESS(networkSymbol),
@@ -122,7 +119,7 @@ export const useOnAddToBid = () => {
         cb: txnCb,
       })
     },
-    [account, library, networkSymbol]
+    [account, addTransaction, generalizedContractCall, library, networkSymbol]
   )
   return {
     onAddToBid,
@@ -139,10 +136,10 @@ export const useOnClaim = () => {
   const networkSymbol = useGetCurrentNetwork()
 
   const onClaim = useCallback(async () => {
-    let estimate,
-      method: (...args: any) => Promise<TransactionResponse>,
-      args: Array<BigNumber | number | string>,
-      value: BigNumber | null
+    let estimate
+    let method: (...args: any) => Promise<TransactionResponse>
+    let args: Array<BigNumber | number | string>
+    let value: BigNumber | null
 
     const auctionContract = getContract(
       ABC_AUCTION_ADDRESS(networkSymbol),
@@ -166,7 +163,7 @@ export const useOnClaim = () => {
       value,
       cb: txnCb,
     })
-  }, [account, library, networkSymbol])
+  }, [account, addTransaction, generalizedContractCall, library, networkSymbol])
   return {
     onClaim,
     isPending,

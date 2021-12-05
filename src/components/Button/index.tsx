@@ -1,5 +1,4 @@
 import { theme } from "@config/theme"
-import { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { Button } from "shards-react"
 import styled from "styled-components"
 

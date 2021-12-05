@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { AbstractConnector } from "@web3-react/abstract-connector"
 import { InjectedConnector } from "@web3-react/injected-connector"
 import Web3 from "web3"
@@ -6,7 +8,6 @@ import {
   portis,
   walletconnect,
   walletlink,
-  network,
   InjectedConnectorProps,
 } from "./connectors"
 
@@ -84,6 +85,10 @@ const ARB_ABC_AUCTION_ADDRESS = IS_PRODUCTION
   ? "0x396dd1f7E3c8044784937935F834C3F8d58EB497"
   : "0xdC91Af223303af5355144F6bfCF4711dCD883cCf"
 const ARB_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
+  ? "0xB07E1a1383F705898ef01E3ba5Aba75531CE810C"
+  : "0x986596ba2b3156A8a2A944fb0A82de134A6DB170"
+
+export const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY = IS_PRODUCTION
   ? "0xB07E1a1383F705898ef01E3ba5Aba75531CE810C"
   : "0x986596ba2b3156A8a2A944fb0A82de134A6DB170"
 

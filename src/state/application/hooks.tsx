@@ -1,17 +1,15 @@
 import { useCallback } from "react"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "../index"
-import { toggleWalletModal, selectNetwork } from "./actions"
-import { useSelector } from "react-redux"
-import { AppState } from "../"
+import { useDispatch, useSelector } from "react-redux"
 import { NetworkSymbolEnum } from "@config/constants"
+import { AppDispatch, AppState } from "../index"
+import { toggleWalletModal, selectNetwork } from "./actions"
 import { networkSymbolSelector } from "./selectors"
 
 export const useToggleWalletModal = () => {
   const isWalletModalOpen = useSelector<
     AppState,
     AppState["application"]["isWalletModalOpen"]
-  >(state => state.application.isWalletModalOpen)
+  >((state) => state.application.isWalletModalOpen)
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(async () => {

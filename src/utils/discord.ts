@@ -20,7 +20,8 @@ export const sendDiscordMessage = async ({
     })
 
     return res
-  } catch {
+  } catch (error) {
     // console.log("error", error)
+    return error
   }
 }
