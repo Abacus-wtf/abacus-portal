@@ -50,6 +50,10 @@ const ListSectionSelector = styled.div`
 
   @media ${({ theme }) => theme.mediaMin.splitCenter} {
     flex-direction: row;
+    grid-gap: 0px;
+  }
+
+  @media ${({ theme }) => theme.mediaMin.tablet} {
     grid-gap: 40px;
   }
 `
@@ -150,6 +154,13 @@ const Navbar = ({ location }) => {
             >
               Claim & Deposit
             </HeaderLink>
+            {/* <HeaderLink
+              as="a"
+              href="/legacy"
+              active={location.pathname.includes("/legacy").toString()}
+            >
+              Legacy
+            </HeaderLink> */}
           </ListSection>
           <ListSectionSelector>
             <NetworkSelectorButton />

@@ -3,7 +3,10 @@ import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
-import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
+import {
+  ABC_PRICING_SESSION_ADDRESS,
+  ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY,
+} from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import {
   useActiveWeb3React,
@@ -13,7 +16,7 @@ import {
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
-export const useOnClaimPayout = () => {
+export const useOnClaimPayout = (isLegacy = false) => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
@@ -29,7 +32,9 @@ export const useOnClaimPayout = () => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        isLegacy
+          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
+          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -51,7 +56,14 @@ export const useOnClaimPayout = () => {
         cb: txnCb,
       })
     },
-    [networkSymbol, library, account, generalizedContractCall, addTransaction]
+    [
+      isLegacy,
+      networkSymbol,
+      library,
+      account,
+      generalizedContractCall,
+      addTransaction,
+    ]
   )
   return {
     onClaim,
@@ -59,7 +71,7 @@ export const useOnClaimPayout = () => {
   }
 }
 
-export const useOnClaimPrincipalAmount = () => {
+export const useOnClaimPrincipalAmount = (isLegacy = false) => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
@@ -75,7 +87,9 @@ export const useOnClaimPrincipalAmount = () => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        isLegacy
+          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
+          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -97,7 +111,14 @@ export const useOnClaimPrincipalAmount = () => {
         cb: txnCb,
       })
     },
-    [networkSymbol, library, account, generalizedContractCall, addTransaction]
+    [
+      isLegacy,
+      networkSymbol,
+      library,
+      account,
+      generalizedContractCall,
+      addTransaction,
+    ]
   )
   return {
     onClaimPrincipal,
