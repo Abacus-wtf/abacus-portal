@@ -8,17 +8,16 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem } from "shards-react"
+import { InputWithTitle } from "@components/Input"
+import { User } from "react-feather"
+import { useOnEndSession } from "@hooks/current-session"
+import { useCurrentSessionData } from "@state/sessionData/hooks"
+import SessionCountdown from "./SessionCountdown"
 import {
   VerticalContainer,
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
-import SessionCountdown from "./SessionCountdown"
-import { InputWithTitle } from "@components/Input"
-import { User } from "react-feather"
-import { useOnEndSession } from "@hooks/current-session"
-import _ from "lodash"
-import { useCurrentSessionData } from "@state/sessionData/hooks"
 
 const EndSession: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
@@ -34,7 +33,8 @@ const EndSession: FunctionComponent = () => {
             {sessionData.totalStaked.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -51,7 +51,8 @@ const EndSession: FunctionComponent = () => {
             {sessionData.bounty.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -67,8 +68,8 @@ const EndSession: FunctionComponent = () => {
 
       <ListGroupItem>
         <InputWithTitle
-          title={"Final Appraisal Value"}
-          id={"stake"}
+          title="Final Appraisal Value"
+          id="stake"
           value={sessionData.finalAppraisalValue}
           disabled
         />

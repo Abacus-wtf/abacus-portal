@@ -1,7 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit"
-import { toggleWalletModal, selectNetwork } from "./actions"
-import _ from "lodash"
 import { NetworkSymbolEnum } from "@config/constants"
+import { toggleWalletModal, selectNetwork } from "./actions"
 
 interface ApplicationState {
   isWalletModalOpen: boolean
@@ -13,7 +12,7 @@ export const initialState: ApplicationState = {
   networkSymbol: null,
 }
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
     .addCase(toggleWalletModal, (state, action) => {
       state.isWalletModalOpen = action.payload

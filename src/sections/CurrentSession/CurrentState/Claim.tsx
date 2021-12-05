@@ -13,12 +13,6 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem, Tooltip, ListGroup } from "shards-react"
-import {
-  VerticalContainer,
-  SubText,
-  ListGroupItemMinWidth,
-} from "../CurrentSession.styles"
-import SessionCountdown from "./SessionCountdown"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
 import { UserState } from "@state/sessionData/reducer"
@@ -31,7 +25,12 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnClaim } from "@hooks/current-session"
-import _ from "lodash"
+import SessionCountdown from "./SessionCountdown"
+import {
+  VerticalContainer,
+  SubText,
+  ListGroupItemMinWidth,
+} from "../CurrentSession.styles"
 
 const Claim: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
@@ -39,7 +38,7 @@ const Claim: FunctionComponent = () => {
   const claimData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["claimPositions"]
-  >(state => state.sessionData.currentSessionData.claimPositions)
+  >((state) => state.sessionData.currentSessionData.claimPositions)
 
   const retrieveClaimData = useRetrieveClaimData()
 
@@ -50,7 +49,7 @@ const Claim: FunctionComponent = () => {
 
   useEffect(() => {
     retrieveClaimData()
-  }, [])
+  }, [retrieveClaimData])
 
   const theme = useContext(ThemeContext)
   return (
@@ -62,7 +61,8 @@ const Claim: FunctionComponent = () => {
             {sessionData.totalStaked.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -79,7 +79,8 @@ const Claim: FunctionComponent = () => {
             {sessionData.bounty.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -96,8 +97,8 @@ const Claim: FunctionComponent = () => {
       <ListGroup>
         <ListGroupItem>
           <InputWithTitle
-            title={"Final Appraisal Value"}
-            id={"stake"}
+            title="Final Appraisal Value"
+            id="stake"
             value={`${sessionData.finalAppraisalValue.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
@@ -107,18 +108,22 @@ const Claim: FunctionComponent = () => {
         </ListGroupItem>
         <ListGroupItem>
           <InputWithTitle
-            title={"Total Reward Left"}
-            id={"totalRewardLeft"}
+            title="Total Reward Left"
+            id="totalRewardLeft"
             placeholder="0"
-            value={claimData ? `${claimData.totalProfit.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })} ETH` : "-"}
+            value={
+              claimData
+                ? `${claimData.totalProfit.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 4,
+                  })} ETH`
+                : "-"
+            }
             disabled
           />
         </ListGroupItem>
       </ListGroup>
-      {/*<HorizontalListGroup>
+      {/* <HorizontalListGroup>
         <ListGroupItem>
           <InputWithTitle
             title={"ETH Payout"}
@@ -137,13 +142,10 @@ const Claim: FunctionComponent = () => {
             disabled
           />
         </ListGroupItem>
-      </HorizontalListGroup>*/}
+      </HorizontalListGroup> */}
       <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
         <HorizontalListGroup>
-          <div
-            style={{ padding: "0 8px", width: "100%" }}
-            id={"claimButton"}
-          >
+          <div style={{ padding: "0 8px", width: "100%" }} id="claimButton">
             <Button
               disabled={!canUserInteract || isPending}
               style={{ width: "100%" }}
@@ -152,8 +154,8 @@ const Claim: FunctionComponent = () => {
                 onClaim()
               }}
             >
-              {isPending 
-                ? "Pending..." 
+              {isPending
+                ? "Pending..."
                 : userStatus === UserState.CompletedClaim
                 ? "Claimed Reward"
                 : "Claim Reward"}
@@ -163,7 +165,7 @@ const Claim: FunctionComponent = () => {
               target="#claimButton"
               disabled={canUserInteract || isPending}
               toggle={() => setIsToolTipOpen(!isToolTipOpen)}
-              placement={"right"}
+              placement="right"
             >
               {userStatus === UserState.CompletedClaim
                 ? "You already claimed"

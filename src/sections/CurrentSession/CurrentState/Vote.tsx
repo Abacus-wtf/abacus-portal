@@ -23,15 +23,10 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
-import { web3Eth } from "@config/constants"
-import {
-  useOnSubmitVote,
-  useOnUpdateVote,
-  useOnAddToBountyVote,
-} from "@hooks/current-session"
-import {hashValues} from '@config/utils'
-import _ from "lodash"
+import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
+import { hashValues } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
+import { useClaimPayoutData } from "@state/miscData/hooks"
 import HashSystem from "../hashSystem"
 import SessionCountdown from "./SessionCountdown"
 import {
@@ -39,7 +34,6 @@ import {
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
-import {useClaimPayoutData} from '@state/miscData/hooks'
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
@@ -54,10 +48,10 @@ const Vote: FunctionComponent = () => {
 
   const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
-  const { onAddToBounty, isPending: addToBountyPending } =
-    useOnAddToBountyVote()
+  // const { onAddToBounty, isPending: addToBountyPending } =
+  //  useOnAddToBountyVote()
   const [stakeVal, setStakeVal] = useState("")
-  const [bountyAddition, setBountyAddition] = useState("")
+  // const [bountyAddition, setBountyAddition] = useState("")
 
   const isPending = submitVotePending || updateVotePending
 
@@ -71,7 +65,8 @@ const Vote: FunctionComponent = () => {
             {sessionData.totalStaked.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -88,7 +83,8 @@ const Vote: FunctionComponent = () => {
             {sessionData.bounty.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -109,19 +105,18 @@ const Vote: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const stake = Number(e.target.stake?.value)
+          const target = e.target as any
+          const stake = Number(target.stake?.value)
           if (
-            Number(e.target.appraisalValue?.value) >= sessionData.maxAppraisal
+            Number(target.appraisalValue?.value) >= sessionData.maxAppraisal
           ) {
             alert(
-              `The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${e.target.appraisalValue.value} Ether.`
+              `The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${target.appraisalValue.value} Ether.`
             )
             return
           }
-          
-          if (
-            stake > Number(claimData.ethCredit)
-          ) {
+
+          if (stake > Number(claimData.ethCredit)) {
             alert(
               `You tried to stake with a higher number than your credit amount. To increase your credit amount, visit the 'Claim & Deposit' page!`
             )
@@ -131,7 +126,7 @@ const Vote: FunctionComponent = () => {
           if (stake < 0.005) {
             alert(
               `The min amount of eth you can stake is .005 Ether. You tried staking ${Number(
-                e.target.stake.value
+                target.stake.value
               )} Ether.`
             )
             return
@@ -139,10 +134,10 @@ const Vote: FunctionComponent = () => {
 
           switch (userStatus) {
             case UserState.NotVoted:
-              await onSubmitVote(e.target.appraise.value, e.target.stake.value)
+              await onSubmitVote(target.appraise.value, target.stake.value)
               break
             case UserState.CompletedVote:
-              await onUpdateVote(e.target.appraise.value)
+              await onUpdateVote(target.appraise.value)
               break
             default:
               break
@@ -152,11 +147,13 @@ const Vote: FunctionComponent = () => {
         <ListGroup>
           <HashSystem
             onCreateHash={(appraisalValue, password) => {
-              setAppraisalHash(hashValues({
-                appraisalValue: parseEther(`${appraisalValue}`),
-                account: account! || '',
-                password: password
-              }))
+              setAppraisalHash(
+                hashValues({
+                  appraisalValue: parseEther(`${appraisalValue}`),
+                  account: account || "",
+                  password,
+                })
+              )
             }}
           />
           <ListGroupItem>
@@ -171,7 +168,9 @@ const Vote: FunctionComponent = () => {
           {userStatus !== UserState.CompletedVote ? (
             <ListGroupItem>
               <InputWithTitle
-                title={`Stake - Max: ${!claimData ? '-' : claimData.ethCredit} ETH`}
+                title={`Stake - Max: ${
+                  !claimData ? "-" : claimData.ethCredit
+                } ETH`}
                 id="stake"
                 value={stakeVal}
                 onChange={(e) => setStakeVal(e.target.value)}
@@ -207,10 +206,10 @@ const Vote: FunctionComponent = () => {
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement="right"
           >
-            It seems you've already voted, or you're not logged in
+            It seems you have already voted, or you are not logged in
           </Tooltip>
         </VerticalContainer>
-        {/*<ListGroup style={{ marginTop: 35 }}>
+        {/* <ListGroup style={{ marginTop: 35 }}>
           <ListGroupItem>
             <InputWithTitle
               title="Add to Bounty"
@@ -238,9 +237,14 @@ const Vote: FunctionComponent = () => {
               {addToBountyPending ? "Pending..." : "Add to Bounty"}
             </Button>
           </div>
-        </ListGroup>*/}
+        </ListGroup> */}
         <div
-          style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 5 }}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 5,
+          }}
         >
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants

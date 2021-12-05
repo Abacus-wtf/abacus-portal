@@ -20,7 +20,7 @@ const MaxWidthItem = styled(ListGroupItem)`
   width: 100%;
 `
 
-const ClaimPool: FunctionComponent = () => {
+const Legacy: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const [ethWithdrawalVal, setEthWithdrawalVal] = useState("")
   const [abcWithdrawalVal, setAbcWithdrawalVal] = useState("")
@@ -55,7 +55,7 @@ const ClaimPool: FunctionComponent = () => {
     ) {
       loadData()
     }
-  }, [account, networkSymbol, claimData, setPayoutData])
+  }, [account, claimData, networkSymbol, setPayoutData])
 
   if (!account) {
     return (
@@ -246,4 +246,4 @@ const ClaimPool: FunctionComponent = () => {
   )
 }
 
-export default ClaimPool
+export default Legacy

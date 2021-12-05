@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit"
-import { createAction } from "@reduxjs/toolkit"
 import application from "./application/reducer"
 import sessionData from "./sessionData/reducer"
 import transactions from "./transactions/reducer"
@@ -12,7 +11,7 @@ const store = configureStore({
     transactions,
     miscData,
   },
-  middleware: getDefaultMiddleware => [
+  middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware({
       thunk: false,
       immutableCheck: false,

@@ -2,10 +2,9 @@ import React, {
   FormEvent,
   FunctionComponent,
   useContext,
-  useEffect,
   useState,
 } from "react"
-import { ThemeContext } from "styled-components"
+import styled, { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
 import {
@@ -14,12 +13,6 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem, Form, Tooltip } from "shards-react"
-import {
-  VerticalContainer,
-  SubText,
-  ListGroupItemMinWidth,
-} from "../CurrentSession.styles"
-import SessionCountdown from "./SessionCountdown"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
@@ -29,10 +22,13 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnHarvest } from "@hooks/current-session"
-import _ from "lodash"
-import {CallToActionCopy} from '../CurrentSession.styles'
-import { useActiveWeb3React } from "@hooks/index"
-import styled from 'styled-components'
+import {
+  CallToActionCopy,
+  VerticalContainer,
+  SubText,
+  ListGroupItemMinWidth,
+} from "../CurrentSession.styles"
+import SessionCountdown from "./SessionCountdown"
 
 const CallToActionSmall = styled(CallToActionCopy)`
   margin-top: 35px;
@@ -43,7 +39,6 @@ const CallToActionSmall = styled(CallToActionCopy)`
 const Harvest: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
-  const { account } = useActiveWeb3React()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -60,7 +55,8 @@ const Harvest: FunctionComponent = () => {
             {sessionData.totalStaked.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -77,7 +73,8 @@ const Harvest: FunctionComponent = () => {
             {sessionData.bounty.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -98,8 +95,8 @@ const Harvest: FunctionComponent = () => {
       >
         <ListGroupItem>
           <InputWithTitle
-            title={"Final Appraisal Value"}
-            id={"stake"}
+            title="Final Appraisal Value"
+            id="stake"
             value={`${sessionData.finalAppraisalValue.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
@@ -107,15 +104,26 @@ const Harvest: FunctionComponent = () => {
             disabled
           />
         </ListGroupItem>
-        <CallToActionSmall>{sessionData.guessedAppraisal && sessionData.guessedAppraisal <= sessionData.finalAppraisalValue * 1.05 && sessionData.guessedAppraisal >= sessionData.finalAppraisalValue * 0.95 
-          ? `Congrats! You appraised the NFT at ${sessionData.guessedAppraisal.toLocaleString("en-US", {minimumFractionDigits: 2,maximumFractionDigits: 2})} ETH which is within the margin of error!`
-          : sessionData.guessedAppraisal < 0
-          ? ''
-          : sessionData.guessedAppraisal 
-          ? `Sorry, you unfortunately guessed ${sessionData.guessedAppraisal.toLocaleString("en-US", {minimumFractionDigits: 2,maximumFractionDigits: 2})} ETH which is not within the margin of error. Try again next time!`
-          : ''}</CallToActionSmall>
+        <CallToActionSmall>
+          {sessionData.guessedAppraisal &&
+          sessionData.guessedAppraisal <=
+            sessionData.finalAppraisalValue * 1.05 &&
+          sessionData.guessedAppraisal >= sessionData.finalAppraisalValue * 0.95
+            ? `Congrats! You appraised the NFT at ${sessionData.guessedAppraisal.toLocaleString(
+                "en-US",
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )} ETH which is within the margin of error!`
+            : sessionData.guessedAppraisal < 0
+            ? ""
+            : sessionData.guessedAppraisal
+            ? `Sorry, you unfortunately guessed ${sessionData.guessedAppraisal.toLocaleString(
+                "en-US",
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )} ETH which is not within the margin of error. Try again next time!`
+            : ""}
+        </CallToActionSmall>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
-          <div style={{ width: "100%" }} id={"submitHarvestButton"}>
+          <div style={{ width: "100%" }} id="submitHarvestButton">
             <Button
               disabled={!canUserInteract || isPending}
               style={{ width: "100%" }}
@@ -133,7 +141,7 @@ const Harvest: FunctionComponent = () => {
             target="#submitHarvestButton"
             disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
-            placement={"right"}
+            placement="right"
           >
             {userStatus === UserState.CompletedHarvest
               ? "You already harvested"

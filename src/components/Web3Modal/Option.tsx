@@ -63,7 +63,7 @@ const CircleWrapper = styled.div`
 `
 
 const HeaderText = styled.div`
-  color: ${props =>
+  color: ${(props) =>
     props.color === "blue"
       ? ({ theme }) => theme.primary1
       : ({ theme }) => theme.text1};
@@ -89,7 +89,6 @@ const IconWrapper = styled.div<{ size?: number | null }>`
 
 export default function Option({
   link = null,
-  clickable = true,
   size,
   onClick = null,
   color,
@@ -100,7 +99,6 @@ export default function Option({
   id,
 }: {
   link?: string | null
-  clickable?: boolean
   size?: number | null
   onClick?: null | (() => void)
   color: string
@@ -113,7 +111,7 @@ export default function Option({
   const content = (
     <OptionCardClickable id={id} onClick={onClick} active={active}>
       <IconWrapper size={size}>
-        <img src={icon} alt={"Icon"} />
+        <img src={icon} alt="Icon" />
       </IconWrapper>
       <OptionCardLeft>
         <HeaderText color={color}>
@@ -133,6 +131,7 @@ export default function Option({
     </OptionCardClickable>
   )
   if (link) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return <ExternalLink href={link}>{content}</ExternalLink>
   }

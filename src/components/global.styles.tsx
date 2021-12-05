@@ -84,7 +84,7 @@ export const CategoryButton = styled.div<{ active: boolean }>`
 export const ImageContainer = styled.div<{ src: string }>`
   width: 100%;
   height: 100%;
-  border: 1px solid #C3C8D7;
+  border: 1px solid #c3c8d7;
   background-image: url("${({ src }) => src}");
   background-size: contain;
   background-repeat: no-repeat;

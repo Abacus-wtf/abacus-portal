@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect } from "react"
 import Helmet from "react-helmet"
 import Navbar from "@components/Navbar"
@@ -26,6 +27,7 @@ const RowContainer = styled(Row)`
 `
 
 const GlobalLayout: React.FC = (props: any) => {
+  const { children, location } = props
   const { chainId } = useActiveWeb3React()
   const selectNetwork = useSelectNetwork()
 
@@ -50,7 +52,7 @@ const GlobalLayout: React.FC = (props: any) => {
   }, [])
 
   useEffect(() => {
-    const network = NetworkSymbolAndId[chainId!]
+    const network = NetworkSymbolAndId[chainId]
     if (network) {
       selectNetwork(network)
     }
@@ -65,13 +67,16 @@ const GlobalLayout: React.FC = (props: any) => {
         <meta name="twitter:site" content="@abacus_wtf" />
         <meta name="twitter:creator" content="@abacus_wtf" />
         <meta name="twitter:title" content="Abacus Protocol" />
-        <meta name="twitter:description" content="A permissionless NFT valuation tool" />
+        <meta
+          name="twitter:description"
+          content="A permissionless NFT valuation tool"
+        />
       </Helmet>
       <StyledContainer>
-        <Navbar location={props.location} />
+        <Navbar location={location} />
         <RowContainer>
           <Web3Modal />
-          {NetworkSymbolAndId[chainId!] !== NetworkSymbolEnum.ARBITRUM ? (
+          {NetworkSymbolAndId[chainId] !== NetworkSymbolEnum.ARBITRUM ? (
             <div
               style={{
                 textAlign: "center",
@@ -80,12 +85,12 @@ const GlobalLayout: React.FC = (props: any) => {
               }}
             >
               We currently only support Arbitrum. Please change to the Arbitrum
-              network by clicking on the 'ETH' label in your Navigation Bar to
-              access Abacus' features. We will be porting to your favorite chain
+              network by clicking on the ETH label in your Navigation Bar to
+              access Abacus features. We will be porting to your favorite chain
               shortly!
             </div>
           ) : (
-            props.children
+            children
           )}
         </RowContainer>
       </StyledContainer>

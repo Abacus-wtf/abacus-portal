@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { AbstractConnector } from "@web3-react/abstract-connector"
 import { InjectedConnector } from "@web3-react/injected-connector"
 import Web3 from "web3"
@@ -6,7 +8,6 @@ import {
   portis,
   walletconnect,
   walletlink,
-  network,
   InjectedConnectorProps,
 } from "./connectors"
 
