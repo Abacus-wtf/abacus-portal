@@ -37,7 +37,6 @@ const CurrentSession = ({ location }) => {
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
-
   useEffect(() => {
     const loadData = async () => {
       if (sessionData.address === "") {

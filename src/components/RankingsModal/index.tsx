@@ -35,15 +35,16 @@ const Row = (props: RowProps) => {
       {Number(appraisal) !== 0 ? (
         <>
           <b>{`${
-            index &&
-            `#${index} ${
-              isWithinFivePercent(
-                Number(appraisal),
-                sessionData.finalAppraisalValue
-              )
-                ? "Won 🎉."
-                : "Lost 😔."
-            } `
+            index
+              ? `#${index} ${
+                  isWithinFivePercent(
+                    Number(appraisal),
+                    sessionData.finalAppraisalValue
+                  )
+                    ? "Won 🎉."
+                    : "Lost 😔."
+                } `
+              : ""
           }`}</b>
           <a
             href={getEtherscanLink(chainId, user.id, "address")}
