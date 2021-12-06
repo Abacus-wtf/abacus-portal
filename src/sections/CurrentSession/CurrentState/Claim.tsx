@@ -15,11 +15,9 @@ import {
 import { ListGroupItem, Tooltip, ListGroup } from "shards-react"
 import { useSelector } from "react-redux"
 import { AppState } from "@state/index"
-import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
-  useCurrentSessionUserStatus,
   useRetrieveClaimData,
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
@@ -34,7 +32,6 @@ import {
 
 const Claim: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
-  const userStatus = useCurrentSessionUserStatus()
   const claimData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["claimPositions"]
@@ -154,11 +151,7 @@ const Claim: FunctionComponent = () => {
                 onClaim()
               }}
             >
-              {isPending
-                ? "Pending..."
-                : userStatus === UserState.CompletedClaim
-                ? "Claimed Reward"
-                : "Claim Reward"}
+              {isPending ? "Pending..." : "Claim Reward"}
             </Button>
             <Tooltip
               open={isToolTipOpen}
@@ -167,9 +160,8 @@ const Claim: FunctionComponent = () => {
               toggle={() => setIsToolTipOpen(!isToolTipOpen)}
               placement="right"
             >
-              {userStatus === UserState.CompletedClaim
-                ? "You already claimed"
-                : "You missed a previous step so you cannot participate in this part of the session"}
+              You missed a previous step so you cannot participate in this part
+              of the session
             </Tooltip>
           </div>
         </HorizontalListGroup>

@@ -40,12 +40,14 @@ const CurrentSession = ({ location }) => {
 
   useEffect(() => {
     const loadData = async () => {
-      await getCurrentSessionData(
-        String(address),
-        String(tokenId),
-        Number(nonce),
-        legacy !== undefined && legacy
-      )
+      if (sessionData.address === "") {
+        await getCurrentSessionData(
+          String(address),
+          String(tokenId),
+          Number(nonce),
+          legacy !== undefined && legacy
+        )
+      }
       if (claimData === null) {
         await setPayoutData(account)
       }
@@ -68,6 +70,7 @@ const CurrentSession = ({ location }) => {
     claimData,
     setPayoutData,
     legacy,
+    sessionData,
   ])
 
   if (!account) {

@@ -143,9 +143,8 @@ const Harvest: FunctionComponent = () => {
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement="right"
           >
-            {userStatus === UserState.CompletedHarvest
-              ? "You already harvested"
-              : "You missed a previous step so you cannot participate in this part of the session"}
+            You missed a previous step so you cannot participate in this part of
+            the session
           </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
