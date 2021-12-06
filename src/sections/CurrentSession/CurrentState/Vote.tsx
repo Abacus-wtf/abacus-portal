@@ -23,7 +23,11 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
-import { useOnAddToBountyVote, useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
+import {
+  useOnAddToBountyVote,
+  useOnSubmitVote,
+  useOnUpdateVote,
+} from "@hooks/current-session"
 import { hashValues } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"

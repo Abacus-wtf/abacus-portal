@@ -5,7 +5,7 @@ import {
   useCurrentSessionData,
   useCurrentSessionStatus,
 } from "@state/sessionData/hooks"
-import { Vote } from "@state/sessionData/reducer"
+import { SessionState, Vote } from "@state/sessionData/reducer"
 import { getEtherscanLink, useActiveWeb3React } from "@hooks/index"
 import { shortenAddress, isWithinFivePercent } from "@config/utils"
 import { Title } from "@components/global.styles"
@@ -27,6 +27,7 @@ interface RowProps extends Vote {
 
 const Row = (props: RowProps) => {
   const sessionData = useCurrentSessionData()
+  const sessionStatus = useCurrentSessionStatus()
   const { chainId } = useActiveWeb3React()
   const { index, user, appraisal, amountStaked } = props
   return (
@@ -55,7 +56,7 @@ const Row = (props: RowProps) => {
         </>
       ) : (
         <>
-          <b>{`${index && `#${index} Did not finish ❌. `}`}</b>
+          <b>{`${index ? `#${index} Did not finish ❌. ` : ""}`}</b>
           <a
             href={getEtherscanLink(chainId, user.id, "address")}
             target="_blank"
@@ -63,7 +64,9 @@ const Row = (props: RowProps) => {
           >
             {shortenAddress(user.id)}
           </a>{" "}
-          was disqualified.
+          {sessionStatus === SessionState.Weigh
+            ? "needs to weigh their vote."
+            : "was disqualified."}
         </>
       )}
     </ListGroupItem>
