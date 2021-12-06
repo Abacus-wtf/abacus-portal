@@ -62,7 +62,10 @@ const SessionCompleted: FunctionComponent = () => {
         <InputWithTitle
           title="Final Appraisal Value"
           id="stake"
-          value={sessionData.finalAppraisalValue}
+          value={`${sessionData.finalAppraisalValue.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4,
+          })} ETH`}
           disabled
         />
       </ListGroupItem>
