@@ -15,6 +15,7 @@ import ConnectWalletAlert from "@components/ConnectWalletAlert"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
 import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
+import RankingsModal from "@components/RankingsModal"
 import {
   SplitContainer,
   VerticalContainer,
@@ -23,7 +24,6 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
-import RankingsModal from "@components/RankingsModal"
 
 const CurrentSession = ({ location }) => {
   // const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
@@ -89,7 +89,7 @@ const CurrentSession = ({ location }) => {
   }
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
-      <RankingsModal 
+      <RankingsModal
         isOpen={isRankingsModalOpen}
         toggle={() => setIsRankingsModalOpen(!isRankingsModalOpen)}
       />
@@ -118,7 +118,12 @@ const CurrentSession = ({ location }) => {
               Share
             </ButtonsWhite>
             {sessionData.rankings && (
-              <ButtonsWhite onClick={() => setIsRankingsModalOpen(true)} style={{ borderRadius: 8 }}>Rankings</ButtonsWhite>
+              <ButtonsWhite
+                onClick={() => setIsRankingsModalOpen(true)}
+                style={{ borderRadius: 8 }}
+              >
+                Rankings
+              </ButtonsWhite>
             )}
           </div>
         </VerticalContainer>
