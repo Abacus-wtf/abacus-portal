@@ -154,13 +154,13 @@ const Navbar = ({ location }) => {
             >
               Claim & Deposit
             </HeaderLink>
-            {/* <HeaderLink
+            <HeaderLink
               as="a"
               href="/legacy"
               active={location.pathname.includes("/legacy").toString()}
             >
               Legacy
-            </HeaderLink> */}
+            </HeaderLink>
           </ListSection>
           <ListSectionSelector>
             <NetworkSelectorButton />

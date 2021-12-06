@@ -24,13 +24,15 @@ import {
   Header,
   HeaderBarContainer,
 } from "./Home.styles"
+import {Tooltip} from 'shards-react'
 
 const Home: React.FC = () => {
-  const getMultiSessionData = useGetMultiSessionData()
   const isInitializedRef = useRef(false)
+  const getMultiSessionData = useGetMultiSessionData()
   const { multiSessionData, fetchStatus, isLastPage } = useMultiSessionState()
   const [filterOpen, setFilterOpen] = useState(false)
   const [filters, setFilters] = useState<string | null>(null)
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
   const prevNetworkSymbol = usePrevious(networkSymbol)
@@ -68,11 +70,18 @@ const Home: React.FC = () => {
             applyFilters={getMultiSessionData}
             setFilters={setFilters}
           />
-          <a href="/create-session">
-            <Button style={{ display: "flex", alignItems: "center" }}>
-              Create Session
-            </Button>
-          </a>
+          <Button id="createSession"  style={{ display: "flex", alignItems: "center", cursor: 'not-allowed', opacity: 0.7 }}>
+            Create Session
+          </Button>
+          <Tooltip
+            open={isToolTipOpen}
+            target="#createSession"
+            toggle={() => setIsToolTipOpen(!isToolTipOpen)}
+            placement="bottom"
+            trigger="hover"
+          >
+            The only way to create new sessions at the moment is to win the bounty auction for the next slot.
+          </Tooltip>
         </HeaderBarContainer>
       </HeaderBar>
 

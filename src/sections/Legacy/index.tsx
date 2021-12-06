@@ -11,9 +11,17 @@ import ConnectWalletAlert from "@components/ConnectWalletAlert"
 import styled from "styled-components"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { VerticalContainer } from "../CurrentSession/CurrentSession.styles"
+import _ from 'lodash'
+import Card from "@components/Card"
+import { CardContainer } from "@sections/Home/Home.styles"
+import { useGetMultiSessionData, useMultiSessionState } from "@state/sessionData/hooks"
 
 const MaxWidthItem = styled(ListGroupItem)`
   width: 100%;
+`
+
+const ClaimRewardsTitle = styled(Title)`
+  margin-top: 35px !important;
 `
 
 const Legacy: FunctionComponent = () => {
@@ -24,7 +32,9 @@ const Legacy: FunctionComponent = () => {
   const [isEthButtonTrigger, setIsEthButtonTrigger] = useState(true)
   const [isLoading, setLoading] = useState(false)
   const networkSymbol = useGetCurrentNetwork()
-
+  const getMultiSessionData = useGetMultiSessionData(true)
+  const { multiSessionData } = useMultiSessionState()
+  
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData(true)
 
@@ -39,6 +49,7 @@ const Legacy: FunctionComponent = () => {
     const loadData = async () => {
       setLoading(true)
       await setPayoutData(account)
+      await getMultiSessionData(null)
       setLoading(false)
     }
     if (
@@ -61,7 +72,7 @@ const Legacy: FunctionComponent = () => {
     )
   }
 
-  if (isLoading || claimData === null) {
+  if (isLoading || claimData === null || multiSessionData === null) {
     return (
       <SmallUniversalContainer
         style={{ alignItems: "center", justifyContent: "center" }}
@@ -73,8 +84,19 @@ const Legacy: FunctionComponent = () => {
 
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
-      <VerticalContainer style={{ maxWidth: 800 }}>
-        <Title>Claim Principal</Title>
+      <VerticalContainer style={{ maxWidth: 800, overflow: 'visible' }}>
+        <Title>Legacy Sessions</Title>
+        <CardContainer>
+          {_.map(multiSessionData, (i) => (
+            <a
+              href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}&legacy=true`}
+              key={`${i.address}-${i.tokenId}-${i.nonce}`}
+            >
+              <Card {...i} />
+            </a>
+          ))}
+        </CardContainer>
+        <ClaimRewardsTitle>Claim Principal</ClaimRewardsTitle>
         <HorizontalListGroup>
           <MaxWidthItem>
             <InputWithTitle
@@ -120,7 +142,7 @@ const Legacy: FunctionComponent = () => {
             </div>
           </HorizontalListGroup>
         </VerticalContainer>
-        <Title style={{ marginTop: "35px !important" }}>Claim Rewards</Title>
+        <ClaimRewardsTitle>Claim Rewards</ClaimRewardsTitle>
         <HorizontalListGroup>
           <MaxWidthItem>
             <InputWithTitle
