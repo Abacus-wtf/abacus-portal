@@ -10,6 +10,62 @@ import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
+export const useOnAddToStake = () => {
+  const { account, library } = useActiveWeb3React()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
+  const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
+
+  const onAddToStake = useCallback(
+    async (amount: string) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const pricingSessionContract = getContract(
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ABC_PRICING_SESSION_ABI,
+        library,
+        account
+      )
+      method = pricingSessionContract.addToStake
+      estimate = pricingSessionContract.estimateGas.addToStake
+      args = [
+        sessionData.address,
+        Number(sessionData.tokenId),
+        parseEther(amount),
+      ]
+      value = null
+      const txnCb = async (response: any) => {
+        addTransaction(response, {
+          summary: "Add to Stake",
+        })
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        cb: txnCb,
+      })
+    },
+    [
+      account,
+      library,
+      sessionData,
+      generalizedContractCall,
+      addTransaction,
+      networkSymbol,
+    ]
+  )
+  return {
+    onAddToStake,
+    isPending,
+  }
+}
+
 export const useOnAddToBountyVote = () => {
   const { account, library } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
