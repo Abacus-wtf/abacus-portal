@@ -23,7 +23,7 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
-import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
+import { useOnAddToBountyVote, useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
 import { hashValues } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"
@@ -48,10 +48,10 @@ const Vote: FunctionComponent = () => {
 
   const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
-  // const { onAddToBounty, isPending: addToBountyPending } =
-  //  useOnAddToBountyVote()
+  const { onAddToBounty, isPending: addToBountyPending } =
+    useOnAddToBountyVote()
   const [stakeVal, setStakeVal] = useState("")
-  // const [bountyAddition, setBountyAddition] = useState("")
+  const [bountyAddition, setBountyAddition] = useState("")
 
   const isPending = submitVotePending || updateVotePending
 
@@ -209,7 +209,7 @@ const Vote: FunctionComponent = () => {
             It seems you have already voted, or you are not logged in
           </Tooltip>
         </VerticalContainer>
-        {/* <ListGroup style={{ marginTop: 35 }}>
+        <ListGroup style={{ marginTop: 35 }}>
           <ListGroupItem>
             <InputWithTitle
               title="Add to Bounty"
@@ -237,7 +237,7 @@ const Vote: FunctionComponent = () => {
               {addToBountyPending ? "Pending..." : "Add to Bounty"}
             </Button>
           </div>
-        </ListGroup> */}
+        </ListGroup>
         <div
           style={{
             width: "100%",
