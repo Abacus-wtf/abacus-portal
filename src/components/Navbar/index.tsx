@@ -50,6 +50,10 @@ const ListSectionSelector = styled.div`
 
   @media ${({ theme }) => theme.mediaMin.splitCenter} {
     flex-direction: row;
+    grid-gap: 0px;
+  }
+
+  @media ${({ theme }) => theme.mediaMin.tablet} {
     grid-gap: 40px;
   }
 `
@@ -123,31 +127,40 @@ const Navbar = ({ location }) => {
         <LinkList menuOpen={menuOpen}>
           <ListSection>
             <HeaderLink
-              as={'a'}
+              as="a"
               href="/"
               active={(location.pathname === "/").toString()}
             >
               Explore
             </HeaderLink>
             <HeaderLink
-              as={'a'}
+              as="a"
               href="/auction"
-              active={(location.pathname.includes("/auction")).toString()}
+              active={location.pathname.includes("/auction").toString()}
             >
               Auction
             </HeaderLink>
-            <HeaderLink 
-              as={'a'}
+            <HeaderLink
+              as="a"
               href="/my-sessions"
-              active={(location.pathname.includes("/my-sessions")).toString()}>
+              active={location.pathname.includes("/my-sessions").toString()}
+            >
               My Sessions
             </HeaderLink>
-            <HeaderLink 
-              as={'a'} 
-              href="/claim-pool" 
-              active={(location.pathname.includes('/claim-pool')).toString()}>
-              Claim {`&`} Deposit
+            <HeaderLink
+              as="a"
+              href="/claim-pool"
+              active={location.pathname.includes("/claim-pool").toString()}
+            >
+              Claim & Deposit
             </HeaderLink>
+            {/* <HeaderLink
+              as="a"
+              href="/legacy"
+              active={location.pathname.includes("/legacy").toString()}
+            >
+              Legacy
+            </HeaderLink> */}
           </ListSection>
           <ListSectionSelector>
             <NetworkSelectorButton />

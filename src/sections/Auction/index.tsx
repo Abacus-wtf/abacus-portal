@@ -2,7 +2,12 @@ import React, { useEffect } from "react"
 import { Title, SmallUniversalContainer } from "@components/global.styles"
 import { useAuctionData, useSetAuctionData } from "@state/miscData/hooks"
 import { ButtonsWhite } from "@components/Button"
-import _ from "lodash"
+import { shortenAddress } from "@config/utils"
+import { useActiveWeb3React } from "@hooks/index"
+import ConnectWalletAlert from "@components/ConnectWalletAlert"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { OutboundLink } from "gatsby-plugin-google-gtag"
+import RightSection from "./RightSection"
 import {
   SplitContainer,
   VerticalContainer,
@@ -10,12 +15,6 @@ import {
   FileContainer,
   SubText,
 } from "../CurrentSession/CurrentSession.styles"
-import RightSection from "./RightSection"
-import { shortenAddress } from "@config/utils"
-import { useActiveWeb3React } from "@hooks/index"
-import ConnectWalletAlert from "@components/ConnectWalletAlert"
-import { useGetCurrentNetwork } from "@state/application/hooks"
-import { OutboundLink } from "gatsby-plugin-google-gtag"
 
 const Auction = () => {
   const { account } = useActiveWeb3React()
@@ -34,7 +33,7 @@ const Auction = () => {
     if (account && networkSymbol && auctionData === null) {
       loadUserData()
     }
-  }, [account, networkSymbol, auctionData])
+  }, [account, networkSymbol, auctionData, setAuctionData])
 
   if (!account) {
     return (
@@ -64,7 +63,7 @@ const Auction = () => {
             <FileContainer {...optionalInfo} />
             <ButtonsWhite
               style={{ borderRadius: 8 }}
-              target={"_blank"}
+              target="_blank"
               href={`https://opensea.io/assets/${optionalInfo.highestNftAddress}/${optionalInfo.highestNftTokenId}`}
               as={OutboundLink}
             >
@@ -80,7 +79,7 @@ const Auction = () => {
               <SubText>
                 Highest Bounty by{" "}
                 <OutboundLink
-                  target={"_blank"}
+                  target="_blank"
                   href={`https://opensea.io/${optionalInfo.highestBidderAddress}`}
                 >
                   {shortenAddress(optionalInfo.highestBidderAddress)}

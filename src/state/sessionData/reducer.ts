@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit"
+import { PromiseStatus } from "@models/PromiseStatus"
 import {
   getCurrentSessionData,
   setUserStatus,
@@ -19,10 +20,16 @@ import {
   setActiveSessionsPage,
   setMultipleSessionIsLastPage,
   setMySessionsIsLastPage,
-  setActiveSessionsIsLastPage
+  setActiveSessionsIsLastPage,
 } from "./actions"
-import _ from "lodash"
-import { PromiseStatus } from "@models/PromiseStatus"
+
+export interface Vote {
+  user: {
+    id: string
+  }
+  appraisal: string
+  amountStaked: string
+}
 
 export enum SessionState {
   Vote = 0,
@@ -61,6 +68,7 @@ export interface SessionData {
   guessedAppraisal?: number
   finalAppraisalValue?: number
   totalStakedInUSD?: number
+  rankings?: Vote[]
 }
 
 export interface ClaimState {

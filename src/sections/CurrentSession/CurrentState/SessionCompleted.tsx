@@ -7,11 +7,10 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem } from "shards-react"
-import { ListGroupItemMinWidth } from "../CurrentSession.styles"
-import SessionCountdown from "./SessionCountdown"
 import { InputWithTitle } from "@components/Input"
-import _ from "lodash"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
+import SessionCountdown from "./SessionCountdown"
+import { ListGroupItemMinWidth } from "../CurrentSession.styles"
 
 const SessionCompleted: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
@@ -26,7 +25,8 @@ const SessionCompleted: FunctionComponent = () => {
             {sessionData.totalStaked.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -43,7 +43,8 @@ const SessionCompleted: FunctionComponent = () => {
             {sessionData.bounty.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -59,8 +60,8 @@ const SessionCompleted: FunctionComponent = () => {
 
       <ListGroupItem>
         <InputWithTitle
-          title={"Final Appraisal Value"}
-          id={"stake"}
+          title="Final Appraisal Value"
+          id="stake"
           value={sessionData.finalAppraisalValue}
           disabled
         />

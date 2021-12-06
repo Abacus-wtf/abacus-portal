@@ -22,7 +22,7 @@ function MetamaskProvider({
   useEffect(() => {
     injectedConnector
       .isAuthorized()
-      .then(isAuthorized => {
+      .then((isAuthorized) => {
         setLoaded(true)
         if (isAuthorized && !networkActive && !networkError) {
           activateNetwork(injectedConnector)
@@ -31,7 +31,7 @@ function MetamaskProvider({
       .catch(() => {
         setLoaded(true)
       })
-  }, [activateNetwork, networkActive, networkError])
+  }, [activateNetwork, injectedConnector, networkActive, networkError])
   if (loaded) {
     return children
   }

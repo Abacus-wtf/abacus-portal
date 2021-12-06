@@ -1,8 +1,7 @@
-import React from 'react'
+import React from "react"
 import styled from "styled-components"
 import { ListGroupItem } from "shards-react"
-import { Text } from "@components/global.styles"
-import { ImageContainer } from "@components/global.styles"
+import { Text, ImageContainer } from "@components/global.styles"
 import { HorizontalListGroup } from "@components/ListGroupMods"
 
 export const CallToActionCopy = styled.p`
@@ -47,19 +46,31 @@ export const SquareImageContainer = styled(ImageContainer)`
   }
 `
 
-export const FileContainer = (props: {animation_url: string | null, image_url: string}) => {
-  if (props.animation_url) {
-    const format = props.animation_url.slice(-3)
-    if (format === 'gif') {
-      return <SquareImageContainer src={props.animation_url} />
-    } else if (format === 'mp4' || format === 'ogg'|| props.animation_url.slice(-4) === 'webm') {
-      return <SquareImageContainer muted controls as={'video'} src={props.animation_url}/>
-    } else {
-      return <SquareImageContainer as={'iframe'} src={props.animation_url}/>
+export const FileContainer = ({
+  animation_url,
+  image_url,
+}: {
+  animation_url: string | null
+  image_url: string
+}) => {
+  if (animation_url) {
+    const format = animation_url.slice(-3)
+    if (format === "gif") {
+      return <SquareImageContainer src={animation_url} />
     }
+    if (
+      format === "mp4" ||
+      format === "ogg" ||
+      animation_url.slice(-4) === "webm"
+    ) {
+      return (
+        <SquareImageContainer muted controls as="video" src={animation_url} />
+      )
+    }
+    return <SquareImageContainer as="iframe" src={animation_url} />
   }
 
-  return <SquareImageContainer src={props.image_url} />
+  return <SquareImageContainer src={image_url} />
 }
 
 export const SubText = styled(Text)`

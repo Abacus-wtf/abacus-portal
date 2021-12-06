@@ -3,17 +3,21 @@ import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
-import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
+import {
+  ABC_PRICING_SESSION_ADDRESS,
+  ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY,
+} from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
-import { useGeneralizedContractCall, ReloadDataType } from "./"
-import { useActiveWeb3React } from "@hooks/index"
+import {
+  useActiveWeb3React,
+  useGeneralizedContractCall,
+  ReloadDataType,
+} from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
-import { useCurrentSessionData } from "@state/sessionData/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
-export const useOnClaimPayout = () => {
+export const useOnClaimPayout = (isLegacy = false) => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
   )
@@ -22,23 +26,22 @@ export const useOnClaimPayout = () => {
 
   const onClaim = useCallback(
     async (isEth: boolean, amount: string) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+      let estimate
+      let method: (...args: any) => Promise<TransactionResponse>
+      let args: Array<BigNumber | number | string>
+      let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        isLegacy
+          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
+          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
       )
       method = pricingSessionContract.claimProfitsEarned
       estimate = pricingSessionContract.estimateGas.claimProfitsEarned
-      args = [
-        isEth ? 1 : 2,
-        parseEther(amount)
-      ]
+      args = [isEth ? 1 : 2, parseEther(amount)]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -53,7 +56,14 @@ export const useOnClaimPayout = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, networkSymbol]
+    [
+      isLegacy,
+      networkSymbol,
+      library,
+      account,
+      generalizedContractCall,
+      addTransaction,
+    ]
   )
   return {
     onClaim,
@@ -61,10 +71,8 @@ export const useOnClaimPayout = () => {
   }
 }
 
-
-export const useOnClaimPrincipalAmount = () => {
+export const useOnClaimPrincipalAmount = (isLegacy = false) => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
   )
@@ -73,22 +81,22 @@ export const useOnClaimPrincipalAmount = () => {
 
   const onClaimPrincipal = useCallback(
     async (amount: string) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+      let estimate
+      let method: (...args: any) => Promise<TransactionResponse>
+      let args: Array<BigNumber | number | string>
+      let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        isLegacy
+          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
+          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
       )
       method = pricingSessionContract.claimPrincipalUsed
       estimate = pricingSessionContract.estimateGas.claimPrincipalUsed
-      args = [
-        parseEther(amount)
-      ]
+      args = [parseEther(amount)]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -103,7 +111,14 @@ export const useOnClaimPrincipalAmount = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, networkSymbol]
+    [
+      isLegacy,
+      networkSymbol,
+      library,
+      account,
+      generalizedContractCall,
+      addTransaction,
+    ]
   )
   return {
     onClaimPrincipal,
@@ -111,10 +126,8 @@ export const useOnClaimPrincipalAmount = () => {
   }
 }
 
-
 export const useOnDepositPrincipal = () => {
   const { account, library } = useActiveWeb3React()
-  const sessionData = useCurrentSessionData()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
   )
@@ -123,10 +136,10 @@ export const useOnDepositPrincipal = () => {
 
   const onDeposit = useCallback(
     async (amount: string) => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+      let estimate
+      let method: (...args: any) => Promise<TransactionResponse>
+      let args: Array<BigNumber | number | string>
+      let value: BigNumber | null
 
       const pricingSessionContract = getContract(
         ABC_PRICING_SESSION_ADDRESS(networkSymbol),
@@ -151,7 +164,7 @@ export const useOnDepositPrincipal = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, networkSymbol]
+    [networkSymbol, library, account, generalizedContractCall, addTransaction]
   )
   return {
     onDeposit,

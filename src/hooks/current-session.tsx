@@ -5,12 +5,10 @@ import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
 import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
-import { useGeneralizedContractCall } from "./"
-import { useActiveWeb3React } from "@hooks/index"
+import { useActiveWeb3React, useGeneralizedContractCall } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
-import {useGetCurrentNetwork} from '@state/application/hooks'
-
+import { useGetCurrentNetwork } from "@state/application/hooks"
 
 export const useOnAddToBountyVote = () => {
   const { account, library } = useActiveWeb3React()
@@ -49,7 +47,14 @@ export const useOnAddToBountyVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, generalizedContractCall, addTransaction, networkSymbol]
+    [
+      account,
+      library,
+      sessionData,
+      generalizedContractCall,
+      addTransaction,
+      networkSymbol,
+    ]
   )
   return {
     onAddToBounty,
@@ -79,7 +84,12 @@ export const useOnSubmitVote = () => {
       )
       method = pricingSessionContract.setVote
       estimate = pricingSessionContract.estimateGas.setVote
-      args = [sessionData.address, Number(sessionData.tokenId), parseEther(stake), hash]
+      args = [
+        sessionData.address,
+        Number(sessionData.tokenId),
+        parseEther(stake),
+        hash,
+      ]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -94,7 +104,14 @@ export const useOnSubmitVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, generalizedContractCall, addTransaction, networkSymbol]
+    [
+      account,
+      library,
+      sessionData,
+      generalizedContractCall,
+      addTransaction,
+      networkSymbol,
+    ]
   )
   return {
     onSubmitVote,
@@ -139,7 +156,14 @@ export const useOnUpdateVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, generalizedContractCall, addTransaction, networkSymbol]
+    [
+      account,
+      library,
+      sessionData,
+      generalizedContractCall,
+      addTransaction,
+      networkSymbol,
+    ]
   )
   return {
     onUpdateVote,
@@ -176,11 +200,11 @@ export const useOnWeightVote = () => {
       args = [
         sessionData.address,
         Number(sessionData.tokenId),
-        parseEther("" + appraisalValue),
+        parseEther(`${appraisalValue}`),
         seed,
       ]
-      console.log('args', args)
-      console.log('account', account)
+      console.log("args", args)
+      console.log("account", account)
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -196,7 +220,15 @@ export const useOnWeightVote = () => {
         cb: txnCb,
       })
     },
-    [account, library, sessionData, networkSymbol]
+    [
+      networkSymbol,
+      library,
+      account,
+      sessionData.address,
+      sessionData.tokenId,
+      generalizedContractCall,
+      addTransaction,
+    ]
   )
   return {
     onWeightVote,
@@ -239,7 +271,15 @@ export const useOnSetFinalAppraisal = () => {
       value,
       cb: txnCb,
     })
-  }, [account, library, sessionData, networkSymbol])
+  }, [
+    networkSymbol,
+    library,
+    account,
+    sessionData.address,
+    sessionData.tokenId,
+    generalizedContractCall,
+    addTransaction,
+  ])
   return {
     onSetFinalAppraisal,
     isPending,
@@ -281,7 +321,15 @@ export const useOnHarvest = () => {
       value,
       cb: txnCb,
     })
-  }, [account, library, sessionData, networkSymbol])
+  }, [
+    networkSymbol,
+    library,
+    account,
+    sessionData.address,
+    sessionData.tokenId,
+    generalizedContractCall,
+    addTransaction,
+  ])
   return {
     onHarvest,
     isPending,
@@ -295,41 +343,43 @@ export const useOnClaim = () => {
   const addTransaction = useTransactionAdder()
   const networkSymbol = useGetCurrentNetwork()
 
-  const onClaim = useCallback(
-    async () => {
-      let estimate,
-        method: (...args: any) => Promise<TransactionResponse>,
-        args: Array<BigNumber | number | string>,
-        value: BigNumber | null
+  const onClaim = useCallback(async () => {
+    let estimate,
+      method: (...args: any) => Promise<TransactionResponse>,
+      args: Array<BigNumber | number | string>,
+      value: BigNumber | null
 
-      const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
-        ABC_PRICING_SESSION_ABI,
-        library,
-        account
-      )
-      method = pricingSessionContract.claim
-      estimate = pricingSessionContract.estimateGas.claim
-      args = [
-        sessionData.address,
-        Number(sessionData.tokenId)
-      ]
-      value = null
-      const txnCb = async (response: any) => {
-        addTransaction(response, {
-          summary: "Claim Tokens",
-        })
-      }
-      await generalizedContractCall({
-        method,
-        estimate,
-        args,
-        value,
-        cb: txnCb,
+    const pricingSessionContract = getContract(
+      ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+      ABC_PRICING_SESSION_ABI,
+      library,
+      account
+    )
+    method = pricingSessionContract.claim
+    estimate = pricingSessionContract.estimateGas.claim
+    args = [sessionData.address, Number(sessionData.tokenId)]
+    value = null
+    const txnCb = async (response: any) => {
+      addTransaction(response, {
+        summary: "Claim Tokens",
       })
-    },
-    [account, library, sessionData, networkSymbol]
-  )
+    }
+    await generalizedContractCall({
+      method,
+      estimate,
+      args,
+      value,
+      cb: txnCb,
+    })
+  }, [
+    networkSymbol,
+    library,
+    account,
+    sessionData.address,
+    sessionData.tokenId,
+    generalizedContractCall,
+    addTransaction,
+  ])
   return {
     onClaim,
     isPending,
@@ -371,10 +421,17 @@ export const useOnEndSession = () => {
       value,
       cb: txnCb,
     })
-  }, [account, library, sessionData, networkSymbol])
+  }, [
+    networkSymbol,
+    library,
+    account,
+    sessionData.address,
+    sessionData.tokenId,
+    generalizedContractCall,
+    addTransaction,
+  ])
   return {
     onEndSession,
     isPending,
   }
 }
-

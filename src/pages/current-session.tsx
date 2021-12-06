@@ -3,9 +3,10 @@ import CurrentSession from "@sections/CurrentSession"
 import React from "react"
 
 const CurrentSessionPage = (props: any) => {
+  const { location } = props
   return (
     <GlobalLayout {...props}>
-      <CurrentSession location={props.location} />
+      <CurrentSession location={location} />
     </GlobalLayout>
   )
 }

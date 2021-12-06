@@ -17,7 +17,6 @@ import {
 import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
-import { web3Eth } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnWeightVote } from "@hooks/current-session"
 import { UserState } from "@state/sessionData/reducer"
@@ -50,10 +49,10 @@ const Weigh: FunctionComponent = () => {
 
   useEffect(() => {
     const encodedVals = encodeSessionData({
-      account: account,
+      account,
       nftAddress: sessionData.address,
       tokenId: sessionData.tokenId,
-      nonce: sessionData.nonce
+      nonce: sessionData.nonce,
     })
     const itemsString = localStorage.getItem(encodedVals)
     if (itemsString && account) {
@@ -78,7 +77,8 @@ const Weigh: FunctionComponent = () => {
             {sessionData.totalStaked.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -95,7 +95,8 @@ const Weigh: FunctionComponent = () => {
             {sessionData.bounty.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
-            })} ETH
+            })}{" "}
+            ETH
           </ListGroupHeader>
           <ListGroupSubtext>
             ($
@@ -111,12 +112,12 @@ const Weigh: FunctionComponent = () => {
       <Form
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
-          const cb = (hash) => {
+          const cb = () => {
             const encodedVals = encodeSessionData({
               nonce: sessionData.nonce,
               nftAddress: sessionData.address,
               tokenId: sessionData.tokenId,
-              account: account
+              account,
             })
             localStorage.setItem(encodedVals, "")
           }

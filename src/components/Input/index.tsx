@@ -3,17 +3,17 @@ import styled from "styled-components"
 import { FormInput } from "shards-react"
 import { Label } from "../global.styles"
 
-export const MainInput = styled(FormInput).attrs((props) => {
-  return {
-    size: props.size || "sm",
-    inputtype: props.inputtype,
-    ...props
-  }
-})`
+export const MainInput = styled(FormInput).attrs((props) => ({
+  size: props.size || "sm",
+  inputtype: props.inputtype,
+  ...props,
+}))`
   border: #c3c8d7;
   border-radius: 53px;
   padding: 0px;
-  ${({ inputtype }) => inputtype === "checkbox" && `
+  ${({ inputtype }) =>
+    inputtype === "checkbox" &&
+    `
     width: 20px;
   `};
 
@@ -50,7 +50,8 @@ const Container = styled.div<ContainerProps>`
   display: flex;
   flex-direction: ${({ type }) => (type === "checkbox" ? "" : "column")};
   align-items: ${({ type }) => (type === "checkbox" ? "center" : "flex-start")};
-  justify-content: ${({ type }) => (type === "checkbox" ? "space-between" : "center")};
+  justify-content: ${({ type }) =>
+    type === "checkbox" ? "space-between" : "center"};
 `
 
 interface InputWithTitle extends React.ComponentProps<FormInput> {
@@ -66,7 +67,9 @@ export const InputWithTitle = ({
   ...props
 }: InputWithTitle) => (
   <Container type={type}>
-    <Label style={{marginBottom: type === 'checkbox' ? 0 : 10}} htmlFor={id}>{title}</Label>
+    <Label style={{ marginBottom: type === "checkbox" ? 0 : 10 }} htmlFor={id}>
+      {title}
+    </Label>
     <MainInput
       id={id}
       style={{ borderRadius: 0 }}

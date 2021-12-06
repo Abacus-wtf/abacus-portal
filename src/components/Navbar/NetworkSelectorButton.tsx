@@ -186,9 +186,9 @@ const NetworkSelectorButton = () => {
           <AlignerColumn>
             <h4>Select network</h4>
             <Aligner>
-              {NetworkInfoMap.map((network, index) => (
+              {NetworkInfoMap.map((network) => (
                 <NetworkButton
-                  key={index}
+                  key={network.chainId}
                   disabled={network.chainId === chainId}
                   onClick={() => MetamaskRequest(network)}
                 >

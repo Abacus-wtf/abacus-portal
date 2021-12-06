@@ -49,7 +49,7 @@ import {
   setMySessionsPage,
   setMySessionsIsLastPage,
   setActiveSessionsPage,
-  setActiveSessionsIsLastPage
+  setActiveSessionsIsLastPage,
 } from "./actions"
 import {
   GET_PRICING_SESSIONS,
@@ -209,18 +209,27 @@ export const useRetrieveClaimData = () => {
         .getEthPayout(sessionData.address, sessionData.tokenId)
         .call(),
       pricingSession.methods.ethToAbc().call(),
-      pricingSession.methods.NftSessionCore(sessionData.nonce, sessionData.address, sessionData.tokenId).call(),
+      pricingSession.methods
+        .NftSessionCore(
+          sessionData.nonce,
+          sessionData.address,
+          sessionData.tokenId
+        )
+        .call(),
     ])
 
     const claimData: ClaimState = {
       abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
       ethClaimAmount: Number(formatEther(getEthPayout)),
-      totalProfit: Number(formatEther(core.totalProfit))
+      totalProfit: Number(formatEther(core.totalProfit)),
     }
     dispatch(setClaimPosition(claimData))
   }, [
     getPricingSessionContract,
     networkSymbol,
+    sessionData.address,
+    sessionData.tokenId,
+    sessionData.nonce,
     dispatch,
   ])
 }
@@ -504,9 +513,14 @@ export const useGetCurrentSessionDataGRT = () => {
 
         let guessedAppraisal = -1
         if (sessionStatus >= SessionState.Harvest && account) {
-          const index = _.findIndex(pricingSession.participants, (participant) => participant.user.id === account.toLowerCase())
+          const index = _.findIndex(
+            pricingSession.participants,
+            (participant) => participant.user.id === account.toLowerCase()
+          )
           if (index !== -1) {
-            guessedAppraisal = Number(formatEther(pricingSession.participants[index].appraisal))
+            guessedAppraisal = Number(
+              formatEther(pricingSession.participants[index].appraisal)
+            )
           }
         }
 
@@ -519,7 +533,8 @@ export const useGetCurrentSessionDataGRT = () => {
           totalStaked: Number(formatEther(pricingSession.totalStaked)),
           totalStakedInUSD:
             Number(formatEther(pricingSession.totalStaked)) * Number(ethUsd),
-            bountyInUSD: Number(formatEther(pricingSession.bounty)) * Number(ethUsd),
+          bountyInUSD:
+            Number(formatEther(pricingSession.bounty)) * Number(ethUsd),
           bounty: Number(formatEther(pricingSession.bounty)),
           nftName: asset.name,
           finalAppraisalValue:
@@ -535,7 +550,7 @@ export const useGetCurrentSessionDataGRT = () => {
               ? asset?.owner?.user?.username
               : shortenAddress(asset?.owner?.address),
           maxAppraisal: Number(formatEther(pricingSession?.maxAppraisal)),
-          guessedAppraisal
+          guessedAppraisal,
         }
         const userStatus = await getUserStatus({
           address,
@@ -588,8 +603,8 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         getStatus,
         pricingSessionCheck,
-        finalAppraisalValue,
-        grtData
+        finalAppraisalResult,
+        grtData,
       ] = await Promise.all([
         openseaGet(URL),
         pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
@@ -610,7 +625,7 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
-      const {pricingSession: pricingSessionGrt } = grtData.data.data
+      const { pricingSession: pricingSessionGrt } = grtData.data.data
 
       let ethUsd
       try {
@@ -626,39 +641,72 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCheck
       )
 
+      const finalAppraisalValue =
+        sessionStatus >= 3
+          ? Number(formatEther(finalAppraisalResult))
+          : undefined
+
       let guessedAppraisal = -1
       if (sessionStatus >= SessionState.Harvest && account) {
-        const index = _.findIndex(pricingSessionGrt.participants, (participant) => participant.user.id === account.toLowerCase())
+        const index = _.findIndex(
+          pricingSessionGrt.participants,
+          (participant) => participant.user.id === account.toLowerCase()
+        )
         if (index !== -1) {
-          guessedAppraisal = Number(formatEther(pricingSessionGrt.participants[index].appraisal))
+          guessedAppraisal = Number(
+            formatEther(pricingSessionGrt.participants[index].appraisal)
+          )
         }
       }
 
+      let rankings
+      if (sessionStatus >= SessionState.Weigh) {
+        rankings = _.map(pricingSessionGrt.participants, (vote) => ({
+          ...vote,
+          appraisal: formatEther(vote.appraisal),
+          amountStaked: formatEther(vote.amountStaked),
+        }))
+      }
+
+      if (finalAppraisalValue !== undefined) {
+        rankings = rankings.sort(
+          (a, b) =>
+            Math.abs(finalAppraisalValue - Number(a.appraisal)) -
+            Math.abs(finalAppraisalValue - Number(b.appraisal))
+        )
+      }
+
       const sessionData: SessionData = {
+        rankings,
         bounty: Number(formatEther(pricingSessionCore.bounty)),
-        image_url: pricingSessionMetadata?.image_preview_url || pricingSessionMetadata?.image_url,
+        image_url:
+          pricingSessionMetadata?.image_preview_url ||
+          pricingSessionMetadata?.image_url,
         animation_url: pricingSessionMetadata?.animation_url || null,
         endTime,
         guessedAppraisal,
-        numPpl: sessionStatus >= 2 ? Number(pricingSessionGrt.numParticipants) : Number(pricingSessionCore.uniqueVoters),
+        numPpl:
+          sessionStatus >= 2
+            ? Number(pricingSessionGrt.numParticipants)
+            : Number(pricingSessionCore.uniqueVoters),
         collectionTitle: pricingSessionMetadata?.collection?.name,
-        totalStaked: sessionStatus >= 2 ? Number(formatEther(pricingSessionGrt.totalStaked)) : Number(formatEther(pricingSessionCore.totalSessionStake)),
-        totalStakedInUSD: sessionStatus >= 2 ?
-          Number(formatEther(pricingSessionGrt.totalStaked)) * Number(ethUsd) 
-          : 
-          Number(formatEther(pricingSessionCore.totalSessionStake)) *
-          Number(ethUsd),
+        totalStaked:
+          sessionStatus >= 2
+            ? Number(formatEther(pricingSessionGrt.totalStaked))
+            : Number(formatEther(pricingSessionCore.totalSessionStake)),
+        totalStakedInUSD:
+          sessionStatus >= 2
+            ? Number(formatEther(pricingSessionGrt.totalStaked)) *
+              Number(ethUsd)
+            : Number(formatEther(pricingSessionCore.totalSessionStake)) *
+              Number(ethUsd),
         bountyInUSD:
-          Number(formatEther(pricingSessionCore.bounty)) *
-          Number(ethUsd),
+          Number(formatEther(pricingSessionCore.bounty)) * Number(ethUsd),
         nftName: pricingSessionMetadata?.name,
         address,
         tokenId,
         nonce,
-        finalAppraisalValue:
-          sessionStatus >= 3
-            ? Number(formatEther(finalAppraisalValue))
-            : undefined,
+        finalAppraisalValue,
         owner:
           pricingSessionMetadata?.owner?.user &&
           pricingSessionMetadata?.owner?.user?.username
