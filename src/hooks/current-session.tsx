@@ -5,7 +5,11 @@ import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
 import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
-import { useActiveWeb3React, useGeneralizedContractCall } from "@hooks/index"
+import {
+  ReloadDataType,
+  useActiveWeb3React,
+  useGeneralizedContractCall,
+} from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
@@ -13,7 +17,9 @@ import { useGetCurrentNetwork } from "@state/application/hooks"
 export const useOnAddToStake = () => {
   const { account, library } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
-  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    ReloadDataType.ClaimPoolAndSession
+  )
   const addTransaction = useTransactionAdder()
   const networkSymbol = useGetCurrentNetwork()
 
@@ -121,7 +127,9 @@ export const useOnAddToBountyVote = () => {
 export const useOnSubmitVote = () => {
   const { account, library } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
-  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    ReloadDataType.ClaimPoolAndSession
+  )
   const addTransaction = useTransactionAdder()
   const networkSymbol = useGetCurrentNetwork()
 
