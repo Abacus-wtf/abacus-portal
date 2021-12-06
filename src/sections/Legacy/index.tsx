@@ -10,11 +10,14 @@ import { SmallUniversalContainer, Title } from "@components/global.styles"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
 import styled from "styled-components"
 import { useGetCurrentNetwork } from "@state/application/hooks"
-import { VerticalContainer } from "../CurrentSession/CurrentSession.styles"
-import _ from 'lodash'
+import _ from "lodash"
 import Card from "@components/Card"
 import { CardContainer } from "@sections/Home/Home.styles"
-import { useGetMultiSessionData, useMultiSessionState } from "@state/sessionData/hooks"
+import {
+  useGetMultiSessionData,
+  useMultiSessionState,
+} from "@state/sessionData/hooks"
+import { VerticalContainer } from "../CurrentSession/CurrentSession.styles"
 
 const MaxWidthItem = styled(ListGroupItem)`
   width: 100%;
@@ -34,7 +37,7 @@ const Legacy: FunctionComponent = () => {
   const networkSymbol = useGetCurrentNetwork()
   const getMultiSessionData = useGetMultiSessionData(true)
   const { multiSessionData } = useMultiSessionState()
-  
+
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData(true)
 
@@ -84,7 +87,7 @@ const Legacy: FunctionComponent = () => {
 
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
-      <VerticalContainer style={{ maxWidth: 800, overflow: 'visible' }}>
+      <VerticalContainer style={{ maxWidth: 800, overflow: "visible" }}>
         <Title>Legacy Sessions</Title>
         <CardContainer>
           {_.map(multiSessionData, (i) => (

@@ -17,6 +17,7 @@ import PaginationButton from "@components/PaginationButton"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { usePrevious } from "@hooks/index"
 import FilterModal from "@components/FilterModal"
+import { Tooltip } from "shards-react"
 import {
   BackgroundIMG,
   HeaderBar,
@@ -24,7 +25,6 @@ import {
   Header,
   HeaderBarContainer,
 } from "./Home.styles"
-import {Tooltip} from 'shards-react'
 
 const Home: React.FC = () => {
   const isInitializedRef = useRef(false)
@@ -70,7 +70,15 @@ const Home: React.FC = () => {
             applyFilters={getMultiSessionData}
             setFilters={setFilters}
           />
-          <Button id="createSession"  style={{ display: "flex", alignItems: "center", cursor: 'not-allowed', opacity: 0.7 }}>
+          <Button
+            id="createSession"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              cursor: "not-allowed",
+              opacity: 0.7,
+            }}
+          >
             Create Session
           </Button>
           <Tooltip
@@ -80,7 +88,8 @@ const Home: React.FC = () => {
             placement="bottom"
             trigger="hover"
           >
-            The only way to create new sessions at the moment is to win the bounty auction for the next slot.
+            The only way to create new sessions at the moment is to win the
+            bounty auction for the next slot.
           </Tooltip>
         </HeaderBarContainer>
       </HeaderBar>

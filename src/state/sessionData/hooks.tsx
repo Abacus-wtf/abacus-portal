@@ -77,11 +77,14 @@ import {
   activeSessionsStateSelector,
 } from "./selectors"
 
-const GRAPHQL_ENDPOINT = (networkSymbol: NetworkSymbolEnum, isLegacy = false): string => {
+const GRAPHQL_ENDPOINT = (
+  networkSymbol: NetworkSymbolEnum,
+  isLegacy = false
+): string => {
   if (isLegacy) {
     return ARB_LEGACY_GRAPHS
   }
-  
+
   switch (networkSymbol) {
     case NetworkSymbolEnum.ETH:
       return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ETH
@@ -595,7 +598,12 @@ export const useGetCurrentSessionData = () => {
   const { account } = useActiveWeb3React()
 
   return useCallback(
-    async (address: string, tokenId: string, nonce: number, isLegacy = false) => {
+    async (
+      address: string,
+      tokenId: string,
+      nonce: number,
+      isLegacy = false
+    ) => {
       dispatch(setCurrentSessionFetchStatus(PromiseStatus.Pending))
       const pricingSession = getPricingSessionContract(
         ABC_PRICING_SESSION_ADDRESS(networkSymbol)
