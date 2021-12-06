@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { Title, SmallUniversalContainer } from "@components/global.styles"
 import * as queryString from "query-string"
 import { navigate } from "gatsby"
@@ -23,6 +23,7 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
+import RankingsModal from "@components/RankingsModal"
 
 const CurrentSession = ({ location }) => {
   // const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
@@ -35,6 +36,7 @@ const CurrentSession = ({ location }) => {
   const networkSymbol = useGetCurrentNetwork()
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
+  const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -87,6 +89,10 @@ const CurrentSession = ({ location }) => {
   }
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
+      <RankingsModal 
+        isOpen={isRankingsModalOpen}
+        toggle={() => setIsRankingsModalOpen(!isRankingsModalOpen)}
+      />
       <SplitContainer>
         <VerticalContainer>
           <FileContainer {...sessionData} />
@@ -111,6 +117,9 @@ const CurrentSession = ({ location }) => {
             >
               Share
             </ButtonsWhite>
+            {sessionData.rankings && (
+              <ButtonsWhite onClick={() => setIsRankingsModalOpen(true)} style={{ borderRadius: 8 }}>Rankings</ButtonsWhite>
+            )}
           </div>
         </VerticalContainer>
         <VerticalContainer>

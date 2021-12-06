@@ -23,6 +23,14 @@ import {
   setActiveSessionsIsLastPage,
 } from "./actions"
 
+export interface Vote {
+  user: {
+    id: string
+  }
+  appraisal: string
+  amountStaked: string
+}
+
 export enum SessionState {
   Vote = 0,
   Weigh = 1,
@@ -60,6 +68,7 @@ export interface SessionData {
   guessedAppraisal?: number
   finalAppraisalValue?: number
   totalStakedInUSD?: number
+  rankings?: Vote[]
 }
 
 export interface ClaimState {
