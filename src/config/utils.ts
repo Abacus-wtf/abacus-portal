@@ -11,7 +11,9 @@ import { keccak256 } from "@ethersproject/keccak256"
 axiosRetry(axios, { retries: 3 })
 
 export function isWithinFivePercent(appraisal: number, finalAppraisal: number) {
-  return appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
+  return (
+    appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
+  )
 }
 
 export function isAddress(value: any): string | false {

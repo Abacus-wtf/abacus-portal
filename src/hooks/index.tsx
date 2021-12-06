@@ -22,35 +22,35 @@ export enum ReloadDataType {
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in number]: string } = {
-  1: 'etherscan.io',
-  3: 'ropsten.',
-  4: 'rinkeby.',
-  5: 'goerli.',
-  42: 'kovan.',
-  137: 'polygonscan.com',
-  42161: 'arbiscan.io',
-  421611: 'testnet.arbiscan.io',
-  80001: 'mumbai'
+  1: "etherscan.io",
+  3: "ropsten.",
+  4: "rinkeby.",
+  5: "goerli.",
+  42: "kovan.",
+  137: "polygonscan.com",
+  42161: "arbiscan.io",
+  421611: "testnet.arbiscan.io",
+  80001: "mumbai",
 }
 
 export function getEtherscanLink(
   chainId: number,
   data: string,
-  type: 'transaction' | 'token' | 'address' | 'block'
+  type: "transaction" | "token" | "address" | "block"
 ): string {
   const prefix = `https://${ETHERSCAN_PREFIXES[chainId]}`
 
   switch (type) {
-    case 'transaction': {
+    case "transaction": {
       return `${prefix}/tx/${data}`
     }
-    case 'token': {
+    case "token": {
       return `${prefix}/token/${data}`
     }
-    case 'block': {
+    case "block": {
       return `${prefix}/block/${data}`
     }
-    case 'address':
+    case "address":
     default: {
       return `${prefix}/address/${data}`
     }
