@@ -67,6 +67,7 @@ const CurrentSession = ({ location }) => {
     getCurrentSessionData,
     claimData,
     setPayoutData,
+    legacy,
   ])
 
   if (!account) {

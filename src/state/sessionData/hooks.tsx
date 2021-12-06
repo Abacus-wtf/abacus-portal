@@ -585,6 +585,7 @@ export const useGetCurrentSessionDataGRT = (isLegacy = false) => {
       dispatch,
       getEthUsdContract,
       getPricingSessionContract,
+      isLegacy,
       networkSymbol,
     ]
   )

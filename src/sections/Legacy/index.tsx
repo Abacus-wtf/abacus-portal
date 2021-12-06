@@ -63,7 +63,7 @@ const Legacy: FunctionComponent = () => {
     ) {
       loadData()
     }
-  }, [account, claimData, networkSymbol, setPayoutData])
+  }, [account, claimData, getMultiSessionData, networkSymbol, setPayoutData])
 
   if (!account) {
     return (
