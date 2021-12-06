@@ -1,4 +1,5 @@
 import { gql } from "graphql-request"
+import { Vote } from "./reducer"
 
 export type SubgraphPricingSession = {
   id: string
@@ -14,13 +15,7 @@ export type SubgraphPricingSession = {
   numParticipants: number
   timeFinalAppraisalSet: number
   maxAppraisal: number
-  participants: {
-    user: {
-      id: string
-    }
-    appraisal: string
-    amountStaked: string
-  }[]
+  participants: Vote[]
 }
 
 export type GetPricingSessionsQueryResponse = {

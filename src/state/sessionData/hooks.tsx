@@ -603,7 +603,7 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCore,
         getStatus,
         pricingSessionCheck,
-        finalAppraisalValue,
+        finalAppraisalResult,
         grtData,
       ] = await Promise.all([
         openseaGet(URL),
@@ -641,6 +641,11 @@ export const useGetCurrentSessionData = () => {
         pricingSessionCheck
       )
 
+      const finalAppraisalValue =
+        sessionStatus >= 3
+          ? Number(formatEther(finalAppraisalResult))
+          : undefined
+
       let guessedAppraisal = -1
       if (sessionStatus >= SessionState.Harvest && account) {
         const index = _.findIndex(
@@ -654,7 +659,25 @@ export const useGetCurrentSessionData = () => {
         }
       }
 
+      let rankings
+      if (sessionStatus >= SessionState.Weigh) {
+        rankings = _.map(pricingSessionGrt.participants, (vote) => ({
+          ...vote,
+          appraisal: formatEther(vote.appraisal),
+          amountStaked: formatEther(vote.amountStaked),
+        }))
+      }
+
+      if (finalAppraisalValue !== undefined) {
+        rankings = rankings.sort(
+          (a, b) =>
+            Math.abs(finalAppraisalValue - Number(a.appraisal)) -
+            Math.abs(finalAppraisalValue - Number(b.appraisal))
+        )
+      }
+
       const sessionData: SessionData = {
+        rankings,
         bounty: Number(formatEther(pricingSessionCore.bounty)),
         image_url:
           pricingSessionMetadata?.image_preview_url ||
@@ -683,10 +706,7 @@ export const useGetCurrentSessionData = () => {
         address,
         tokenId,
         nonce,
-        finalAppraisalValue:
-          sessionStatus >= 3
-            ? Number(formatEther(finalAppraisalValue))
-            : undefined,
+        finalAppraisalValue,
         owner:
           pricingSessionMetadata?.owner?.user &&
           pricingSessionMetadata?.owner?.user?.username
