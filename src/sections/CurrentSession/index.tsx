@@ -7,6 +7,7 @@ import {
   // useGetCurrentSessionDataGRT,
   useCurrentSessionFetchStatus,
   useGetCurrentSessionData,
+  useGetCurrentSessionDataGRT,
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
@@ -26,13 +27,15 @@ import {
 import CurrentState from "./CurrentState"
 
 const CurrentSession = ({ location }) => {
-  // const getCurrentSessionDataGRT = useGetCurrentSessionDataGRT()
+  const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
   const getCurrentSessionData = useGetCurrentSessionData()
+  const getCurrentSessionDataGrt = useGetCurrentSessionDataGRT(
+    legacy ? Boolean(legacy) : false
+  )
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
   const isLoading = fetchStatus === PromiseStatus.Pending
-  const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
   const networkSymbol = useGetCurrentNetwork()
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
@@ -45,12 +48,19 @@ const CurrentSession = ({ location }) => {
   useEffect(() => {
     const loadData = async () => {
       if (sessionData.address === "") {
-        await getCurrentSessionData(
-          String(address),
-          String(tokenId),
-          Number(nonce),
-          legacy !== undefined && legacy
-        )
+        if (legacy ? Boolean(legacy) : false) {
+          await getCurrentSessionDataGrt(
+            String(address),
+            String(tokenId),
+            Number(nonce)
+          )
+        } else {
+          await getCurrentSessionData(
+            String(address),
+            String(tokenId),
+            Number(nonce)
+          )
+        }
       }
       if (claimData === null) {
         await setPayoutData(account)
@@ -75,6 +85,7 @@ const CurrentSession = ({ location }) => {
     setPayoutData,
     legacy,
     sessionData,
+    getCurrentSessionDataGrt,
   ])
 
   if (!account) {
