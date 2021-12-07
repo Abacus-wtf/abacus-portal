@@ -115,7 +115,7 @@ const Legacy: FunctionComponent = () => {
           <InputWithTitle
             title="Claim Principal"
             id="claimPrincipal"
-            placeholder="0"
+            placeholder="Enter withdraw amount in ETH"
             value={claimPrincipalVal}
             onChange={(e) => setClaimPrincipalVal(e.target.value)}
           />
@@ -171,7 +171,7 @@ const Legacy: FunctionComponent = () => {
             <InputWithTitle
               title="ETH Withdrawal Amount"
               id="ethWithdrawal"
-              placeholder="0"
+              placeholder="Enter withdraw amount in ETH"
               value={ethWithdrawalVal}
               onChange={(e) => setEthWithdrawalVal(e.target.value)}
             />
@@ -180,7 +180,7 @@ const Legacy: FunctionComponent = () => {
             <InputWithTitle
               title="ABC Withdrawal Amount"
               id="abcWithdrawal"
-              placeholder="0"
+              placeholder="Enter withdraw amount in ABC"
               value={abcWithdrawalVal}
               onChange={(e) => setAbcWithdrawalVal(e.target.value)}
             />

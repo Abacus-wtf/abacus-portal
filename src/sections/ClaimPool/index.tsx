@@ -97,7 +97,7 @@ const ClaimPool: FunctionComponent = () => {
             <InputWithTitle
               title="ETH Deposit Amount"
               id="ethDeposit"
-              placeholder="0"
+              placeholder="Enter deposit amount in ETH"
               value={ethDepositVal}
               onChange={(e) => setEthDepositVal(e.target.value)}
             />
@@ -106,7 +106,7 @@ const ClaimPool: FunctionComponent = () => {
             <InputWithTitle
               title="Claim Principal"
               id="claimPrincipal"
-              placeholder="0"
+              placeholder="Enter claim amount in ETH"
               value={claimPrincipalVal}
               onChange={(e) => setClaimPrincipalVal(e.target.value)}
             />
@@ -182,7 +182,7 @@ const ClaimPool: FunctionComponent = () => {
             <InputWithTitle
               title="ETH Withdrawal Amount"
               id="ethWithdrawal"
-              placeholder="0"
+              placeholder="Enter withdraw amount in ETH"
               value={ethWithdrawalVal}
               onChange={(e) => setEthWithdrawalVal(e.target.value)}
             />
@@ -191,7 +191,7 @@ const ClaimPool: FunctionComponent = () => {
             <InputWithTitle
               title="ABC Withdrawal Amount"
               id="abcWithdrawal"
-              placeholder="0"
+              placeholder="Enter withdraw amount in ABC"
               value={abcWithdrawalVal}
               onChange={(e) => setAbcWithdrawalVal(e.target.value)}
             />

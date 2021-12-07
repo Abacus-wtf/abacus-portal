@@ -39,10 +39,12 @@ import {
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
+import CongratsModal from "../CongratsModal"
 
 const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
   const { account } = useActiveWeb3React()
+  const [congratsOpen, setCongratsOpen] = useState(false)
 
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
@@ -142,7 +144,11 @@ const Vote: FunctionComponent = () => {
 
           switch (userStatus) {
             case UserState.NotVoted:
-              await onSubmitVote(target.appraise.value, target.stake.value)
+              await onSubmitVote(
+                target.appraise.value,
+                target.stake.value,
+                () => setCongratsOpen(true)
+              )
               break
             case UserState.CompletedVote:
               await onUpdateVote(target.appraise.value)
@@ -292,6 +298,10 @@ const Vote: FunctionComponent = () => {
           </div>
         </ListGroup>
       </Form>
+      <CongratsModal
+        open={congratsOpen}
+        toggle={() => setCongratsOpen(false)}
+      />
     </>
   )
 }

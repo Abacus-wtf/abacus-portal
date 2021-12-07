@@ -212,26 +212,30 @@ export const useRetrieveClaimData = () => {
     const pricingSession = getPricingSessionContract(
       ABC_PRICING_SESSION_ADDRESS(networkSymbol)
     )
-    const [getEthPayout, ethToAbc, core] = await Promise.all([
-      pricingSession.methods
-        .getEthPayout(sessionData.address, sessionData.tokenId)
-        .call(),
-      pricingSession.methods.ethToAbc().call(),
-      pricingSession.methods
-        .NftSessionCore(
-          sessionData.nonce,
-          sessionData.address,
-          sessionData.tokenId
-        )
-        .call(),
-    ])
+    try {
+      const [getEthPayout, ethToAbc, core] = await Promise.all([
+        pricingSession.methods
+          .getEthPayout(sessionData.address, sessionData.tokenId)
+          .call(),
+        pricingSession.methods.ethToAbc().call(),
+        pricingSession.methods
+          .NftSessionCore(
+            sessionData.nonce,
+            sessionData.address,
+            sessionData.tokenId
+          )
+          .call(),
+      ])
 
-    const claimData: ClaimState = {
-      abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
-      ethClaimAmount: Number(formatEther(getEthPayout)),
-      totalProfit: Number(formatEther(core.totalProfit)),
+      const claimData: ClaimState = {
+        abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
+        ethClaimAmount: Number(formatEther(getEthPayout)),
+        totalProfit: Number(formatEther(core.totalProfit)),
+      }
+      dispatch(setClaimPosition(claimData))
+    } catch (e) {
+      console.error(e)
     }
-    dispatch(setClaimPosition(claimData))
   }, [
     getPricingSessionContract,
     networkSymbol,
@@ -599,18 +603,12 @@ export const useGetCurrentSessionData = () => {
   const { account } = useActiveWeb3React()
 
   return useCallback(
-    async (
-      address: string,
-      tokenId: string,
-      nonce: number,
-      isLegacy = false
-    ) => {
+    async (address: string, tokenId: string, nonce: number) => {
       dispatch(setCurrentSessionFetchStatus(PromiseStatus.Pending))
       const pricingSession = getPricingSessionContract(
         ABC_PRICING_SESSION_ADDRESS(networkSymbol)
       )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
-
       const URL = `asset/${address}/${tokenId}`
       const [
         pricingSessionMetadata,
@@ -628,7 +626,7 @@ export const useGetCurrentSessionData = () => {
           .finalAppraisalValue(nonce, address, tokenId)
           .call(),
         axios.post<GetPricingSessionQueryResponse>(
-          GRAPHQL_ENDPOINT(networkSymbol, isLegacy),
+          GRAPHQL_ENDPOINT(networkSymbol),
           {
             query: GET_PRICING_SESSION(`${address}/${tokenId}/${nonce}`),
           },
@@ -639,7 +637,7 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
-      const { pricingSession: pricingSessionGrt } = grtData.data.data
+      const { pricingSession: pricingSessionGrt } = grtData?.data.data ?? {}
 
       let ethUsd
       try {
