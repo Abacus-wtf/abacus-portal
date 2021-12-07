@@ -37,6 +37,11 @@ const CurrentSession = ({ location }) => {
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
+  const [isFisk] = useState(
+    tokenId ===
+      "103662588172564032573538786729890701797701353903294947741648606022377129639937" &&
+      address === "0x495f947276749ce646f68ac8c248420045cb7b5e"
+  )
   useEffect(() => {
     const loadData = async () => {
       if (sessionData.address === "") {
@@ -141,9 +146,11 @@ const CurrentSession = ({ location }) => {
               Owned by{" "}
               <OutboundLink
                 target="_blank"
-                href={`https://opensea.io/${sessionData.ownerAddress}`}
+                href={`https://opensea.io/${
+                  isFisk ? "fiskantes" : sessionData.ownerAddress
+                }`}
               >
-                {sessionData.owner}
+                {isFisk ? "Fiskantes" : sessionData.owner}
               </OutboundLink>
             </SubText>
           </VerticalSmallGapContainer>

@@ -675,11 +675,14 @@ export const useGetCurrentSessionData = () => {
 
       let rankings
       if (sessionStatus >= SessionState.Weigh) {
-        rankings = _.map(pricingSessionGrt.participants, (vote) => ({
-          ...vote,
-          appraisal: formatEther(vote.appraisal),
-          amountStaked: formatEther(vote.amountStaked),
-        }))
+        rankings = _.map(
+          pricingSessionGrt !== null ? pricingSessionGrt.participants : [],
+          (vote) => ({
+            ...vote,
+            appraisal: formatEther(vote.appraisal),
+            amountStaked: formatEther(vote.amountStaked),
+          })
+        )
       }
 
       if (finalAppraisalValue !== undefined) {
