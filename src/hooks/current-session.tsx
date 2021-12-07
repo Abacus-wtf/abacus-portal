@@ -70,7 +70,7 @@ export const useOnSubmitVote = () => {
   const networkSymbol = useGetCurrentNetwork()
 
   const onSubmitVote = useCallback(
-    async (hash: string, stake: string) => {
+    async (hash: string, stake: string, callback: () => void) => {
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -95,6 +95,7 @@ export const useOnSubmitVote = () => {
         addTransaction(response, {
           summary: "Submit Vote",
         })
+        callback()
       }
       await generalizedContractCall({
         method,

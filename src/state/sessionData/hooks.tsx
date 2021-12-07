@@ -625,7 +625,7 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
-      const { pricingSession: pricingSessionGrt } = grtData.data.data
+      const { pricingSession: pricingSessionGrt } = grtData?.data.data ?? {}
 
       let ethUsd
       try {
