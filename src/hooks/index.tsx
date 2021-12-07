@@ -16,6 +16,13 @@ import {
 import { useSetAuctionData, useSetPayoutData } from "@state/miscData/hooks"
 import { useDispatch } from "react-redux"
 import { setGeneralizedContractErrorMessage } from "@state/application/actions"
+import styled from "styled-components"
+
+const ErrorMessageLabel = styled.label`
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-left: 2px;
+`
 
 export enum ReloadDataType {
   Auction,
@@ -182,16 +189,21 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
           if (error?.code === -32603) {
             const ErrorMessage = (
               <>
-                <p>
-                  The transaction was reverted. You may not have enough ABC or
-                  ETH to complete this transaction.
-                </p>{" "}
-                {error?.data?.message ? (
-                  <p>
-                    The error message from MetaMask was: "
-                    <i>{error.data.message}</i>"
-                  </p>
-                ) : null}
+                <ErrorMessageLabel>
+                  The transaction was reverted.
+                </ErrorMessageLabel>
+                <div style={{ marginLeft: 42 }}>
+                  <p style={{ marginTop: 10 }}>
+                    You may not have enough ABC or ETH to complete this
+                    transaction.
+                  </p>{" "}
+                  {error?.data?.message ? (
+                    <p style={{ marginTop: 5 }}>
+                      The error message from MetaMask was: "
+                      <i>{error.data.message}</i>"
+                    </p>
+                  ) : null}
+                </div>
               </>
             )
 

@@ -5,6 +5,10 @@ import styled from "styled-components"
 import { AlertCircle } from "react-feather"
 
 const StyledAlert = styled(Alert)`
+  padding: 25px;
+  border-radius: 20px;
+  margin-top: 35px;
+  margin-bottom: 0px;
   & p {
     color: white !important;
     margin: 0;
@@ -19,7 +23,7 @@ const GeneralizedContractError: FunctionComponent = () => {
   }
   return (
     <StyledAlert theme="danger">
-      <AlertCircle />
+      <AlertCircle style={{ marginTop: -9, marginRight: 15 }} />
       {errorMessage}
     </StyledAlert>
   )
