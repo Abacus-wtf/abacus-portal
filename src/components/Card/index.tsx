@@ -114,7 +114,8 @@ export default ({
     <OuterTextContainer>
       <TextContainer>
         <BoldText>
-          {nftName} #{tokenId}
+          {nftName} #
+          {tokenId.length >= 8 ? `${tokenId.slice(0, 8)}...` : tokenId}
         </BoldText>
         <EthText>
           <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
