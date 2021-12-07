@@ -32,19 +32,21 @@ const CurrentSession = ({ location }) => {
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
   const isLoading = fetchStatus === PromiseStatus.Pending
-  const { address, tokenId, nonce } = queryString.parse(location.search)
+  const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
   const networkSymbol = useGetCurrentNetwork()
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
-
   useEffect(() => {
     const loadData = async () => {
-      await getCurrentSessionData(
-        String(address),
-        String(tokenId),
-        Number(nonce)
-      )
+      if (sessionData.address === "") {
+        await getCurrentSessionData(
+          String(address),
+          String(tokenId),
+          Number(nonce),
+          legacy !== undefined && legacy
+        )
+      }
       if (claimData === null) {
         await setPayoutData(account)
       }
@@ -66,6 +68,8 @@ const CurrentSession = ({ location }) => {
     getCurrentSessionData,
     claimData,
     setPayoutData,
+    legacy,
+    sessionData,
   ])
 
   if (!account) {
