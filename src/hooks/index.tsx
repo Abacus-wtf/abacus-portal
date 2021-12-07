@@ -19,6 +19,7 @@ export enum ReloadDataType {
   Auction,
   Session,
   ClaimPool,
+  ClaimPoolAndSession,
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in number]: string } = {
@@ -114,6 +115,9 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
         setAuctionData()
       } else if (reloadType === ReloadDataType.ClaimPool) {
         setPayoutData(account)
+      } else if (reloadType === ReloadDataType.ClaimPoolAndSession) {
+        setPayoutData(account)
+        getCurrentSessionData(address, tokenId, nonce)
       } else {
         getCurrentSessionData(address, tokenId, nonce)
       }

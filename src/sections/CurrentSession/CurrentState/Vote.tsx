@@ -23,7 +23,12 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
-import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
+import {
+  useOnAddToBountyVote,
+  useOnAddToStake,
+  useOnSubmitVote,
+  useOnUpdateVote,
+} from "@hooks/current-session"
 import { hashValues } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"
@@ -48,10 +53,13 @@ const Vote: FunctionComponent = () => {
 
   const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
-  // const { onAddToBounty, isPending: addToBountyPending } =
-  //  useOnAddToBountyVote()
+  const { onAddToBounty, isPending: addToBountyPending } =
+    useOnAddToBountyVote()
+  const { onAddToStake, isPending: addToStakePending } = useOnAddToStake()
+
   const [stakeVal, setStakeVal] = useState("")
-  // const [bountyAddition, setBountyAddition] = useState("")
+  const [bountyAddition, setBountyAddition] = useState("")
+  const [stakeAddition, setStakeAddition] = useState("")
 
   const isPending = submitVotePending || updateVotePending
 
@@ -209,7 +217,40 @@ const Vote: FunctionComponent = () => {
             It seems you have already voted, or you are not logged in
           </Tooltip>
         </VerticalContainer>
-        {/* <ListGroup style={{ marginTop: 35 }}>
+        {userStatus === UserState.CompletedVote && (
+          <ListGroup style={{ marginTop: 35 }}>
+            <ListGroupItem>
+              <InputWithTitle
+                title={`Add to Stake - Max: ${
+                  !claimData ? "-" : claimData.ethCredit
+                } ETH`}
+                id="stakeAddition"
+                placeholder="0"
+                value={stakeAddition}
+                onChange={(e) => setStakeAddition(e.target.value)}
+              />
+            </ListGroupItem>
+            <div
+              style={{ width: "100%", margin: "35px 0px 10px 0px" }}
+              id="addtoStakeButton"
+            >
+              <Button
+                disabled={
+                  addToStakePending ||
+                  Number.isNaN(Number(stakeAddition)) ||
+                  stakeAddition === ""
+                }
+                style={{ width: "100%" }}
+                onClick={async () => {
+                  await onAddToStake(stakeAddition)
+                }}
+              >
+                {addToStakePending ? "Pending..." : "Add to Stake"}
+              </Button>
+            </div>
+          </ListGroup>
+        )}
+        <ListGroup style={{ marginTop: 35 }}>
           <ListGroupItem>
             <InputWithTitle
               title="Add to Bounty"
@@ -237,7 +278,7 @@ const Vote: FunctionComponent = () => {
               {addToBountyPending ? "Pending..." : "Add to Bounty"}
             </Button>
           </div>
-        </ListGroup> */}
+        </ListGroup>
         <div
           style={{
             width: "100%",
