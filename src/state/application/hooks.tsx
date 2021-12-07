@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux"
 import { NetworkSymbolEnum } from "@config/constants"
 import { AppDispatch, AppState } from "../index"
 import { toggleWalletModal, selectNetwork } from "./actions"
-import { networkSymbolSelector } from "./selectors"
+import {
+  generalizedContractErrorMessageSelector,
+  networkSymbolSelector,
+} from "./selectors"
 
 export const useToggleWalletModal = () => {
   const isWalletModalOpen = useSelector<
@@ -32,3 +35,9 @@ export const useGetCurrentNetwork = () =>
   useSelector<AppState, AppState["application"]["networkSymbol"]>(
     networkSymbolSelector
   )
+
+export const useGeneralizedContractError = () =>
+  useSelector<
+    AppState,
+    AppState["application"]["generalizedContract"]["errorMessage"]
+  >(generalizedContractErrorMessageSelector)

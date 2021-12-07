@@ -1,8 +1,8 @@
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Web3Provider, TransactionResponse } from "@ethersproject/providers"
 import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 import { NetworkContextName, web3, web3Eth } from "@config/constants"
-import { useCallback, useEffect, useRef, useState } from "react"
 import { BigNumber } from "ethers"
 import { calculateGasMargin } from "@config/utils"
 import {
@@ -14,6 +14,8 @@ import {
   useGetCurrentSessionData,
 } from "@state/sessionData/hooks"
 import { useSetAuctionData, useSetPayoutData } from "@state/miscData/hooks"
+import { useDispatch } from "react-redux"
+import { setGeneralizedContractErrorMessage } from "@state/application/actions"
 
 export enum ReloadDataType {
   Auction,
@@ -100,6 +102,7 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
   const sessionData = useCurrentSessionData()
   const { account, chainId, library } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
+  const dispatch = useDispatch()
 
   const getCurrentSessionData = useGetCurrentSessionData()
   const setPayoutData = useSetPayoutData()
@@ -147,6 +150,7 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
       value: BigNumber | null
       cb: (response: any) => void
     }) => {
+      dispatch(setGeneralizedContractErrorMessage(null))
       if (account === undefined || account === null) {
         toggleWalletModal()
         alert(
@@ -176,17 +180,27 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
         )
         .catch((error) => {
           if (error?.code === -32603) {
-            const metaMaskData = error?.data?.message
-              ? `\n\nThe error message from MetaMask was: "${error.data.message}"`
-              : ""
-            alert(
-              `The transaction was reverted. You may not have enough ABC or ETH to complete this transaction.${metaMaskData}`
+            const ErrorMessage = (
+              <>
+                <p>
+                  The transaction was reverted. You may not have enough ABC or
+                  ETH to complete this transaction.
+                </p>{" "}
+                {error?.data?.message ? (
+                  <p>
+                    The error message from MetaMask was: "
+                    <i>{error.data.message}</i>"
+                  </p>
+                ) : null}
+              </>
             )
+
+            dispatch(setGeneralizedContractErrorMessage(ErrorMessage))
           }
           console.error(error)
         })
     },
-    [account, chainId, library, toggleWalletModal]
+    [account, chainId, dispatch, library, toggleWalletModal]
   )
 
   return {
