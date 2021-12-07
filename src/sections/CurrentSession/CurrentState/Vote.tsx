@@ -217,6 +217,18 @@ const Vote: FunctionComponent = () => {
             It seems you have already voted, or you are not logged in
           </Tooltip>
         </VerticalContainer>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 8,
+          }}
+        >
+          <SubText style={{ display: "flex", alignItems: "center" }}>
+            <User style={{ height: 14 }} /> {sessionData.numPpl} participants
+          </SubText>
+        </div>
         {userStatus === UserState.CompletedVote && (
           <ListGroup style={{ marginTop: 35 }}>
             <ListGroupItem>
@@ -279,18 +291,6 @@ const Vote: FunctionComponent = () => {
             </Button>
           </div>
         </ListGroup>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            marginTop: 5,
-          }}
-        >
-          <SubText style={{ display: "flex", alignItems: "center" }}>
-            <User style={{ height: 14 }} /> {sessionData.numPpl} participants
-          </SubText>
-        </div>
       </Form>
     </>
   )

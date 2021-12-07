@@ -699,8 +699,8 @@ export const useGetCurrentSessionData = () => {
         rankings,
         bounty: Number(formatEther(pricingSessionCore.bounty)),
         image_url:
-          pricingSessionMetadata?.image_preview_url ||
-          pricingSessionMetadata?.image_url,
+          pricingSessionMetadata?.image_url ||
+          pricingSessionMetadata?.image_preview_url,
         animation_url: pricingSessionMetadata?.animation_url || null,
         endTime,
         guessedAppraisal,
