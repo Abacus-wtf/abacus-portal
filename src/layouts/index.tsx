@@ -8,7 +8,7 @@ import Web3Modal from "@components/Web3Modal"
 import Web3 from "web3"
 import { useActiveWeb3React } from "@hooks/index"
 import { useSelectNetwork } from "@state/application/hooks"
-import { NetworkSymbolAndId } from "@config/constants"
+import { NetworkSymbolEnum, NetworkSymbolAndId } from "@config/constants"
 import { GlobalStyles } from "./styles"
 
 const StyledContainer = styled(Container)`
@@ -76,8 +76,7 @@ const GlobalLayout: React.FC = (props: any) => {
         <Navbar location={location} />
         <RowContainer>
           <Web3Modal />
-          {children}
-          {/* NetworkSymbolAndId[chainId] !== NetworkSymbolEnum.ARBITRUM ? (
+          {NetworkSymbolAndId[chainId] !== NetworkSymbolEnum.ARBITRUM ? (
             <div
               style={{
                 textAlign: "center",
@@ -92,7 +91,7 @@ const GlobalLayout: React.FC = (props: any) => {
             </div>
           ) : (
             children
-          ) */}
+          )}
         </RowContainer>
       </StyledContainer>
     </>
