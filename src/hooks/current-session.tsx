@@ -38,11 +38,7 @@ export const useOnAddToStake = () => {
       )
       method = pricingSessionContract.addToStake
       estimate = pricingSessionContract.estimateGas.addToStake
-      args = [
-        sessionData.address,
-        Number(sessionData.tokenId),
-        parseEther(amount),
-      ]
+      args = [sessionData.address, sessionData.tokenId, parseEther(amount)]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -94,7 +90,7 @@ export const useOnAddToBountyVote = () => {
       )
       method = pricingSessionContract.addToBounty
       estimate = pricingSessionContract.estimateGas.addToBounty
-      args = [sessionData.address, Number(sessionData.tokenId)]
+      args = [sessionData.address, sessionData.tokenId]
       value = parseEther(amount)
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -148,12 +144,7 @@ export const useOnSubmitVote = () => {
       )
       method = pricingSessionContract.setVote
       estimate = pricingSessionContract.estimateGas.setVote
-      args = [
-        sessionData.address,
-        Number(sessionData.tokenId),
-        parseEther(stake),
-        hash,
-      ]
+      args = [sessionData.address, sessionData.tokenId, parseEther(stake), hash]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -205,7 +196,7 @@ export const useOnUpdateVote = () => {
       )
       method = pricingSessionContract.updateVote
       estimate = pricingSessionContract.estimateGas.updateVote
-      args = [sessionData.address, Number(sessionData.tokenId), hash]
+      args = [sessionData.address, sessionData.tokenId, hash]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -263,7 +254,7 @@ export const useOnWeightVote = () => {
       estimate = pricingSessionContract.estimateGas.weightVote
       args = [
         sessionData.address,
-        Number(sessionData.tokenId),
+        sessionData.tokenId,
         parseEther(`${appraisalValue}`),
         seed,
       ]
@@ -321,7 +312,7 @@ export const useOnSetFinalAppraisal = () => {
     )
     method = pricingSessionContract.setFinalAppraisal
     estimate = pricingSessionContract.estimateGas.setFinalAppraisal
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {
@@ -371,7 +362,7 @@ export const useOnHarvest = () => {
     )
     method = pricingSessionContract.harvest
     estimate = pricingSessionContract.estimateGas.harvest
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {
@@ -421,7 +412,7 @@ export const useOnClaim = () => {
     )
     method = pricingSessionContract.claim
     estimate = pricingSessionContract.estimateGas.claim
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {
@@ -471,7 +462,7 @@ export const useOnEndSession = () => {
     )
     method = pricingSessionContract.endSession
     estimate = pricingSessionContract.estimateGas.endSession
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {
