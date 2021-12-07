@@ -43,6 +43,7 @@
     "global-require": "off",
     "import/no-dynamic-require": "off",
     "max-classes-per-file": "off",
+    "react/no-unescaped-entities": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {

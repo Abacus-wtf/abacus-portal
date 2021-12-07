@@ -9,6 +9,7 @@ import Web3 from "web3"
 import { useActiveWeb3React } from "@hooks/index"
 import { useSelectNetwork } from "@state/application/hooks"
 import { NetworkSymbolEnum, NetworkSymbolAndId } from "@config/constants"
+import GeneralizedContractError from "@components/GeneralizedContractError"
 import { GlobalStyles } from "./styles"
 
 const StyledContainer = styled(Container)`
@@ -74,6 +75,7 @@ const GlobalLayout: React.FC = (props: any) => {
       </Helmet>
       <StyledContainer>
         <Navbar location={location} />
+        <GeneralizedContractError />
         <RowContainer>
           <Web3Modal />
           {NetworkSymbolAndId[chainId] !== NetworkSymbolEnum.ARBITRUM ? (
