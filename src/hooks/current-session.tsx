@@ -5,10 +5,68 @@ import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
 import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
-import { useActiveWeb3React, useGeneralizedContractCall } from "@hooks/index"
+import {
+  ReloadDataType,
+  useActiveWeb3React,
+  useGeneralizedContractCall,
+} from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
+
+export const useOnAddToStake = () => {
+  const { account, library } = useActiveWeb3React()
+  const sessionData = useCurrentSessionData()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    ReloadDataType.ClaimPoolAndSession
+  )
+  const addTransaction = useTransactionAdder()
+  const networkSymbol = useGetCurrentNetwork()
+
+  const onAddToStake = useCallback(
+    async (amount: string) => {
+      let estimate,
+        method: (...args: any) => Promise<TransactionResponse>,
+        args: Array<BigNumber | number | string>,
+        value: BigNumber | null
+
+      const pricingSessionContract = getContract(
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ABC_PRICING_SESSION_ABI,
+        library,
+        account
+      )
+      method = pricingSessionContract.addToStake
+      estimate = pricingSessionContract.estimateGas.addToStake
+      args = [sessionData.address, sessionData.tokenId, parseEther(amount)]
+      value = null
+      const txnCb = async (response: any) => {
+        addTransaction(response, {
+          summary: "Add to Stake",
+        })
+      }
+      await generalizedContractCall({
+        method,
+        estimate,
+        args,
+        value,
+        cb: txnCb,
+      })
+    },
+    [
+      account,
+      library,
+      sessionData,
+      generalizedContractCall,
+      addTransaction,
+      networkSymbol,
+    ]
+  )
+  return {
+    onAddToStake,
+    isPending,
+  }
+}
 
 export const useOnAddToBountyVote = () => {
   const { account, library } = useActiveWeb3React()
@@ -32,7 +90,7 @@ export const useOnAddToBountyVote = () => {
       )
       method = pricingSessionContract.addToBounty
       estimate = pricingSessionContract.estimateGas.addToBounty
-      args = [sessionData.address, Number(sessionData.tokenId)]
+      args = [sessionData.address, sessionData.tokenId]
       value = parseEther(amount)
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -65,7 +123,9 @@ export const useOnAddToBountyVote = () => {
 export const useOnSubmitVote = () => {
   const { account, library } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
-  const { generalizedContractCall, isPending } = useGeneralizedContractCall()
+  const { generalizedContractCall, isPending } = useGeneralizedContractCall(
+    ReloadDataType.ClaimPoolAndSession
+  )
   const addTransaction = useTransactionAdder()
   const networkSymbol = useGetCurrentNetwork()
 
@@ -84,12 +144,7 @@ export const useOnSubmitVote = () => {
       )
       method = pricingSessionContract.setVote
       estimate = pricingSessionContract.estimateGas.setVote
-      args = [
-        sessionData.address,
-        Number(sessionData.tokenId),
-        parseEther(stake),
-        hash,
-      ]
+      args = [sessionData.address, sessionData.tokenId, parseEther(stake), hash]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -142,7 +197,7 @@ export const useOnUpdateVote = () => {
       )
       method = pricingSessionContract.updateVote
       estimate = pricingSessionContract.estimateGas.updateVote
-      args = [sessionData.address, Number(sessionData.tokenId), hash]
+      args = [sessionData.address, sessionData.tokenId, hash]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -200,7 +255,7 @@ export const useOnWeightVote = () => {
       estimate = pricingSessionContract.estimateGas.weightVote
       args = [
         sessionData.address,
-        Number(sessionData.tokenId),
+        sessionData.tokenId,
         parseEther(`${appraisalValue}`),
         seed,
       ]
@@ -258,7 +313,7 @@ export const useOnSetFinalAppraisal = () => {
     )
     method = pricingSessionContract.setFinalAppraisal
     estimate = pricingSessionContract.estimateGas.setFinalAppraisal
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {
@@ -308,7 +363,7 @@ export const useOnHarvest = () => {
     )
     method = pricingSessionContract.harvest
     estimate = pricingSessionContract.estimateGas.harvest
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {
@@ -358,7 +413,7 @@ export const useOnClaim = () => {
     )
     method = pricingSessionContract.claim
     estimate = pricingSessionContract.estimateGas.claim
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {
@@ -408,7 +463,7 @@ export const useOnEndSession = () => {
     )
     method = pricingSessionContract.endSession
     estimate = pricingSessionContract.estimateGas.endSession
-    args = [sessionData.address, Number(sessionData.tokenId)]
+    args = [sessionData.address, sessionData.tokenId]
     value = null
     const txnCb = async (response: any) => {
       addTransaction(response, {

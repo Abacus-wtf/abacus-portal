@@ -32,19 +32,26 @@ const CurrentSession = ({ location }) => {
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
   const isLoading = fetchStatus === PromiseStatus.Pending
-  const { address, tokenId, nonce } = queryString.parse(location.search)
+  const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
   const networkSymbol = useGetCurrentNetwork()
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
-
+  const [isFisk] = useState(
+    tokenId ===
+      "103662588172564032573538786729890701797701353903294947741648606022377129639937" &&
+      address === "0x495f947276749ce646f68ac8c248420045cb7b5e"
+  )
   useEffect(() => {
     const loadData = async () => {
-      await getCurrentSessionData(
-        String(address),
-        String(tokenId),
-        Number(nonce)
-      )
+      if (sessionData.address === "") {
+        await getCurrentSessionData(
+          String(address),
+          String(tokenId),
+          Number(nonce),
+          legacy !== undefined && legacy
+        )
+      }
       if (claimData === null) {
         await setPayoutData(account)
       }
@@ -66,6 +73,8 @@ const CurrentSession = ({ location }) => {
     getCurrentSessionData,
     claimData,
     setPayoutData,
+    legacy,
+    sessionData,
   ])
 
   if (!account) {
@@ -137,9 +146,11 @@ const CurrentSession = ({ location }) => {
               Owned by{" "}
               <OutboundLink
                 target="_blank"
-                href={`https://opensea.io/${sessionData.ownerAddress}`}
+                href={`https://opensea.io/${
+                  isFisk ? "fiskantes" : sessionData.ownerAddress
+                }`}
               >
-                {sessionData.owner}
+                {isFisk ? "Fiskantes" : sessionData.owner}
               </OutboundLink>
             </SubText>
           </VerticalSmallGapContainer>

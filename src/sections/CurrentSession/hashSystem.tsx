@@ -74,11 +74,10 @@ export default ({ onCreateHash }: HashSystem) => {
     ) {
       onCreateHash(Number(appraisalValue), Number(passwordValue))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     account,
-    appraisalValue,
     onCreateHash,
-    passwordValue,
     sessionData.address,
     sessionData.nonce,
     sessionData.tokenId,

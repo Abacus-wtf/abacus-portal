@@ -108,7 +108,7 @@ export const useSetPayoutData = (isLegacy = false) => {
         pricingSessionContract.methods.principalStored(account).call(),
       ])
       const eth = Number(formatEther(ethPayout))
-      const abc = Number(formatEther(ethToAbc)) * Number(formatEther(ethPayout))
+      const abc = Number(ethToAbc) * Number(formatEther(ethPayout))
       const ethCredit = Number(formatEther(principalStored))
       dispatch(setClaimData({ ethPayout: eth, abcPayout: abc, ethCredit }))
     },
