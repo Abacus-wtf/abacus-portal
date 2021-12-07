@@ -5,6 +5,7 @@ import { useCurrentSessionData } from "@state/sessionData/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
 import React, { FunctionComponent } from "react"
 import { Modal, ModalBody } from "shards-react"
+import DancingPepe from "@images/dancing_pepe.gif"
 
 const ButtonsContainer = styled.div`
   margin-top: 25px;
@@ -23,13 +24,24 @@ const CongratsModal: FunctionComponent<CongratsModalProps> = ({
 }) => {
   const { address, tokenId, nonce, collectionTitle } = useCurrentSessionData()
   return (
-    <Modal size="md" open={open} toggle={toggle} centered>
+    <Modal size="lg" open={open} toggle={toggle} centered>
       <ModalBody>
-        <h4>Congrats!</h4>
-        <UniversalContainer>
-          <Label htmlFor="session-state" style={{ margin: "25px 0 5px 5px" }}>
-            Congratulations for appraising! Share it on Twitter :)
+        <UniversalContainer style={{ alignItems: "center" }}>
+          <Label
+            htmlFor="session-state"
+            style={{
+              margin: "0px 0 5px 5px",
+              fontSize: "1.5rem",
+              textAlign: "center",
+            }}
+          >
+            Congratulations for appraising! Share it on Twitter 🎉🎉🎉
           </Label>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <img
+            src={DancingPepe}
+            style={{ maxHeight: 400, maxWidth: 200, margin: 25 }}
+          />
           <ButtonsContainer>
             <Button
               style={{ borderRadius: 8 }}
