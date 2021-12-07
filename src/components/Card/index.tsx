@@ -10,6 +10,7 @@ const CardContainer = styled.div`
   width: 100%;
   height: 100%;
   min-height: 350px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,7 +60,7 @@ const BoldText = styled(Text)`
   font-weight: bold;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 80%;
+  max-width: 60%;
   overflow: hidden;
 `
 
@@ -113,7 +114,8 @@ export default ({
     <OuterTextContainer>
       <TextContainer>
         <BoldText>
-          {nftName} #{tokenId}
+          {nftName} #
+          {tokenId.length >= 8 ? `${tokenId.slice(0, 8)}...` : tokenId}
         </BoldText>
         <EthText>
           <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
