@@ -60,7 +60,7 @@ const BoldText = styled(Text)`
   font-weight: bold;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 80%;
+  max-width: 60%;
   overflow: hidden;
 `
 
