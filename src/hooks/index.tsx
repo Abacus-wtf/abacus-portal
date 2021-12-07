@@ -175,6 +175,14 @@ export const useGeneralizedContractCall = (reloadType?: ReloadDataType) => {
           })
         )
         .catch((error) => {
+          if (error?.code === -32603) {
+            const metaMaskData = error?.data?.message
+              ? `\n\nThe error message from MetaMask was: "${error.data.message}"`
+              : ""
+            alert(
+              `The transaction was reverted. You may not have enough ABC or ETH to complete this transaction.${metaMaskData}`
+            )
+          }
           console.error(error)
         })
     },
