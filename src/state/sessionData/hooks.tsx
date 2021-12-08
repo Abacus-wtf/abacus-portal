@@ -694,6 +694,14 @@ export const useGetCurrentSessionData = () => {
             Math.abs(finalAppraisalValue - bVal)
           )
         })
+      } else {
+        rankings = rankings.sort((a, b) => {
+          const aVal = Number(a.appraisal)
+          const bVal = Number(b.appraisal)
+          if (aVal === 0) return 10000000
+          if (bVal === 0) return -10000000
+          return 0
+        })
       }
 
       const sessionData: SessionData = {
