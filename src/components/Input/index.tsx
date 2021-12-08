@@ -85,7 +85,7 @@ InputWithTitle.defaultProps = {
   type: "",
 }
 
-interface InputWithTitleAndButton extends InputWithTitle {
+interface InputWithTitleAndButtonProps extends InputWithTitle {
   buttonText: string
   onClick: () => void
 }
@@ -103,7 +103,7 @@ export const InputWithTitleAndButton = ({
   buttonText,
   onClick,
   ...props
-}: InputWithTitleAndButton) => (
+}: InputWithTitleAndButtonProps) => (
   <Container type={type}>
     <Label style={{ marginBottom: type === "checkbox" ? 0 : 10 }} htmlFor={id}>
       {title}
