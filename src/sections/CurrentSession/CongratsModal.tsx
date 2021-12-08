@@ -6,6 +6,7 @@ import { OutboundLink } from "gatsby-plugin-google-gtag"
 import React, { FunctionComponent } from "react"
 import { Modal, ModalBody } from "shards-react"
 import DancingPepe from "@images/dancing_pepe.gif"
+import moment from "moment"
 
 const ButtonsContainer = styled.div`
   margin-top: 25px;
@@ -22,7 +23,8 @@ const CongratsModal: FunctionComponent<CongratsModalProps> = ({
   open,
   toggle,
 }) => {
-  const { address, tokenId, nonce, collectionTitle } = useCurrentSessionData()
+  const { address, tokenId, nonce, collectionTitle, endTime } =
+    useCurrentSessionData()
   return (
     <Modal size="lg" open={open} toggle={toggle} centered>
       <ModalBody>
@@ -42,6 +44,18 @@ const CongratsModal: FunctionComponent<CongratsModalProps> = ({
             src={DancingPepe}
             style={{ maxHeight: 400, maxWidth: 200, margin: 25 }}
           />
+          <Label
+            htmlFor="session-state"
+            style={{
+              margin: "0px 0 5px 5px",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Make sure to set a reminder for{" "}
+            {moment(endTime).format("MMM Do hh:mm A")}! If you don't weigh your
+            vote, your stake will be lost and your vote will not count!
+          </Label>
           <ButtonsContainer>
             <Button
               style={{ borderRadius: 8 }}
