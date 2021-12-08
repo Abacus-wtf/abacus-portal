@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import { FormInput } from "shards-react"
+import { ButtonsWhite } from "@components/Button"
 import { Label } from "../global.styles"
 
 export const MainInput = styled(FormInput).attrs((props) => ({
@@ -83,3 +84,39 @@ export const InputWithTitle = ({
 InputWithTitle.defaultProps = {
   type: "",
 }
+
+interface InputWithTitleAndButton extends InputWithTitle {
+  buttonText: string
+  onClick: () => void
+}
+
+const InputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`
+
+export const InputWithTitleAndButton = ({
+  title,
+  type,
+  id,
+  buttonText,
+  onClick,
+  ...props
+}: InputWithTitleAndButton) => (
+  <Container type={type}>
+    <Label style={{ marginBottom: type === "checkbox" ? 0 : 10 }} htmlFor={id}>
+      {title}
+    </Label>
+    <InputContainer>
+      <MainInput
+        id={id}
+        style={{ borderRadius: 0 }}
+        size="lg"
+        inputtype={type}
+        {...props}
+      />
+      <ButtonsWhite onClick={onClick}>{buttonText}</ButtonsWhite>
+    </InputContainer>
+  </Container>
+)
