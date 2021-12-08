@@ -1,5 +1,5 @@
 import GlobalLayout from "@layouts/index"
-import Home from "@sections/Home"
+import Legacy from "@sections/Legacy"
 import React from "react"
 
 const IndexPage = (props: any) => (
@@ -10,7 +10,7 @@ const IndexPage = (props: any) => (
   ) */
 
   <GlobalLayout {...props}>
-    <Home />
+    <Legacy />
   </GlobalLayout>
 )
 

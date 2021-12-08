@@ -131,35 +131,7 @@ const Navbar = ({ location }) => {
               href="/"
               active={(location.pathname === "/").toString()}
             >
-              Explore
-            </HeaderLink>
-            <HeaderLink
-              as="a"
-              href="/auction"
-              active={location.pathname.includes("/auction").toString()}
-            >
-              Auction
-            </HeaderLink>
-            <HeaderLink
-              as="a"
-              href="/my-sessions"
-              active={location.pathname.includes("/my-sessions").toString()}
-            >
-              My Sessions
-            </HeaderLink>
-            <HeaderLink
-              as="a"
-              href="/claim-pool"
-              active={location.pathname.includes("/claim-pool").toString()}
-            >
-              Claim & Deposit
-            </HeaderLink>
-            <HeaderLink
-              as="a"
-              href="/legacy"
-              active={location.pathname.includes("/legacy").toString()}
-            >
-              Legacy
+              Legacy v1
             </HeaderLink>
           </ListSection>
           <ListSectionSelector>
