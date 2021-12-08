@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState, useEffect } from "react"
 import Button from "@components/Button"
 import { HorizontalListGroup } from "@components/ListGroupMods"
 import { ListGroupItem } from "shards-react"
-import { InputWithTitle } from "@components/Input"
+import { InputWithTitle, InputWithTitleAndButton } from "@components/Input"
 import {
   useOnClaimPayout,
   useOnDepositPrincipal,
@@ -103,12 +103,14 @@ const ClaimPool: FunctionComponent = () => {
             />
           </MaxWidthItem>
           <MaxWidthItem>
-            <InputWithTitle
+            <InputWithTitleAndButton
               title="Claim Principal"
               id="claimPrincipal"
               placeholder="Enter claim amount in ETH"
               value={claimPrincipalVal}
               onChange={(e) => setClaimPrincipalVal(e.target.value)}
+              buttonText="Max"
+              onClick={() => setClaimPrincipalVal(claimData.ethCredit)}
             />
           </MaxWidthItem>
         </HorizontalListGroup>
@@ -179,21 +181,25 @@ const ClaimPool: FunctionComponent = () => {
         </HorizontalListGroup>
         <HorizontalListGroup>
           <MaxWidthItem>
-            <InputWithTitle
+            <InputWithTitleAndButton
               title="ETH Withdrawal Amount"
               id="ethWithdrawal"
               placeholder="Enter withdraw amount in ETH"
               value={ethWithdrawalVal}
               onChange={(e) => setEthWithdrawalVal(e.target.value)}
+              buttonText="Max"
+              onClick={() => setEthWithdrawalVal(claimData.ethPayout)}
             />
           </MaxWidthItem>
           <MaxWidthItem>
-            <InputWithTitle
+            <InputWithTitleAndButton
               title="ABC Withdrawal Amount"
               id="abcWithdrawal"
               placeholder="Enter withdraw amount in ABC"
               value={abcWithdrawalVal}
               onChange={(e) => setAbcWithdrawalVal(e.target.value)}
+              buttonText="Max"
+              onClick={() => setAbcWithdrawalVal(claimData.abcPayout)}
             />
           </MaxWidthItem>
         </HorizontalListGroup>
