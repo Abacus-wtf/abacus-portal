@@ -133,6 +133,13 @@ const Navbar = ({ location }) => {
             >
               Legacy v1
             </HeaderLink>
+            <HeaderLink
+              as="a"
+              href="/legacyv2"
+              active={(location.pathname === "/").toString()}
+            >
+              Legacy v2
+            </HeaderLink>
           </ListSection>
           <ListSectionSelector>
             <NetworkSelectorButton />
