@@ -7,6 +7,7 @@ import { useActiveWeb3React } from "@hooks/index"
 import ConnectWalletAlert from "@components/ConnectWalletAlert"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
+import { NetworkSymbolEnum } from "@config/constants"
 import RightSection from "./RightSection"
 import {
   SplitContainer,
@@ -35,7 +36,7 @@ const Auction = () => {
     }
   }, [account, networkSymbol, auctionData, setAuctionData])
 
-  if (!account) {
+  if (!account && networkSymbol !== NetworkSymbolEnum.ARBITRUM) {
     return (
       <SmallUniversalContainer
         style={{ alignItems: "center", justifyContent: "center" }}

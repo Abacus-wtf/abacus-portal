@@ -17,6 +17,7 @@ import { useGetCurrentNetwork } from "@state/application/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
 import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import RankingsModal from "@components/RankingsModal"
+import { NetworkSymbolEnum } from "@config/constants"
 import {
   SplitContainer,
   VerticalContainer,
@@ -88,7 +89,7 @@ const CurrentSession = ({ location }) => {
     getCurrentSessionDataGrt,
   ])
 
-  if (!account) {
+  if (!account && networkSymbol !== NetworkSymbolEnum.ARBITRUM) {
     return (
       <SmallUniversalContainer
         style={{ alignItems: "center", justifyContent: "center" }}

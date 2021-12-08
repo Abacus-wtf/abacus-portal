@@ -17,6 +17,7 @@ import {
   useGetMultiSessionData,
   useMultiSessionState,
 } from "@state/sessionData/hooks"
+import { NetworkSymbolEnum } from "@config/constants"
 import { VerticalContainer } from "../CurrentSession/CurrentSession.styles"
 
 const MaxWidthItem = styled(ListGroupItem)`
@@ -65,7 +66,7 @@ const Legacy: FunctionComponent = () => {
     }
   }, [account, claimData, getMultiSessionData, networkSymbol, setPayoutData])
 
-  if (!account) {
+  if (!account && networkSymbol !== NetworkSymbolEnum.ARBITRUM) {
     return (
       <SmallUniversalContainer
         style={{ alignItems: "center", justifyContent: "center" }}
