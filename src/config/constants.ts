@@ -24,6 +24,7 @@ export declare enum ChainId {
 export type NetworkSymbol = "ETH" | "AETH"
 
 export enum NetworkSymbolEnum {
+  NONE = "SOLID_NUTHIN",
   ETH = "ETH",
   ARBITRUM = "AETH",
 }
@@ -103,16 +104,32 @@ export const ABC_TOKEN_ADDRESS = (networkSymbol: NetworkSymbolEnum) =>
     ? ETH_ABC_TOKEN_ADDRESS
     : ARB_ABC_TOKEN_ADDRESS
 
-export const ABC_AUCTION_ADDRESS = (networkSymbol: NetworkSymbolEnum) =>
-  networkSymbol === NetworkSymbolEnum.ETH
-    ? ETH_ABC_AUCTION_ADDRESS
-    : ARB_ABC_AUCTION_ADDRESS
-
-export const ABC_PRICING_SESSION_ADDRESS = (networkSymbol: NetworkSymbolEnum) =>
-  networkSymbol === NetworkSymbolEnum.ETH
-    ? ETH_ABC_PRICING_SESSION_ADDRESS
-    : ARB_ABC_PRICING_SESSION_ADDRESS
-
+export const ABC_AUCTION_ADDRESS = (networkSymbol: NetworkSymbolEnum) => {
+  switch (networkSymbol) {
+    case NetworkSymbolEnum.ETH:
+      return ETH_ABC_AUCTION_ADDRESS
+    case NetworkSymbolEnum.ARBITRUM:
+      return ARB_ABC_AUCTION_ADDRESS
+    case NetworkSymbolEnum.NONE:
+      return ARB_ABC_AUCTION_ADDRESS
+    default:
+      return ""
+  }
+}
+export const ABC_PRICING_SESSION_ADDRESS = (
+  networkSymbol: NetworkSymbolEnum
+) => {
+  switch (networkSymbol) {
+    case NetworkSymbolEnum.ETH:
+      return ETH_ABC_PRICING_SESSION_ADDRESS
+    case NetworkSymbolEnum.ARBITRUM:
+      return ARB_ABC_PRICING_SESSION_ADDRESS
+    case NetworkSymbolEnum.NONE:
+      return ARB_ABC_PRICING_SESSION_ADDRESS
+    default:
+      return ""
+  }
+}
 export const ETH_USD_ORACLE_ADDRESS =
   "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
 

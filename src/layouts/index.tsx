@@ -59,7 +59,7 @@ const GlobalLayout: React.FC = (props: any) => {
   useEffect(() => {
     const network = NetworkSymbolAndId[chainId]
     if (!account) {
-      selectNetwork(NetworkSymbolEnum.ARBITRUM)
+      selectNetwork(NetworkSymbolEnum.NONE)
     } else if (network) {
       selectNetwork(network)
     }
@@ -84,7 +84,8 @@ const GlobalLayout: React.FC = (props: any) => {
         <GeneralizedContractError />
         <RowContainer>
           <Web3Modal />
-          {networkSymbol !== NetworkSymbolEnum.ARBITRUM ? (
+          {networkSymbol !== NetworkSymbolEnum.ARBITRUM &&
+          networkSymbol !== NetworkSymbolEnum.NONE ? (
             <div
               style={{
                 textAlign: "center",

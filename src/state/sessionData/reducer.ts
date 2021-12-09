@@ -124,21 +124,21 @@ export const initialState = {
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
     page: 0,
-    isLastPage: false,
+    isLastPage: true,
   },
   mySessionsState: {
     data: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
     page: 0,
-    isLastPage: false,
+    isLastPage: true,
   },
   activeSessionsState: {
     data: [],
     fetchStatus: PromiseStatus.Idle,
     errorMessage: null,
     page: 0,
-    isLastPage: false,
+    isLastPage: true,
   },
 } as SessionDataState
 
