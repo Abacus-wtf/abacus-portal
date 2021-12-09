@@ -3,8 +3,12 @@ import styled from "styled-components"
 import { Row } from "shards-react"
 import { useActiveWeb3React, usePrevious } from "@hooks/index"
 import { shortenAddress } from "@config/utils"
-import { useToggleWalletModal } from "@state/application/hooks"
+import {
+  useGetCurrentNetwork,
+  useToggleWalletModal,
+} from "@state/application/hooks"
 import { Menu, X } from "react-feather"
+import { NetworkSymbolEnum } from "@config/constants"
 import Button, { ButtonClear } from "../Button"
 import NetworkSelectorButton from "./NetworkSelectorButton"
 
@@ -71,14 +75,18 @@ const MobileNavButton = styled(ButtonClear)`
   }
 `
 
-const HeaderLink = styled(ButtonClear)<{ active: string }>`
+const HeaderLink = styled(ButtonClear).attrs(({ disabled }) => ({
+  // eslint-disable-next-line no-script-url
+  ...(disabled ? { href: "javascript:void(0)" } : {}),
+}))<{ active: string }>`
   min-width: fit-content;
   opacity: 0.4;
   transition: 0.2s;
   font-size: 1rem;
+  ${({ disabled }) => (disabled ? "cursor: not-allowed; opacity: 0.2;" : "")}
 
   &:hover {
-    opacity: 1;
+    opacity: ${({ disabled }) => (disabled ? "0.2" : "1")};
   }
 
   ${({ active }) =>
@@ -110,6 +118,8 @@ const Navbar = ({ location }) => {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useToggleWalletModal()
   const prevLocation = usePrevious(location)
+  const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   useEffect(() => {
     if (location !== prevLocation) {
@@ -144,6 +154,7 @@ const Navbar = ({ location }) => {
               as="a"
               href="/my-sessions"
               active={location.pathname.includes("/my-sessions").toString()}
+              disabled={isNetworkSymbolNone}
             >
               My Sessions
             </HeaderLink>
@@ -151,6 +162,7 @@ const Navbar = ({ location }) => {
               as="a"
               href="/claim-pool"
               active={location.pathname.includes("/claim-pool").toString()}
+              disabled={isNetworkSymbolNone}
             >
               Claim & Deposit
             </HeaderLink>
