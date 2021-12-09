@@ -5,7 +5,6 @@ import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
 import {
   ABC_PRICING_SESSION_ADDRESS,
-  ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY,
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import {
@@ -17,7 +16,7 @@ import {
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
-export const useOnClaimPayout = (isLegacy = false) => {
+export const useOnClaimPayout = () => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
@@ -34,9 +33,7 @@ export const useOnClaimPayout = (isLegacy = false) => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        isLegacy
-          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
-          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
