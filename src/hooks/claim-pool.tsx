@@ -3,9 +3,7 @@ import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
-import {
-  ABC_PRICING_SESSION_ADDRESS,
-} from "@config/constants"
+import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import {
   useActiveWeb3React,
@@ -66,7 +64,6 @@ export const useOnClaimPayout = () => {
       })
     },
     [
-      isLegacy,
       networkSymbol,
       library,
       account,
@@ -81,7 +78,7 @@ export const useOnClaimPayout = () => {
   }
 }
 
-export const useOnClaimPrincipalAmount = (isLegacy = false) => {
+export const useOnClaimPrincipalAmount = () => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
@@ -97,9 +94,7 @@ export const useOnClaimPrincipalAmount = (isLegacy = false) => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        isLegacy
-          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
-          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -121,14 +116,7 @@ export const useOnClaimPrincipalAmount = (isLegacy = false) => {
         cb: txnCb,
       })
     },
-    [
-      isLegacy,
-      networkSymbol,
-      library,
-      account,
-      generalizedContractCall,
-      addTransaction,
-    ]
+    [networkSymbol, library, account, generalizedContractCall, addTransaction]
   )
   return {
     onClaimPrincipal,
