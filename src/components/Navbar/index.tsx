@@ -156,7 +156,7 @@ const Navbar = ({ location }) => {
             </HeaderLink>
             <HeaderLink
               as="a"
-              href="/legacy"
+              href="https://legacy.abacus.wtf"
               active={location.pathname.includes("/legacy").toString()}
             >
               Legacy
