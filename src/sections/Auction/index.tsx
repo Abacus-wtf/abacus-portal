@@ -26,17 +26,21 @@ const Auction = () => {
       ? auctionData.optionalInfo
       : undefined
   const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   useEffect(() => {
     const loadUserData = async () => {
       await setAuctionData()
     }
-    if (account && networkSymbol && auctionData === null) {
+    if (
+      (account && networkSymbol && auctionData === null) ||
+      isNetworkSymbolNone
+    ) {
       loadUserData()
     }
-  }, [account, networkSymbol, auctionData, setAuctionData])
+  }, [account, networkSymbol, auctionData, setAuctionData, isNetworkSymbolNone])
 
-  if (!account && networkSymbol !== NetworkSymbolEnum.ARBITRUM) {
+  if (!account && !isNetworkSymbolNone) {
     return (
       <SmallUniversalContainer
         style={{ alignItems: "center", justifyContent: "center" }}

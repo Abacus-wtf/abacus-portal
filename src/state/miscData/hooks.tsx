@@ -53,7 +53,9 @@ export const useSetAuctionData = () => {
 
     const [highestBidderUserVote, userVote] = await Promise.all([
       auctionContract.methods.userVote(nonce, highestBidder).call(),
-      auctionContract.methods.userVote(nonce, account).call(),
+      ...(account
+        ? [auctionContract.methods.userVote(nonce, account).call()]
+        : []),
     ])
     let optionalInfo
     if (highestBidderUserVote.nftAddress !== ZERO_ADDRESS) {
