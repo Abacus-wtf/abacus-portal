@@ -1,10 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, {
-  FormEvent,
-  FunctionComponent,
-  useContext,
-  useState,
-} from "react"
+import React, { FormEvent, useContext, useState } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
@@ -43,10 +38,15 @@ import {
 } from "../CurrentSession.styles"
 import CongratsModal from "../CongratsModal"
 
-const Vote: FunctionComponent = () => {
+const Vote = ({
+  congratsOpen,
+  setCongratsOpen,
+}: {
+  congratsOpen: boolean
+  setCongratsOpen: (input: boolean) => void
+}) => {
   const [appraisalHash, setAppraisalHash] = useState("")
   const { account } = useActiveWeb3React()
-  const [congratsOpen, setCongratsOpen] = useState(false)
   const networkSymbol = useGetCurrentNetwork()
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
@@ -114,7 +114,8 @@ const Vote: FunctionComponent = () => {
       <Label>
         NOTE: Your browser will store your seed number and appraisal number for
         a given pricing session. However, if you are using a private browser,
-        please ensure that you save your values elsewhere.
+        please ensure that you save your values elsewhere. Also, keep in mind,
+        you will be charged in additional 0.004 ETH for a keeper and bounty tax.
       </Label>
       <Form
         disabled={isNetworkSymbolNone}
