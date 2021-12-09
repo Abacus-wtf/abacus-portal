@@ -97,7 +97,7 @@ export const useSetPayoutData = (isLegacy = 1) => {
   return useCallback(
     async (account: string) => {
       const pricingSessionContract = getPricingSessionContract(
-        isLegacy
+        isLegacy === 1
           ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
           : ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2
       )
