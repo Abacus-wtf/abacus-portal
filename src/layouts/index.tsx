@@ -13,6 +13,7 @@ import {
 } from "@state/application/hooks"
 import { NetworkSymbolEnum, NetworkSymbolAndId } from "@config/constants"
 import GeneralizedContractError from "@components/GeneralizedContractError"
+import NotConnectedAlert from "@components/NotConnectedAlert"
 import { GlobalStyles } from "./styles"
 
 const StyledContainer = styled(Container)`
@@ -35,6 +36,8 @@ const GlobalLayout: React.FC = (props: any) => {
   const { chainId, account } = useActiveWeb3React()
   const selectNetwork = useSelectNetwork()
   const networkSymbol = useGetCurrentNetwork()
+  const isArbitrumNetwork = networkSymbol === NetworkSymbolEnum.ARBITRUM
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -82,10 +85,10 @@ const GlobalLayout: React.FC = (props: any) => {
       <StyledContainer>
         <Navbar location={location} />
         <GeneralizedContractError />
+        <NotConnectedAlert />
         <RowContainer>
           <Web3Modal />
-          {networkSymbol !== NetworkSymbolEnum.ARBITRUM &&
-          networkSymbol !== NetworkSymbolEnum.NONE ? (
+          {!isArbitrumNetwork && !isNetworkSymbolNone ? (
             <div
               style={{
                 textAlign: "center",

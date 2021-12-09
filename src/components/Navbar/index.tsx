@@ -169,6 +169,7 @@ const Navbar = ({ location }) => {
               as="a"
               href="https://legacy.abacus.wtf"
               active={location.pathname.includes("/legacy").toString()}
+              disabled={isNetworkSymbolNone}
             >
               Legacy
             </HeaderLink>

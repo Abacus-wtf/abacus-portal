@@ -16,6 +16,9 @@ export const theme = {
 
     accent: "#355DFF",
   },
+  layout: {
+    maxWidth: "800px",
+  },
   copy: {
     large: "40px",
   },
