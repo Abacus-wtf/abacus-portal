@@ -29,9 +29,7 @@ import CurrentState from "./CurrentState"
 const CurrentSession = ({ location }) => {
   const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
   const getCurrentSessionData = useGetCurrentSessionData()
-  const getCurrentSessionDataGrt = useGetCurrentSessionDataGRT(
-    legacy ? Boolean(legacy) : false
-  )
+  const getCurrentSessionDataGrt = useGetCurrentSessionDataGRT(Number(legacy))
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()

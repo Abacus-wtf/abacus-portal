@@ -6,6 +6,7 @@ import { getContract } from "@config/utils"
 import {
   ABC_PRICING_SESSION_ADDRESS,
   ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY,
+  ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2,
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import {
@@ -17,7 +18,7 @@ import {
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
-export const useOnClaimPayout = (isLegacy = false) => {
+export const useOnClaimPayout = (isLegacy = 1) => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
@@ -34,9 +35,9 @@ export const useOnClaimPayout = (isLegacy = false) => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        isLegacy
+        isLegacy === 1
           ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
-          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+          : ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2,
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -84,13 +85,12 @@ export const useOnClaimPayout = (isLegacy = false) => {
   }
 }
 
-export const useOnClaimPrincipalAmount = (isLegacy = false) => {
+export const useOnClaimPrincipalAmount = (isLegacy = 1) => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
   )
   const addTransaction = useTransactionAdder()
-  const networkSymbol = useGetCurrentNetwork()
 
   const onClaimPrincipal = useCallback(
     async (amount: string) => {
@@ -100,9 +100,9 @@ export const useOnClaimPrincipalAmount = (isLegacy = false) => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        isLegacy
+        isLegacy === 1
           ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
-          : ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+          : ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2,
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -124,14 +124,7 @@ export const useOnClaimPrincipalAmount = (isLegacy = false) => {
         cb: txnCb,
       })
     },
-    [
-      isLegacy,
-      networkSymbol,
-      library,
-      account,
-      generalizedContractCall,
-      addTransaction,
-    ]
+    [isLegacy, library, account, generalizedContractCall, addTransaction]
   )
   return {
     onClaimPrincipal,

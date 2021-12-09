@@ -2,10 +2,10 @@ import GlobalLayout from "@layouts/index"
 import Legacy from "@sections/Legacy"
 import React from "react"
 
-const LegacyPage = (props: any) => (
+const LegacyV1 = (props: any) => (
   <GlobalLayout {...props}>
-    <Legacy />
+    <Legacy legacy={1} />
   </GlobalLayout>
 )
 
-export default LegacyPage
+export default LegacyV1

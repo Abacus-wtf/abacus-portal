@@ -2,16 +2,10 @@ import GlobalLayout from "@layouts/index"
 import Legacy from "@sections/Legacy"
 import React from "react"
 
-const IndexPage = (props: any) => (
-  /* return (
-    <GlobalLayout {...props}>
-      <Auction />
-    </GlobalLayout>
-  ) */
-
+const LegacyPage = (props: any) => (
   <GlobalLayout {...props}>
-    <Legacy />
+    <Legacy legacy={2} />
   </GlobalLayout>
 )
 
-export default IndexPage
+export default LegacyPage

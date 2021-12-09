@@ -1,8 +1,8 @@
-import React, { FunctionComponent, useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import Button from "@components/Button"
 import { HorizontalListGroup } from "@components/ListGroupMods"
 import { ListGroupItem } from "shards-react"
-import { InputWithTitle, InputWithTitleAndButton } from "@components/Input"
+import { InputWithTitle } from "@components/Input"
 import { useOnClaimPayout, useOnClaimPrincipalAmount } from "@hooks/claim-pool"
 import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import { useActiveWeb3React } from "@hooks/index"
@@ -27,7 +27,7 @@ const ClaimRewardsTitle = styled(Title)`
   margin-top: 35px !important;
 `
 
-const Legacy: FunctionComponent = () => {
+const Legacy = ({ legacy }: { legacy: number }) => {
   const { account } = useActiveWeb3React()
   const [ethWithdrawalVal, setEthWithdrawalVal] = useState("")
   const [abcWithdrawalVal, setAbcWithdrawalVal] = useState("")
@@ -35,15 +35,15 @@ const Legacy: FunctionComponent = () => {
   const [isEthButtonTrigger, setIsEthButtonTrigger] = useState(true)
   const [isLoading, setLoading] = useState(false)
   const networkSymbol = useGetCurrentNetwork()
-  const getMultiSessionData = useGetMultiSessionData(true)
+  const getMultiSessionData = useGetMultiSessionData(legacy)
   const { multiSessionData } = useMultiSessionState()
 
   const claimData = useClaimPayoutData()
-  const setPayoutData = useSetPayoutData(true)
+  const setPayoutData = useSetPayoutData(legacy)
 
-  const { onClaim, isPending } = useOnClaimPayout(true)
+  const { onClaim, isPending } = useOnClaimPayout(legacy)
   const { onClaimPrincipal, isPending: isPendingClaimPrincipal } =
-    useOnClaimPrincipalAmount(true)
+    useOnClaimPrincipalAmount(legacy)
 
   const isEthPending = isPending && isEthButtonTrigger
   const isAbcPending = isPending && !isEthButtonTrigger
@@ -88,11 +88,11 @@ const Legacy: FunctionComponent = () => {
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <VerticalContainer style={{ maxWidth: 800, overflow: "visible" }}>
-        <Title>Legacy Sessions</Title>
+        <Title>Legacy Sessions v{legacy}</Title>
         <CardContainer>
           {_.map(multiSessionData, (i) => (
             <a
-              href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}&legacy=true`}
+              href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}&legacy=${legacy}`}
               key={`${i.address}-${i.tokenId}-${i.nonce}`}
             >
               <Card {...i} />
@@ -112,14 +112,12 @@ const Legacy: FunctionComponent = () => {
           </MaxWidthItem>
         </HorizontalListGroup>
         <ListGroupItem>
-          <InputWithTitleAndButton
+          <InputWithTitle
             title="Claim Principal"
             id="claimPrincipal"
             placeholder="Enter withdraw amount in ETH"
             value={claimPrincipalVal}
             onChange={(e) => setClaimPrincipalVal(e.target.value)}
-            buttonText="Max"
-            onClick={() => setClaimPrincipalVal(claimData.ethCredit)}
           />
         </ListGroupItem>
         <VerticalContainer style={{ alignItems: "center" }}>
@@ -170,25 +168,21 @@ const Legacy: FunctionComponent = () => {
         </HorizontalListGroup>
         <HorizontalListGroup>
           <MaxWidthItem>
-            <InputWithTitleAndButton
+            <InputWithTitle
               title="ETH Withdrawal Amount"
               id="ethWithdrawal"
               placeholder="Enter withdraw amount in ETH"
               value={ethWithdrawalVal}
               onChange={(e) => setEthWithdrawalVal(e.target.value)}
-              buttonText="Max"
-              onClick={() => setEthWithdrawalVal(claimData.ethPayout)}
             />
           </MaxWidthItem>
           <MaxWidthItem>
-            <InputWithTitleAndButton
+            <InputWithTitle
               title="ABC Withdrawal Amount"
               id="abcWithdrawal"
               placeholder="Enter withdraw amount in ABC"
               value={abcWithdrawalVal}
               onChange={(e) => setAbcWithdrawalVal(e.target.value)}
-              buttonText="Max"
-              onClick={() => setAbcWithdrawalVal(claimData.abcPayout)}
             />
           </MaxWidthItem>
         </HorizontalListGroup>

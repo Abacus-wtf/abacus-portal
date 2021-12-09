@@ -128,14 +128,14 @@ const Navbar = ({ location }) => {
           <ListSection>
             <HeaderLink
               as="a"
-              href="/"
-              active={(location.pathname === "/").toString()}
+              href="/legacyv1"
+              active={(location.pathname === "/legacyv1").toString()}
             >
               Legacy v1
             </HeaderLink>
             <HeaderLink
               as="a"
-              href="/legacyv2"
+              href="/"
               active={(location.pathname === "/").toString()}
             >
               Legacy v2

@@ -11,6 +11,7 @@ import {
 import {
   ABC_PRICING_SESSION_ADDRESS,
   ARB_LEGACY_GRAPHS,
+  ARB_LEGACY_GRAPHS_V2,
   ETH_USD_ORACLE_ADDRESS,
   NetworkSymbolEnum,
 } from "@config/constants"
@@ -79,20 +80,12 @@ import {
 
 const GRAPHQL_ENDPOINT = (
   networkSymbol: NetworkSymbolEnum,
-  isLegacy = false
+  isLegacy = 1
 ): string => {
-  if (isLegacy) {
+  if (isLegacy === 1) {
     return ARB_LEGACY_GRAPHS
   }
-
-  switch (networkSymbol) {
-    case NetworkSymbolEnum.ETH:
-      return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ETH
-    case NetworkSymbolEnum.ARBITRUM:
-      return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ARBITRUM
-    default:
-      return ""
-  }
+  return ARB_LEGACY_GRAPHS_V2
 }
 
 const modifyTimeAndSession = (
@@ -296,7 +289,7 @@ const parseSubgraphPricingSessions = async (
   return sessionData
 }
 
-export const useGetMultiSessionData = (isLegacy = false) => {
+export const useGetMultiSessionData = (isLegacy = 1) => {
   const dispatch = useDispatch<AppDispatch>()
   const whereRef = useRef("")
   const { page, multiSessionData } = useMultiSessionState()
@@ -480,7 +473,7 @@ const getUserStatus = async ({
   return Number(getVoterCheck)
 }
 
-export const useGetCurrentSessionDataGRT = (isLegacy = false) => {
+export const useGetCurrentSessionDataGRT = (isLegacy = 1) => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)

@@ -96,6 +96,14 @@ export const ARB_LEGACY_GRAPHS = IS_PRODUCTION
   ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrum"
   : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkeby"
 
+export const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2 = IS_PRODUCTION
+  ? "0xc34fe8aa917716B6c12C7234EE4a7D91B231cBE1"
+  : "0xAf9D4eeb825F9aE4915d52630c41032ECe990bb4"
+
+export const ARB_LEGACY_GRAPHS_V2 = IS_PRODUCTION
+  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv2"
+  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv2"
+
 export const CURRENT_SESSIONS = (networkSymbol: NetworkSymbolEnum) =>
   networkSymbol === NetworkSymbolEnum.ETH
     ? ETH_CURRENT_SESSIONS
