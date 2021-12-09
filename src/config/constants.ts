@@ -155,7 +155,7 @@ export const web3 = (networkSymbol: NetworkSymbolEnum) =>
 export const web3Eth = new Web3(ETH_RPC)
 
 export const NetworkInfoMap: NetworkInfo[] = [
-  {
+  /* {
     rpc: ETH_RPC,
     chainId: NETWORK_CHAIN_ID,
     symbol: "ETH",
@@ -164,7 +164,7 @@ export const NetworkInfoMap: NetworkInfo[] = [
     blockExplorer: IS_PRODUCTION
       ? "https://etherscan.io/#/"
       : "https://rinkeby.etherscan.io/#/",
-  },
+  }, */
   {
     rpc: ARBITRUM_ETH_RPC,
     chainId: ARBITRUM_NETWORK_CHAIN_ID,
