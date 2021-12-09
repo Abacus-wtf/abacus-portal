@@ -12,6 +12,8 @@ import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnEndSession } from "@hooks/current-session"
 import { useCurrentSessionData } from "@state/sessionData/hooks"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { NetworkSymbolEnum } from "@config/constants"
 import SessionCountdown from "./SessionCountdown"
 import {
   VerticalContainer,
@@ -22,6 +24,8 @@ import {
 const EndSession: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
   const { onEndSession, isPending } = useOnEndSession()
+  const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const theme = useContext(ThemeContext)
   return (
@@ -79,7 +83,7 @@ const EndSession: FunctionComponent = () => {
       </ListGroupItem>
       <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
         <Button
-          disabled={isPending}
+          disabled={isPending || isNetworkSymbolNone}
           style={{ width: "100%" }}
           type="button"
           onClick={() => {

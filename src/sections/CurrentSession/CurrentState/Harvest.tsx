@@ -22,6 +22,8 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useOnHarvest } from "@hooks/current-session"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { NetworkSymbolEnum } from "@config/constants"
 import {
   CallToActionCopy,
   VerticalContainer,
@@ -39,6 +41,8 @@ const CallToActionSmall = styled(CallToActionCopy)`
 const Harvest: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
+  const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -92,6 +96,7 @@ const Harvest: FunctionComponent = () => {
           e.preventDefault()
           onHarvest()
         }}
+        disabled={isNetworkSymbolNone}
       >
         <ListGroupItem>
           <InputWithTitle
@@ -125,7 +130,7 @@ const Harvest: FunctionComponent = () => {
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <div style={{ width: "100%" }} id="submitHarvestButton">
             <Button
-              disabled={!canUserInteract || isPending}
+              disabled={!canUserInteract || isPending || isNetworkSymbolNone}
               style={{ width: "100%" }}
               type="submit"
             >
@@ -143,8 +148,9 @@ const Harvest: FunctionComponent = () => {
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement="right"
           >
-            You missed a previous step so you cannot participate in this part of
-            the session
+            {isNetworkSymbolNone
+              ? "Your wallet is not connected!"
+              : "You missed a previous step so you cannot participate in this part of the session"}
           </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants

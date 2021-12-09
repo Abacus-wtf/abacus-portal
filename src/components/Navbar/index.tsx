@@ -76,8 +76,7 @@ const MobileNavButton = styled(ButtonClear)`
 `
 
 const HeaderLink = styled(ButtonClear).attrs(({ disabled }) => ({
-  // eslint-disable-next-line no-script-url
-  ...(disabled ? { href: "javascript:void(0)" } : {}),
+  ...(disabled ? { href: "#" } : {}),
 }))<{ active: string }>`
   min-width: fit-content;
   opacity: 0.4;

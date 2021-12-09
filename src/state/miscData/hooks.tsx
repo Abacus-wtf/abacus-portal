@@ -96,6 +96,9 @@ export const useSetPayoutData = () => {
 
   return useCallback(
     async (account: string) => {
+      if (!account) {
+        return
+      }
       const pricingSessionContract = getPricingSessionContract(
         ABC_PRICING_SESSION_ADDRESS(networkSymbol)
       )

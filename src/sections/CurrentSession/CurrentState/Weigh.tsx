@@ -26,6 +26,8 @@ import {
   useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
 import { encodeSessionData } from "@config/utils"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { NetworkSymbolEnum } from "@config/constants"
 import SessionCountdown from "./SessionCountdown"
 import {
   VerticalContainer,
@@ -36,6 +38,8 @@ import {
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const { onWeightVote, isPending } = useOnWeightVote()
+  const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const userStatus = useCurrentSessionUserStatus()
   const sessionData = useCurrentSessionData()
@@ -110,6 +114,7 @@ const Weigh: FunctionComponent = () => {
         <SessionCountdown />
       </HorizontalListGroup>
       <Form
+        disabled={isNetworkSymbolNone}
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
           const cb = () => {
@@ -150,6 +155,7 @@ const Weigh: FunctionComponent = () => {
           <div style={{ width: "100%" }} id="submitWeighButton">
             <Button
               disabled={
+                isNetworkSymbolNone ||
                 !canUserInteract ||
                 isPending ||
                 appraisalValue === "" ||
@@ -178,6 +184,8 @@ const Weigh: FunctionComponent = () => {
           >
             {userStatus === UserState.CompletedWeigh
               ? "You already weighed your vote"
+              : isNetworkSymbolNone
+              ? "Your wallet is not connected!"
               : "You missed a previous step, so you cannot participate in this part of the session"}
           </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
