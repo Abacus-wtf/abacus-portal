@@ -19,6 +19,8 @@ import {
 } from "@state/sessionData/hooks"
 import { User } from "react-feather"
 import { useOnSetFinalAppraisal } from "@hooks/current-session"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { NetworkSymbolEnum } from "@config/constants"
 import {
   VerticalContainer,
   SubText,
@@ -28,6 +30,8 @@ import {
 
 const SetFinalAppraisal: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
+  const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -80,13 +84,14 @@ const SetFinalAppraisal: FunctionComponent = () => {
           e.preventDefault()
           onSetFinalAppraisal()
         }}
+        disabled={isNetworkSymbolNone}
       >
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <CallToActionCopy>TIME TO SET THE FINAL APPRAISAL!</CallToActionCopy>
           <div id="setFinalAppraisalButton" style={{ width: "100%" }}>
             <Button
               type="submit"
-              disabled={!canUserInteract || isPending}
+              disabled={!canUserInteract || isPending || isNetworkSymbolNone}
               style={{ width: "100%" }}
             >
               {isPending ? "Pending..." : "Set Final Appraisal"}
@@ -98,8 +103,9 @@ const SetFinalAppraisal: FunctionComponent = () => {
             disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
           >
-            You missed a previous step, so you cannot participate in this part
-            of the session
+            {isNetworkSymbolNone
+              ? "Your wallet is not connected!"
+              : "You missed a previous step so you cannot participate in this part of the session"}
           </Tooltip>
           <SubText style={{ display: "flex", alignItems: "center" }}>
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants

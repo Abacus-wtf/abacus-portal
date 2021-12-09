@@ -6,6 +6,7 @@ import {
   NetworkInfo,
   NetworkSymbolAndId,
   ETH_RPC,
+  NetworkSymbolEnum,
 } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useGetCurrentNetwork } from "@state/application/hooks"
@@ -162,7 +163,7 @@ const NetworkSelectorButton = () => {
     <>
       <StyledMenuButton onClick={() => setShowModal(!showModal)}>
         <Aligner>
-          {networkSymbol ? (
+          {networkSymbol && networkSymbol !== NetworkSymbolEnum.NONE ? (
             <img
               alt=""
               src={require(`../../images/${networkSymbol}.svg`)}
@@ -173,7 +174,8 @@ const NetworkSelectorButton = () => {
               style={{ marginRight: "10px", height: "18px", width: "auto" }}
             />
           )}
-          {networkSymbol || "Change Network"}
+          {(networkSymbol && networkSymbol !== NetworkSymbolEnum.NONE) ||
+            "Change Network"}
         </Aligner>
       </StyledMenuButton>
       <Modal

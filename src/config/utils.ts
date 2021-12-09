@@ -143,6 +143,9 @@ export function encodeSessionData({
   nonce: number
   tokenId: string
 }) {
+  if (!account) {
+    return ""
+  }
   return web3Eth.eth.abi.encodeParameters(
     ["uint", "address", "address", "uint"],
     [nonce, nftAddress, account, tokenId]

@@ -82,6 +82,8 @@ const GRAPHQL_ENDPOINT = (networkSymbol: NetworkSymbolEnum): string => {
       return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ETH
     case NetworkSymbolEnum.ARBITRUM:
       return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ARBITRUM
+    case NetworkSymbolEnum.NONE:
+      return process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ARBITRUM
     default:
       return ""
   }
@@ -244,10 +246,9 @@ const findAsset = (
 ) => {
   const ret = assets.find(
     (asset) =>
-      asset.asset_contract.address === session.nftAddress &&
-      asset.token_id === String(session.tokenId)
+      String(asset.asset_contract.address) === String(session.nftAddress) &&
+      String(asset.token_id) === String(session.tokenId)
   )
-
   return ret
 }
 
@@ -255,20 +256,19 @@ const parseSubgraphPricingSessions = async (
   pricingSessions: SubgraphPricingSession[]
 ) => {
   const { assets } = await openseaGetMany(pricingSessions)
-
   const sessionData: SessionData[] = _.map(
     pricingSessions,
     (session): SessionData => {
       const asset = findAsset(assets, session)
       return {
-        image_url: asset.image_preview_url || asset.image_url,
+        image_url: (asset?.image_preview_url || asset?.image_url) ?? "",
         animation_url: null,
         endTime: Number(session.endTime),
         numPpl: Number(session.numParticipants),
-        collectionTitle: asset.asset_contract.name,
+        collectionTitle: asset?.asset_contract.name ?? "",
         totalStaked: Number(formatEther(session.totalStaked)),
         bounty: Number(formatEther(session.bounty)),
-        nftName: asset.name,
+        nftName: asset?.name ?? "",
         finalAppraisalValue:
           session.sessionStatus >= 3
             ? Number(formatEther(session.finalAppraisalValue))
@@ -276,7 +276,7 @@ const parseSubgraphPricingSessions = async (
         address: session.nftAddress,
         tokenId: session.tokenId,
         nonce: Number(session.nonce),
-        ownerAddress: asset.owner?.address,
+        ownerAddress: asset?.owner?.address ?? "",
         owner:
           asset?.owner?.user && asset?.owner?.user?.username
             ? asset?.owner?.user?.username
