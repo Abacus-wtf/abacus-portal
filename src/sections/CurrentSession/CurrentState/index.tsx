@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import React from "react"
 import { useCurrentSessionStatus } from "@state/sessionData/hooks"
 import { SessionState } from "@state/sessionData/reducer"
 import Vote from "./Vote"
@@ -8,11 +8,22 @@ import Harvest from "./Harvest"
 import Claim from "./Claim"
 import SessionCompleted from "./SessionCompleted"
 
-const CurrentState: FunctionComponent = () => {
+const CurrentState = ({
+  congratsOpen,
+  setCongratsOpen,
+}: {
+  congratsOpen: boolean
+  setCongratsOpen: (input: boolean) => void
+}) => {
   const status = useCurrentSessionStatus()
   switch (status) {
     case SessionState.Vote:
-      return <Vote />
+      return (
+        <Vote
+          congratsOpen={congratsOpen}
+          setCongratsOpen={(input) => setCongratsOpen(input)}
+        />
+      )
     case SessionState.Weigh:
       return <Weigh />
     case SessionState.SetFinalAppraisal:
