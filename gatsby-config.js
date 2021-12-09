@@ -16,20 +16,6 @@ module.exports = {
   },
   pathPrefix: "__PATH_PREFIX__",
   plugins: [
-    {
-      resolve: `gatsby-plugin-google-gtag`,
-      options: {
-        trackingIds: ["G-0NEGLJHXHQ"],
-        gtagConfig: {
-          anonymize_ip: true,
-          cookie_expires: 0,
-        },
-        pluginConfig: {
-          head: false,
-          respectDNT: true,
-        },
-      },
-    },
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-lodash`,
     {
