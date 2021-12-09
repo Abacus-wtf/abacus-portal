@@ -75,14 +75,15 @@ const NetworkButton = styled(Button)`
   }
 `
 
-const NetworkSelectorButton = () => {
+export const NetworkSelectorModal = ({
+  showModal,
+  setShowModal,
+}: {
+  showModal: boolean
+  setShowModal: (input: boolean) => void
+}) => {
   const { chainId } = useActiveWeb3React()
-  const networkSymbol = useGetCurrentNetwork()
-
-  const [showModal, setShowModal] = useState<boolean>(false)
-
   const { ethereum } = window as any
-
   const MetamaskRequest = async (network: NetworkInfo) => {
     if (network.chainId === 1) {
       try {
@@ -160,6 +161,44 @@ const NetworkSelectorButton = () => {
     }
   }
   return (
+    <Modal
+      size="md"
+      open={showModal}
+      toggle={() => setShowModal(!showModal)}
+      centered
+    >
+      <ModalBody>
+        <AlignerColumn>
+          <h4>Select network</h4>
+          <Aligner>
+            {NetworkInfoMap.map((network) => (
+              <NetworkButton
+                key={network.chainId}
+                disabled={network.chainId === chainId}
+                onClick={() => MetamaskRequest(network)}
+              >
+                <Aligner>
+                  <img
+                    alt=""
+                    src={require(`../../images/${network.logo}`)}
+                    style={{ paddingRight: "10px", height: "18px" }}
+                  />
+                  {NetworkSymbolAndId[network.chainId]}
+                </Aligner>
+              </NetworkButton>
+            ))}
+          </Aligner>
+        </AlignerColumn>
+      </ModalBody>
+    </Modal>
+  )
+}
+
+const NetworkSelectorButton = () => {
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const networkSymbol = useGetCurrentNetwork()
+
+  return (
     <>
       <StyledMenuButton onClick={() => setShowModal(!showModal)}>
         <Aligner>
@@ -178,36 +217,10 @@ const NetworkSelectorButton = () => {
             "Change Network"}
         </Aligner>
       </StyledMenuButton>
-      <Modal
-        size="md"
-        open={showModal}
-        toggle={() => setShowModal(!showModal)}
-        centered
-      >
-        <ModalBody>
-          <AlignerColumn>
-            <h4>Select network</h4>
-            <Aligner>
-              {NetworkInfoMap.map((network) => (
-                <NetworkButton
-                  key={network.chainId}
-                  disabled={network.chainId === chainId}
-                  onClick={() => MetamaskRequest(network)}
-                >
-                  <Aligner>
-                    <img
-                      alt=""
-                      src={require(`../../images/${network.logo}`)}
-                      style={{ paddingRight: "10px", height: "18px" }}
-                    />
-                    {NetworkSymbolAndId[network.chainId]}
-                  </Aligner>
-                </NetworkButton>
-              ))}
-            </Aligner>
-          </AlignerColumn>
-        </ModalBody>
-      </Modal>
+      <NetworkSelectorModal
+        showModal={showModal}
+        setShowModal={(input) => setShowModal(input)}
+      />
     </>
   )
 }

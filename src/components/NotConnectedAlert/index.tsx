@@ -2,13 +2,14 @@ import {
   useGetCurrentNetwork,
   useToggleWalletModal,
 } from "@state/application/hooks"
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useState } from "react"
 import { Alert } from "shards-react"
 import styled from "styled-components"
 import { AlertCircle } from "react-feather"
 import { theme } from "@config/theme"
 import { NetworkSymbolEnum } from "@config/constants"
 import Button from "@components/Button"
+import { NetworkSelectorModal } from "@components/Navbar/NetworkSelectorButton"
 
 const StyledAlert = styled(Alert)`
   padding: 25px;
@@ -45,6 +46,7 @@ const IconContainer = styled.div`
 `
 
 const NotConnectedAlert: FunctionComponent = () => {
+  const [showModal, setShowModal] = useState(false)
   const networkSymbol = useGetCurrentNetwork()
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
   const toggleWalletModal = useToggleWalletModal()
@@ -57,10 +59,18 @@ const NotConnectedAlert: FunctionComponent = () => {
         <AlertCircle size="50px" />
       </IconContainer>
       <InfoContainer>
-        Your wallet is currently not connected. Please connect to interact with
-        the App!
+        Your wallet is currently not connected or on the incorrect network.
+        Please connect your wallet with the correct network to interact with the
+        App!
       </InfoContainer>
-      <Button onClick={() => toggleWalletModal()}>Connect Wallet</Button>
+      <div style={{ display: "flex", gridGap: 15 }}>
+        <Button onClick={() => setShowModal(true)}>Switch Networks</Button>
+        <Button onClick={() => toggleWalletModal()}>Connect Wallet</Button>
+      </div>
+      <NetworkSelectorModal
+        showModal={showModal}
+        setShowModal={(input) => setShowModal(input)}
+      />
     </StyledAlert>
   )
 }
