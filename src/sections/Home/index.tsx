@@ -18,6 +18,7 @@ import { useGetCurrentNetwork } from "@state/application/hooks"
 import { usePrevious } from "@hooks/index"
 import FilterModal from "@components/FilterModal"
 import { Tooltip } from "shards-react"
+import { NetworkSymbolEnum } from "@config/constants"
 import {
   BackgroundIMG,
   HeaderBar,
@@ -37,6 +38,7 @@ const Home: React.FC = () => {
   const networkSymbol = useGetCurrentNetwork()
   const prevNetworkSymbol = usePrevious(networkSymbol)
   const isNewNetwork = networkSymbol !== prevNetworkSymbol
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   useEffect(() => {
     if (isNewNetwork) {
@@ -61,7 +63,10 @@ const Home: React.FC = () => {
           </Subheader>
         </Header>
         <HeaderBarContainer>
-          <ButtonsWhite onClick={() => setFilterOpen(true)}>
+          <ButtonsWhite
+            onClick={() => setFilterOpen(true)}
+            disabled={isNetworkSymbolNone}
+          >
             Filter
           </ButtonsWhite>
           <FilterModal
@@ -78,6 +83,7 @@ const Home: React.FC = () => {
               cursor: "not-allowed",
               opacity: 0.7,
             }}
+            disabled={isNetworkSymbolNone}
           >
             Create Session
           </Button>

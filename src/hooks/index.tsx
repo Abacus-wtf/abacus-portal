@@ -2,7 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Web3Provider, TransactionResponse } from "@ethersproject/providers"
 import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
-import { NetworkContextName, web3, web3Eth } from "@config/constants"
+import {
+  NetworkContextName,
+  NetworkSymbolEnum,
+  web3,
+  web3Eth,
+} from "@config/constants"
 import { BigNumber } from "ethers"
 import { calculateGasMargin } from "@config/utils"
 import {
@@ -84,7 +89,10 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> & 
 }
 
 export function useWeb3Contract(ABI: any) {
-  const networkSymbol = useGetCurrentNetwork()
+  let networkSymbol = useGetCurrentNetwork()
+  if (networkSymbol === NetworkSymbolEnum.NONE) {
+    networkSymbol = NetworkSymbolEnum.ARBITRUM
+  }
   return useCallback(
     (address: string) => {
       const Web3 = web3(networkSymbol)

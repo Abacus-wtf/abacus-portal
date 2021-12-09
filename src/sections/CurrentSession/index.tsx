@@ -4,7 +4,6 @@ import * as queryString from "query-string"
 import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
-  // useGetCurrentSessionDataGRT,
   useCurrentSessionFetchStatus,
   useGetCurrentSessionData,
   useGetCurrentSessionDataGRT,
@@ -17,6 +16,7 @@ import { useGetCurrentNetwork } from "@state/application/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
 import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import RankingsModal from "@components/RankingsModal"
+import { NetworkSymbolEnum } from "@config/constants"
 import {
   SplitContainer,
   VerticalContainer,
@@ -29,14 +29,13 @@ import CurrentState from "./CurrentState"
 const CurrentSession = ({ location }) => {
   const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
   const getCurrentSessionData = useGetCurrentSessionData()
-  const getCurrentSessionDataGrt = useGetCurrentSessionDataGRT(
-    legacy ? Boolean(legacy) : false
-  )
+  const getCurrentSessionDataGrt = useGetCurrentSessionDataGRT()
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
   const isLoading = fetchStatus === PromiseStatus.Pending
   const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
@@ -48,7 +47,7 @@ const CurrentSession = ({ location }) => {
   useEffect(() => {
     const loadData = async () => {
       if (sessionData.address === "") {
-        if (legacy ? Boolean(legacy) : false) {
+        if (legacy) {
           await getCurrentSessionDataGrt(
             String(address),
             String(tokenId),
@@ -70,7 +69,7 @@ const CurrentSession = ({ location }) => {
     if (!address || !tokenId || !nonce) {
       alert("This is a broken link, we are redirecting you to the home page.")
       navigate("/")
-    } else if (account && chainId && networkSymbol) {
+    } else if ((account && chainId && networkSymbol) || isNetworkSymbolNone) {
       loadData()
     }
   }, [
@@ -86,9 +85,10 @@ const CurrentSession = ({ location }) => {
     legacy,
     sessionData,
     getCurrentSessionDataGrt,
+    isNetworkSymbolNone,
   ])
 
-  if (!account) {
+  if (!account && !isNetworkSymbolNone) {
     return (
       <SmallUniversalContainer
         style={{ alignItems: "center", justifyContent: "center" }}

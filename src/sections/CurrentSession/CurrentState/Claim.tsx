@@ -7,6 +7,7 @@ import React, {
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
+import { useGetCurrentNetwork } from "@state/application/hooks"
 import {
   HorizontalListGroup,
   ListGroupHeader,
@@ -22,6 +23,7 @@ import {
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
+import { NetworkSymbolEnum } from "@config/constants"
 import { useOnClaim } from "@hooks/current-session"
 import SessionCountdown from "./SessionCountdown"
 import {
@@ -32,6 +34,8 @@ import {
 
 const Claim: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
+  const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
   const claimData = useSelector<
     AppState,
     AppState["sessionData"]["currentSessionData"]["claimPositions"]
@@ -144,7 +148,7 @@ const Claim: FunctionComponent = () => {
         <HorizontalListGroup>
           <div style={{ padding: "0 8px", width: "100%" }} id="claimButton">
             <Button
-              disabled={!canUserInteract || isPending}
+              disabled={!canUserInteract || isPending || isNetworkSymbolNone}
               style={{ width: "100%" }}
               type="button"
               onClick={() => {
@@ -160,8 +164,9 @@ const Claim: FunctionComponent = () => {
               toggle={() => setIsToolTipOpen(!isToolTipOpen)}
               placement="right"
             >
-              You missed a previous step so you cannot participate in this part
-              of the session
+              {isNetworkSymbolNone
+                ? "Your wallet is not connected!"
+                : "You missed a previous step so you cannot participate in this part of the session"}
             </Tooltip>
           </div>
         </HorizontalListGroup>

@@ -7,9 +7,13 @@ import { Container, Row } from "shards-react"
 import Web3Modal from "@components/Web3Modal"
 import Web3 from "web3"
 import { useActiveWeb3React } from "@hooks/index"
-import { useSelectNetwork } from "@state/application/hooks"
+import {
+  useSelectNetwork,
+  useGetCurrentNetwork,
+} from "@state/application/hooks"
 import { NetworkSymbolEnum, NetworkSymbolAndId } from "@config/constants"
 import GeneralizedContractError from "@components/GeneralizedContractError"
+import NotConnectedAlert from "@components/NotConnectedAlert"
 import { GlobalStyles } from "./styles"
 
 const StyledContainer = styled(Container)`
@@ -29,8 +33,11 @@ const RowContainer = styled(Row)`
 
 const GlobalLayout: React.FC = (props: any) => {
   const { children, location } = props
-  const { chainId } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const selectNetwork = useSelectNetwork()
+  const networkSymbol = useGetCurrentNetwork()
+  const isArbitrumNetwork = networkSymbol === NetworkSymbolEnum.ARBITRUM
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -54,10 +61,12 @@ const GlobalLayout: React.FC = (props: any) => {
 
   useEffect(() => {
     const network = NetworkSymbolAndId[chainId]
-    if (network) {
+    if (!account) {
+      selectNetwork(NetworkSymbolEnum.NONE)
+    } else if (network) {
       selectNetwork(network)
     }
-  }, [chainId, selectNetwork])
+  }, [account, chainId, selectNetwork])
 
   return (
     <>
@@ -76,9 +85,10 @@ const GlobalLayout: React.FC = (props: any) => {
       <StyledContainer>
         <Navbar location={location} />
         <GeneralizedContractError />
+        <NotConnectedAlert />
         <RowContainer>
           <Web3Modal />
-          {NetworkSymbolAndId[chainId] !== NetworkSymbolEnum.ARBITRUM ? (
+          {!isArbitrumNetwork && !isNetworkSymbolNone ? (
             <div
               style={{
                 textAlign: "center",

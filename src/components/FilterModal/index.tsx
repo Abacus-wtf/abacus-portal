@@ -33,7 +33,6 @@ type FilterModalProps = {
   toggle: () => void
   applyFilters: (where: string | null) => Promise<void>
   setFilters: (where: string | null) => void
-  prefix?: string
 }
 
 type FilterForm<Elements> = Elements & {
@@ -57,7 +56,6 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
   toggle,
   applyFilters,
   setFilters,
-  prefix,
 }) => {
   const [nftAddressValue, setNftAddressValue] = useState("")
   const [tokenIdValue, setTokenIdValue] = useState("")
@@ -90,7 +88,6 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
     applyFilters(where)
     setFilters(where)
     toggle()
-    console.log(prefix)
   }
 
   return (
@@ -189,10 +186,6 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
       </StyledModalBody>
     </Modal>
   )
-}
-
-FilterModal.defaultProps = {
-  prefix: "",
 }
 
 export default FilterModal

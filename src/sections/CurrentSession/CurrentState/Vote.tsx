@@ -32,6 +32,8 @@ import {
 import { hashValues } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"
+import { useGetCurrentNetwork } from "@state/application/hooks"
+import { NetworkSymbolEnum } from "@config/constants"
 import HashSystem from "../hashSystem"
 import SessionCountdown from "./SessionCountdown"
 import {
@@ -45,6 +47,8 @@ const Vote: FunctionComponent = () => {
   const [appraisalHash, setAppraisalHash] = useState("")
   const { account } = useActiveWeb3React()
   const [congratsOpen, setCongratsOpen] = useState(false)
+  const networkSymbol = useGetCurrentNetwork()
+  const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const sessionData = useCurrentSessionData()
   const userStatus = useCurrentSessionUserStatus()
@@ -113,6 +117,7 @@ const Vote: FunctionComponent = () => {
         please ensure that you save your values elsewhere.
       </Label>
       <Form
+        disabled={isNetworkSymbolNone}
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           e.preventDefault()
           const target = e.target as any
@@ -197,6 +202,7 @@ const Vote: FunctionComponent = () => {
           <div style={{ width: "100%" }} id="submitVoteButton">
             <Button
               disabled={
+                isNetworkSymbolNone ||
                 !canUserInteract ||
                 isPending ||
                 appraisalHash === "" ||
