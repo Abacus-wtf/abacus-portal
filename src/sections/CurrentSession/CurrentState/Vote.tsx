@@ -48,7 +48,6 @@ const Vote = ({
   const [appraisalHash, setAppraisalHash] = useState("")
   const { account } = useActiveWeb3React()
   const networkSymbol = useGetCurrentNetwork()
-  console.log(networkSymbol)
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const sessionData = useCurrentSessionData()
