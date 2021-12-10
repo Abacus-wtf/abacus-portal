@@ -151,11 +151,7 @@ const RightSection: FunctionComponent = () => {
             const target = e.target as any
             e.preventDefault()
 
-            await onAddToBid(
-              target.newBid.value,
-              target.nftAddressAdd.value,
-              target.tokenIdAdd.value
-            )
+            await onAddToBid(target.newBid.value)
           }}
         >
           <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
