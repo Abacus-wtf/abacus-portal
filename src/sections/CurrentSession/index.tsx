@@ -6,6 +6,7 @@ import {
   useCurrentSessionData,
   useCurrentSessionFetchStatus,
   useGetCurrentSessionData,
+  useGetUserStatus,
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
@@ -36,6 +37,7 @@ const CurrentSession = ({ location }) => {
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
+  const getUserStatus = useGetUserStatus()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
   const [isFisk] = useState(
     tokenId ===
@@ -56,6 +58,7 @@ const CurrentSession = ({ location }) => {
       if (claimData === null) {
         await setPayoutData(account)
       }
+      getUserStatus(String(address), String(tokenId))
     }
 
     if (!address || !tokenId || !nonce) {
