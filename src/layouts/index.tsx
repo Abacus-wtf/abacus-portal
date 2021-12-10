@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect } from "react"
-import Helmet from "react-helmet"
 import Navbar from "@components/Navbar"
 import styled from "styled-components"
 import { Container, Row } from "shards-react"
@@ -14,6 +13,8 @@ import {
 import { NetworkSymbolEnum, NetworkSymbolAndId } from "@config/constants"
 import GeneralizedContractError from "@components/GeneralizedContractError"
 import NotConnectedAlert from "@components/NotConnectedAlert"
+import { theme } from "@config/theme"
+import SEO, { SEOWithQueryProps } from "@components/SEO"
 import { GlobalStyles } from "./styles"
 
 const StyledContainer = styled(Container)`
@@ -26,7 +27,7 @@ const RowContainer = styled(Row)`
   padding: 15px;
   justify-content: center;
 
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     padding: 65px 80px;
   }
 `
@@ -68,24 +69,44 @@ const GlobalLayout: React.FC = (props: any) => {
     }
   }, [account, chainId, selectNetwork])
 
+  const seoProps = React.useMemo<SEOWithQueryProps>(() => {
+    switch (location.pathname) {
+      case "/":
+        return {
+          title: "Abacus Protocol",
+        }
+      case "/auction/":
+        return {
+          title: "Abacus Protocol | Auction",
+        }
+      case "/claim-pool/":
+        return {
+          title: "Abacus Protocol | Claim Pool",
+        }
+      case "/create-session/":
+        return {
+          title: "Abacus Protocol | Create New Session",
+        }
+
+      case "/current-session/":
+        return {
+          title: "Abacus Protocol | Current Session",
+        }
+      case "/my-sessions/":
+        return {
+          title: "Abacus Protocol | My Sessions",
+        }
+      default:
+        return {
+          title: "Abacus Protocol",
+        }
+    }
+  }, [location.pathname])
+
   return (
     <>
+      <SEO {...seoProps} />
       <GlobalStyles />
-      <Helmet title="Abacus Protocol" />
-      <Helmet>
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@abacus_wtf" />
-        <meta name="twitter:creator" content="@abacus_wtf" />
-        <meta name="twitter:title" content="Abacus Protocol" />
-        <meta
-          name="twitter:description"
-          content="A permissionless NFT valuation tool"
-        />
-        <meta
-          name="twitter:image"
-          content="https://app.abacus.wtf/twitter_card.png"
-        />
-      </Helmet>
       <StyledContainer>
         <Navbar location={location} />
         <GeneralizedContractError />

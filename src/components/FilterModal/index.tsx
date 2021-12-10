@@ -8,13 +8,14 @@ import { Modal, ModalBody, ListGroupItem, ListGroup, Form } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import Button from "@components/Button"
 import { SessionState } from "@state/sessionData/reducer"
+import { theme } from "@config/theme"
 import { Label } from "../global.styles"
 
 const StyledModalBody = styled(ModalBody)`
   overflow-y: scroll;
   max-height: 100vh;
 
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     overflow: unset;
   }
 `
@@ -22,7 +23,7 @@ const StyledModalBody = styled(ModalBody)`
 const StyledSessionStateContainer = styled.div`
   grid-gap: 10px;
   margin: 10px 0px;
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }

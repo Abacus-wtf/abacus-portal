@@ -9,8 +9,11 @@ import {
 } from "@state/application/hooks"
 import { Menu, X } from "react-feather"
 import { NetworkSymbolEnum } from "@config/constants"
+import { theme } from "@config/theme"
+import loadable from "@loadable/component"
 import Button, { ButtonClear } from "../Button"
-import NetworkSelectorButton from "./NetworkSelectorButton"
+
+const NetworkSelectorButton = loadable(() => import("./NetworkSelectorButton"))
 
 const RowStyled = styled(Row)`
   padding: 0px;
@@ -21,7 +24,7 @@ const RowStyled = styled(Row)`
 const Logo = styled.a`
   font-size: 1.5rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.text1};
+  color: ${theme.colors.text1};
 `
 
 const LinkList = styled.div<{ menuOpen: boolean }>`
@@ -33,11 +36,11 @@ const LinkList = styled.div<{ menuOpen: boolean }>`
   left: 0px;
   right: 0px;
   bottom: 0px;
-  top: ${({ theme }) => theme.navbar.height};
-  background-color: ${({ theme }) => theme.colors.bg1};
+  top: ${theme.navbar.height};
+  background-color: ${theme.colors.bg1};
   z-index: 1;
 
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -52,25 +55,25 @@ const ListSectionSelector = styled.div`
   flex-direction: column;
   align-items: center;
 
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     flex-direction: row;
     grid-gap: 0px;
   }
 
-  @media ${({ theme }) => theme.mediaMin.tablet} {
+  @media ${theme.mediaMin.tablet} {
     grid-gap: 40px;
   }
 `
 
 const ListSection = styled(ListSectionSelector)`
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     width: 100%;
     justify-content: center;
   }
 `
 
 const MobileNavButton = styled(ButtonClear)`
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     display: none;
   }
 `
@@ -102,10 +105,10 @@ const NavbarContainer = styled.div`
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #e4e6ee;
-  background-color: ${({ theme }) => theme.colors.bg1};
-  height: ${({ theme }) => theme.navbar.height};
+  background-color: ${theme.colors.bg1};
+  height: ${theme.navbar.height};
 
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     height: unset;
     grid-gap: 30px;
     padding: 45px 80px;

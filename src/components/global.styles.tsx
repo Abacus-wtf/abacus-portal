@@ -63,7 +63,7 @@ export const CategoryButton = styled.div<{ active: boolean }>`
   transition: 0.3s;
   font-size: 0.85rem;
   width: fit-content;
-  color: ${({ theme }) => theme.colors.text1};
+  color: ${theme.colors.text1};
 
   &:hover {
     opacity: 0.8;

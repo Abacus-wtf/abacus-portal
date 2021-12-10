@@ -11,6 +11,7 @@ import {
 import { useActiveWeb3React } from "@hooks/index"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { Activity } from "react-feather"
+import { theme } from "@config/theme"
 import Button from "../Button"
 
 const StyledMenuButton = styled.button`
@@ -21,8 +22,6 @@ const StyledMenuButton = styled.button`
   padding: 0;
   white-space: nowrap;
   background-color: #fff;
-  border: ${({ theme }) => `1px solid ${theme.primary1}`};
-  color: ${({ theme }) => theme.primary1};
   opacity: 1;
   font-weight: 700;
   border-radius: 4px;
@@ -37,7 +36,7 @@ const StyledMenuButton = styled.button`
     opacity: 0.8;
   }
 
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     margin-bottom: 0;
     padding: 0.15rem 0.5rem;
     height: 100%;

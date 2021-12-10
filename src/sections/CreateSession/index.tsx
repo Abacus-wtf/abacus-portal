@@ -15,6 +15,7 @@ import { ZERO_ADDRESS, ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import { openseaGet, shortenAddress } from "@config/utils"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import { useGetCurrentNetwork } from "@state/application/hooks"
+import { theme } from "@config/theme"
 import {
   SplitContainer,
   VerticalSmallGapContainer,
@@ -25,13 +26,13 @@ import {
 const ListGroupStyled = styled(ListGroup)`
   margin: 45px 0px;
 
-  @media ${({ theme }) => theme.mediaMin.splitCenter} {
+  @media ${theme.mediaMin.splitCenter} {
     min-width: 450px;
   }
 `
 
 const ModalSubtitle = styled(SubTitle)`
-  color: ${({ theme }) => theme.colors.accent};
+  color: ${theme.colors.accent};
   font-weight: bold;
 `
 
