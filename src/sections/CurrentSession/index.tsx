@@ -5,6 +5,7 @@ import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
   useCurrentSessionFetchStatus,
+  useCurrentSessionUserStatus,
   useGetCurrentSessionData,
   useGetUserStatus,
 } from "@state/sessionData/hooks"
@@ -38,6 +39,7 @@ const CurrentSession = ({ location }) => {
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
   const getUserStatus = useGetUserStatus()
+  const userStatus = useCurrentSessionUserStatus()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
   const [isFisk] = useState(
     tokenId ===
@@ -58,7 +60,9 @@ const CurrentSession = ({ location }) => {
       if (claimData === null) {
         await setPayoutData(account)
       }
-      getUserStatus(String(address), String(tokenId))
+      if (userStatus === -1) {
+        await getUserStatus(String(address), String(tokenId))
+      }
     }
 
     if (!address || !tokenId || !nonce) {
@@ -68,7 +72,7 @@ const CurrentSession = ({ location }) => {
       loadData()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [claimData, sessionData])
+  }, [claimData, sessionData, userStatus])
 
   if (!account && !isNetworkSymbolNone) {
     return (
