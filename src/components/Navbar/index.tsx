@@ -170,8 +170,8 @@ const Navbar = ({ location }) => {
               Claim & Deposit
             </HeaderLink>
             <HeaderLink
-              as={Link}
-              to="https://legacy.abacus.wtf"
+              as="a"
+              href="https://legacy.abacus.wtf"
               active={location.pathname.includes("/legacy").toString()}
               disabled={isNetworkSymbolNone}
             >
