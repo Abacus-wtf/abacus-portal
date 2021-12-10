@@ -7,6 +7,7 @@ import {
   useGetCurrentNetwork,
   useToggleWalletModal,
 } from "@state/application/hooks"
+import { Link } from "gatsby"
 import { Menu, X } from "react-feather"
 import { NetworkSymbolEnum } from "@config/constants"
 import { theme } from "@config/theme"
@@ -21,7 +22,7 @@ const RowStyled = styled(Row)`
   margin: 0;
 `
 
-const Logo = styled.a`
+const Logo = styled(Link)`
   font-size: 1.5rem;
   font-weight: 500;
   color: ${theme.colors.text1};
@@ -132,45 +133,45 @@ const Navbar = ({ location }) => {
   return (
     <RowStyled>
       <NavbarContainer>
-        <Logo href="/">Abacus</Logo>
+        <Logo to="/">Abacus</Logo>
         <MobileNavButton onClick={() => setMenuOpen((open) => !open)}>
           {menuOpen ? <X /> : <Menu />}
         </MobileNavButton>
         <LinkList menuOpen={menuOpen}>
           <ListSection>
             <HeaderLink
-              as="a"
-              href="/"
+              as={Link}
+              to="/"
               active={(location.pathname === "/").toString()}
             >
               Explore
             </HeaderLink>
             <HeaderLink
-              as="a"
-              href="/auction"
+              as={Link}
+              to="/auction"
               active={location.pathname.includes("/auction").toString()}
             >
               Auction
             </HeaderLink>
             <HeaderLink
-              as="a"
-              href="/my-sessions"
+              as={Link}
+              to="/my-sessions"
               active={location.pathname.includes("/my-sessions").toString()}
               disabled={isNetworkSymbolNone}
             >
               My Sessions
             </HeaderLink>
             <HeaderLink
-              as="a"
-              href="/claim-pool"
+              as={Link}
+              to="/claim-pool"
               active={location.pathname.includes("/claim-pool").toString()}
               disabled={isNetworkSymbolNone}
             >
               Claim & Deposit
             </HeaderLink>
             <HeaderLink
-              as="a"
-              href="https://legacy.abacus.wtf"
+              as={Link}
+              to="https://legacy.abacus.wtf"
               active={location.pathname.includes("/legacy").toString()}
               disabled={isNetworkSymbolNone}
             >

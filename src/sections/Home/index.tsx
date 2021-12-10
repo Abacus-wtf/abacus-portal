@@ -19,6 +19,7 @@ import { usePrevious } from "@hooks/index"
 import FilterModal from "@components/FilterModal"
 import { Tooltip } from "shards-react"
 import { NetworkSymbolEnum } from "@config/constants"
+import { Link } from "gatsby"
 import {
   BackgroundIMG,
   HeaderBar,
@@ -102,12 +103,12 @@ const Home: React.FC = () => {
 
       <CardContainer>
         {_.map(multiSessionData, (i) => (
-          <a
-            href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
+          <Link
+            to={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
             key={`${i.address}-${i.tokenId}-${i.nonce}`}
           >
             <Card {...i} />
-          </a>
+          </Link>
         ))}
       </CardContainer>
       <UniversalContainer style={{ alignItems: "center", marginTop: "10px" }}>
