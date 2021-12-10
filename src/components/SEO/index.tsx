@@ -8,6 +8,7 @@
 import React, { FunctionComponent } from "react"
 import Helmet from "react-helmet"
 import { useStaticQuery, graphql } from "gatsby"
+import defaultMetaImage from "../../images/metaImage.png"
 
 import config from "../../../website"
 import SchemaOrg from "./SchemaOrg"
@@ -45,12 +46,11 @@ interface SEOProps extends SEOWithQueryProps {
 const SEO: FunctionComponent<SEOProps> = ({
   siteMetadata: seo,
   pageData = {},
-  // metaImage,
+  metaImage,
   title = pageData.title || config.siteTitle,
   description = pageData.description || seo.description,
 }) => {
-  const image =
-    "https://app.abacus.wtf/static/twitter_card-e604e5de62a699aaac0b319c13c71f08.png" // `${seo.canonicalUrl}${metaImage || defaultMetaImage}`
+  const image = `${seo.canonicalUrl}${metaImage || defaultMetaImage}`
   const url = pageData.slug
     ? `${seo.canonicalUrl}${pageData.slug}`
     : seo.canonicalUrl
