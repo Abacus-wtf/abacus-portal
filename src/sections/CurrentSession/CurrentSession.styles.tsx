@@ -3,13 +3,14 @@ import styled from "styled-components"
 import { ListGroupItem } from "shards-react"
 import { Text, ImageContainer } from "@components/global.styles"
 import { HorizontalListGroup } from "@components/ListGroupMods"
+import { theme } from "@config/theme"
 
 export const CallToActionCopy = styled.p`
   margin: 0;
   padding: 0;
   width: 100%;
   text-align: center;
-  font-size: ${({ theme }) => theme.copy.large};
+  font-size: ${theme.copy.large};
 `
 
 export const SplitContainer = styled.div`
@@ -18,7 +19,7 @@ export const SplitContainer = styled.div`
   grid-gap: 40px;
   width: 100%;
 
-  @media ${({ theme }) => theme.media.splitCenter} {
+  @media ${theme.media.splitCenter} {
     grid-template-columns: 1fr;
   }
 `
@@ -74,7 +75,7 @@ export const FileContainer = ({
 }
 
 export const SubText = styled(Text)`
-  color: ${({ theme }) => theme.colors.text2};
+  color: ${theme.colors.text2};
   text-align: left;
 `
 

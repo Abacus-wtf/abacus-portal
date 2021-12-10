@@ -10,7 +10,7 @@ export const theme = {
     text2: "#6C7388",
     text3: "#D5D7DF",
     oppositeText1: "#fff",
-
+    primary1: "#355DFF",
     bg1: "#fff",
     bg2: "#E4E4E4",
 

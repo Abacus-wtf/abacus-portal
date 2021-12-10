@@ -1,21 +1,48 @@
-"use strict"
-
+// eslint-disable-next-line import/no-extraneous-dependencies
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 })
 
 const path = require(`path`)
 
+const config = require("./website")
+
 module.exports = {
   siteMetadata: {
-    title: `Abacus Protocol Portal`,
-    description: `NFT Valuation Tool`,
+    siteUrl: config.siteUrl,
+    title: config.siteTitle,
+    twitterHandle: config.twitterHandle,
+    description: config.siteDescription,
+    keywords: [
+      "Software Engineer",
+      "Musician",
+      "JavaScript Training",
+      "Learn Music",
+    ],
+    canonicalUrl: config.siteUrl,
     author: {
-      name: "Abacus Team",
+      name: config.author,
+      minibio: config.minibio,
+    },
+    organization: {
+      name: config.organization,
+      url: config.siteUrl,
+    },
+    social: {
+      twitter: config.twitterHandle,
+      fbAppID: "",
     },
   },
   pathPrefix: "__PATH_PREFIX__",
   plugins: [
+    `gatsby-plugin-react-helmet`,
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `images`,
+        path: path.join(__dirname, `src`, `images`),
+      },
+    },
     {
       resolve: `gatsby-plugin-google-gtag`,
       options: {
@@ -30,8 +57,10 @@ module.exports = {
         },
       },
     },
-    `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-lodash`,
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
+    `gatsby-plugin-typescript`,
+    `gatsby-plugin-styled-components`,
     {
       resolve: `gatsby-plugin-swarm`,
       options: {
@@ -49,14 +78,6 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `images`,
-        path: path.join(__dirname, `src`, `images`),
-      },
-    },
-
-    {
       resolve: `gatsby-plugin-nprogress`,
       options: {
         // Setting a color is optional.
@@ -65,9 +86,6 @@ module.exports = {
         showSpinner: true,
       },
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
-    `gatsby-plugin-typescript`,
-    `gatsby-plugin-styled-components`,
+    `gatsby-plugin-offline`,
   ],
 }
