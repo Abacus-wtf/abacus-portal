@@ -110,7 +110,7 @@ const ClaimPool: FunctionComponent = () => {
               value={claimPrincipalVal}
               onChange={(e) => setClaimPrincipalVal(e.target.value)}
               buttonText="Max"
-              onClick={() => setClaimPrincipalVal(claimData.ethCredit)}
+              onClick={() => setClaimPrincipalVal(`${claimData.ethCredit}`)}
             />
           </MaxWidthItem>
         </HorizontalListGroup>
@@ -188,7 +188,7 @@ const ClaimPool: FunctionComponent = () => {
               value={ethWithdrawalVal}
               onChange={(e) => setEthWithdrawalVal(e.target.value)}
               buttonText="Max"
-              onClick={() => setEthWithdrawalVal(claimData.ethPayout)}
+              onClick={() => setEthWithdrawalVal(`${claimData.ethPayout}`)}
             />
           </MaxWidthItem>
           <MaxWidthItem>
@@ -199,7 +199,7 @@ const ClaimPool: FunctionComponent = () => {
               value={abcWithdrawalVal}
               onChange={(e) => setAbcWithdrawalVal(e.target.value)}
               buttonText="Max"
-              onClick={() => setAbcWithdrawalVal(claimData.abcPayout)}
+              onClick={() => setAbcWithdrawalVal(`${claimData.abcPayout}`)}
             />
           </MaxWidthItem>
         </HorizontalListGroup>

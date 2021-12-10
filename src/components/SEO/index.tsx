@@ -11,7 +11,6 @@ import { useStaticQuery, graphql } from "gatsby"
 
 import config from "../../../website"
 import SchemaOrg from "./SchemaOrg"
-import defaultMetaImage from "../../images/metaImage.png"
 
 export type SEOWithQueryProps = {
   pageData?: {
@@ -46,7 +45,7 @@ interface SEOProps extends SEOWithQueryProps {
 const SEO: FunctionComponent<SEOProps> = ({
   siteMetadata: seo,
   pageData = {},
-  metaImage,
+  // metaImage,
   title = pageData.title || config.siteTitle,
   description = pageData.description || seo.description,
 }) => {
