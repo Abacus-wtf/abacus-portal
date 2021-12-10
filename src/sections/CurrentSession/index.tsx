@@ -6,7 +6,6 @@ import {
   useCurrentSessionData,
   useCurrentSessionFetchStatus,
   useGetCurrentSessionData,
-  useGetCurrentSessionDataGRT,
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
@@ -27,9 +26,8 @@ import {
 import CurrentState from "./CurrentState"
 
 const CurrentSession = ({ location }) => {
-  const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
+  const { address, tokenId, nonce } = queryString.parse(location.search)
   const getCurrentSessionData = useGetCurrentSessionData()
-  const getCurrentSessionDataGrt = useGetCurrentSessionDataGRT()
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
@@ -49,19 +47,11 @@ const CurrentSession = ({ location }) => {
   useEffect(() => {
     const loadData = async () => {
       if (sessionData.address === "") {
-        if (legacy) {
-          await getCurrentSessionDataGrt(
-            String(address),
-            String(tokenId),
-            Number(nonce)
-          )
-        } else {
-          await getCurrentSessionData(
-            String(address),
-            String(tokenId),
-            Number(nonce)
-          )
-        }
+        await getCurrentSessionData(
+          String(address),
+          String(tokenId),
+          Number(nonce)
+        )
       }
       if (claimData === null) {
         await setPayoutData(account)
@@ -74,21 +64,8 @@ const CurrentSession = ({ location }) => {
     } else if ((account && chainId && networkSymbol) || isNetworkSymbolNone) {
       loadData()
     }
-  }, [
-    address,
-    tokenId,
-    nonce,
-    account,
-    networkSymbol,
-    chainId,
-    getCurrentSessionData,
-    claimData,
-    setPayoutData,
-    legacy,
-    sessionData,
-    getCurrentSessionDataGrt,
-    isNetworkSymbolNone,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [claimData, sessionData])
 
   if (!account && !isNetworkSymbolNone) {
     return (
