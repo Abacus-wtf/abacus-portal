@@ -86,7 +86,7 @@ const ARB_ABC_AUCTION_ADDRESS = IS_PRODUCTION
   ? "0x396dd1f7E3c8044784937935F834C3F8d58EB497"
   : "0xB1B8A7FcF35615051B0cDEE38A03002F87278b09"
 const ARB_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
-  ? "0xdc0B4eb507d483B77ECF3B82503D5630037aF3cF"
+  ? "0x06060a6258c84dfcd42c1fb82e0028758808f5ac"
   : "0x554feAd617d7EB05eF3C001582cDC4f3405059C0"
 
 export const CURRENT_SESSIONS = (networkSymbol: NetworkSymbolEnum) =>
@@ -155,7 +155,7 @@ export const web3 = (networkSymbol: NetworkSymbolEnum) =>
 export const web3Eth = new Web3(ETH_RPC)
 
 export const NetworkInfoMap: NetworkInfo[] = [
-  /* {
+  {
     rpc: ETH_RPC,
     chainId: NETWORK_CHAIN_ID,
     symbol: "ETH",
@@ -164,7 +164,7 @@ export const NetworkInfoMap: NetworkInfo[] = [
     blockExplorer: IS_PRODUCTION
       ? "https://etherscan.io/#/"
       : "https://rinkeby.etherscan.io/#/",
-  }, */
+  },
   {
     rpc: ARBITRUM_ETH_RPC,
     chainId: ARBITRUM_NETWORK_CHAIN_ID,
