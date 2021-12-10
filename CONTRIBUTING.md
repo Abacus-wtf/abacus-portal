@@ -100,7 +100,7 @@ included in the project:
 
    ```bash
    # Clone your fork of the repo into the current directory
-   git clone https://github.com/<your-username>/abacus-portal.git
+   git clone https://github.com/Abacus-wtf/abacus-portal.git
    # Navigate to the newly cloned directory
    cd abacus-portal
    # Assign the original repo to a remote called "upstream"
