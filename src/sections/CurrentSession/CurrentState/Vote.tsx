@@ -139,11 +139,11 @@ const Vote = ({
             return
           }
 
-          if (stake < 0.005) {
+          if (stake < 0.009) {
             alert(
-              `The min amount of eth you can stake is .005 Ether. You tried staking ${Number(
+              `The min amount of eth you can stake is .009 Ether. You tried staking ${Number(
                 target.stake.value
-              )} Ether.`
+              )} Ether. Keep in mind that 0.002 Ether is used for the Bounty tax and 0.002 Ether is used for the Keepers tax.`
             )
             return
           }
