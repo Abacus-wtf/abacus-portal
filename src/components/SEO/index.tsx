@@ -50,7 +50,8 @@ const SEO: FunctionComponent<SEOProps> = ({
   title = pageData.title || config.siteTitle,
   description = pageData.description || seo.description,
 }) => {
-  const image = `${seo.canonicalUrl}${metaImage || defaultMetaImage}`
+  const image =
+    "https://app.abacus.wtf/static/twitter_card-e604e5de62a699aaac0b319c13c71f08.png" // `${seo.canonicalUrl}${metaImage || defaultMetaImage}`
   const url = pageData.slug
     ? `${seo.canonicalUrl}${pageData.slug}`
     : seo.canonicalUrl
