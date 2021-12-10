@@ -48,6 +48,7 @@ const Vote = ({
   const [appraisalHash, setAppraisalHash] = useState("")
   const { account } = useActiveWeb3React()
   const networkSymbol = useGetCurrentNetwork()
+  console.log(networkSymbol)
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const sessionData = useCurrentSessionData()
@@ -204,7 +205,6 @@ const Vote = ({
             <Button
               disabled={
                 isNetworkSymbolNone ||
-                !canUserInteract ||
                 isPending ||
                 appraisalHash === "" ||
                 (userStatus === UserState.NotVoted &&
@@ -223,7 +223,7 @@ const Vote = ({
           <Tooltip
             open={isToolTipOpen}
             target="#submitVoteButton"
-            disabled={canUserInteract || isPending}
+            disabled={!canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement="right"
           >
