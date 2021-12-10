@@ -204,6 +204,7 @@ const Vote = ({
           <div style={{ width: "100%" }} id="submitVoteButton">
             <Button
               disabled={
+                !canUserInteract ||
                 isNetworkSymbolNone ||
                 isPending ||
                 appraisalHash === "" ||
@@ -223,7 +224,7 @@ const Vote = ({
           <Tooltip
             open={isToolTipOpen}
             target="#submitVoteButton"
-            disabled={!canUserInteract || isPending}
+            disabled={canUserInteract || isPending}
             toggle={() => setIsToolTipOpen(!isToolTipOpen)}
             placement="right"
           >
