@@ -5,8 +5,9 @@ import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
   useCurrentSessionFetchStatus,
+  useCurrentSessionUserStatus,
   useGetCurrentSessionData,
-  useGetCurrentSessionDataGRT,
+  useGetUserStatus,
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { ButtonsWhite } from "@components/Button"
@@ -27,9 +28,8 @@ import {
 import CurrentState from "./CurrentState"
 
 const CurrentSession = ({ location }) => {
-  const { address, tokenId, nonce, legacy } = queryString.parse(location.search)
+  const { address, tokenId, nonce } = queryString.parse(location.search)
   const getCurrentSessionData = useGetCurrentSessionData()
-  const getCurrentSessionDataGrt = useGetCurrentSessionDataGRT()
   const { account, chainId } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
   const fetchStatus = useCurrentSessionFetchStatus()
@@ -38,31 +38,30 @@ const CurrentSession = ({ location }) => {
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
   const claimData = useClaimPayoutData()
   const setPayoutData = useSetPayoutData()
+  const getUserStatus = useGetUserStatus()
+  const userStatus = useCurrentSessionUserStatus()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
   const [isFisk] = useState(
     tokenId ===
       "103662588172564032573538786729890701797701353903294947741648606022377129639937" &&
       address === "0x495f947276749ce646f68ac8c248420045cb7b5e"
   )
+  const [congratsOpen, setCongratsOpen] = useState(false)
+
   useEffect(() => {
     const loadData = async () => {
       if (sessionData.address === "") {
-        if (legacy) {
-          await getCurrentSessionDataGrt(
-            String(address),
-            String(tokenId),
-            Number(nonce)
-          )
-        } else {
-          await getCurrentSessionData(
-            String(address),
-            String(tokenId),
-            Number(nonce)
-          )
-        }
+        await getCurrentSessionData(
+          String(address),
+          String(tokenId),
+          Number(nonce)
+        )
       }
       if (claimData === null) {
         await setPayoutData(account)
+      }
+      if (userStatus === -1) {
+        await getUserStatus(String(address), String(tokenId))
       }
     }
 
@@ -72,21 +71,8 @@ const CurrentSession = ({ location }) => {
     } else if ((account && chainId && networkSymbol) || isNetworkSymbolNone) {
       loadData()
     }
-  }, [
-    address,
-    tokenId,
-    nonce,
-    account,
-    networkSymbol,
-    chainId,
-    getCurrentSessionData,
-    claimData,
-    setPayoutData,
-    legacy,
-    sessionData,
-    getCurrentSessionDataGrt,
-    isNetworkSymbolNone,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [claimData, sessionData, userStatus])
 
   if (!account && !isNetworkSymbolNone) {
     return (
@@ -165,7 +151,10 @@ const CurrentSession = ({ location }) => {
               </OutboundLink>
             </SubText>
           </VerticalSmallGapContainer>
-          <CurrentState />
+          <CurrentState
+            congratsOpen={congratsOpen}
+            setCongratsOpen={(input) => setCongratsOpen(input)}
+          />
         </VerticalContainer>
       </SplitContainer>
     </SmallUniversalContainer>

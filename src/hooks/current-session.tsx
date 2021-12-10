@@ -150,6 +150,7 @@ export const useOnSubmitVote = () => {
         addTransaction(response, {
           summary: "Submit Vote",
         })
+        await response.wait()
         callback()
       }
       await generalizedContractCall({
