@@ -10,13 +10,14 @@ import { getEtherscanLink, useActiveWeb3React } from "@hooks/index"
 import { shortenAddress, isWithinFivePercent } from "@config/utils"
 import { Title } from "@components/global.styles"
 import styled from "styled-components"
+import { theme } from "@config/theme"
 
 const RankingsModalBody = styled(ModalBody)`
   display: flex;
   flex-direction: column;
   grid-gap: 10px;
   max-height: 500px;
-  @media ${({ theme }) => theme.media.phone} {
+  @media ${theme.media.phone} {
     width: 100%;
   }
 `

@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import Countdown from "react-countdown"
+import { theme } from "@config/theme"
 import { User } from "react-feather"
 import EthSymbol from "@images/ETH.svg"
 import { Text, ImageContainer } from "@components/global.styles"
@@ -32,7 +33,7 @@ const MiniText = styled.div`
   max-height: 30px;
   font-size: 14px;
   backdrop-filter: blur(10px);
-  color: ${({ theme }) => theme.colors.text3};
+  color: ${theme.colors.text3};
 `
 
 const UserStyled = styled(User)`
@@ -65,7 +66,7 @@ const BoldText = styled(Text)`
 `
 
 const SubText = styled(Text)`
-  color: ${({ theme }) => theme.colors.text2};
+  color: ${theme.colors.text2};
   font-size: 0.85rem;
   text-overflow: ellipsis;
   white-space: nowrap;

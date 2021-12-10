@@ -2,7 +2,7 @@ import GlobalLayout from "@layouts/index"
 import CurrentSession from "@sections/CurrentSession"
 import React from "react"
 
-const CurrentSessionPage = (props: any) => {
+const CurrentSessionPage = (props) => {
   const { location } = props
   return (
     <GlobalLayout {...props}>

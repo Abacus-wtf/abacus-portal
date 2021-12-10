@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
+import { theme } from "@config/theme"
 
 const ExternalLink = styled(OutboundLink).attrs({
   target: "_blank",
@@ -64,15 +65,13 @@ const CircleWrapper = styled.div`
 
 const HeaderText = styled.div`
   color: ${(props) =>
-    props.color === "blue"
-      ? ({ theme }) => theme.primary1
-      : ({ theme }) => theme.text1};
+    props.color === "blue" ? theme.colors.primary1 : theme.colors.text1};
   font-size: 1rem;
   font-weight: 500;
 `
 
 const SubHeader = styled.div`
-  color: ${({ theme }) => theme.color.text1};
+  color: ${theme.colors.text1};
   margin-top: 10px;
   font-size: 12px;
 `

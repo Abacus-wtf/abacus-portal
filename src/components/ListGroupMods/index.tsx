@@ -1,3 +1,4 @@
+import { theme } from "@config/theme"
 import {
   ListGroup,
   ListGroupItemHeading,
@@ -36,5 +37,5 @@ export const ListGroupHeader = styled(ListGroupItemHeading)`
 
 export const ListGroupSubtext = styled(ListGroupItemText)`
   margin: 0px;
-  color: ${({ theme }) => theme.colors.text2} !important;
+  color: ${theme.colors.text2} !important;
 `
