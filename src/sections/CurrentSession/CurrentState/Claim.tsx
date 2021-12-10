@@ -1,9 +1,4 @@
-import React, {
-  FunctionComponent,
-  useContext,
-  useState,
-  useEffect,
-} from "react"
+import React, { FunctionComponent, useContext, useState } from "react"
 import { ThemeContext } from "styled-components"
 import { Label } from "@components/global.styles"
 import Button from "@components/Button"
@@ -14,12 +9,9 @@ import {
   ListGroupSubtext,
 } from "@components/ListGroupMods"
 import { ListGroupItem, Tooltip, ListGroup } from "shards-react"
-import { useSelector } from "react-redux"
-import { AppState } from "@state/index"
 import {
   useCanUserInteract,
   useCurrentSessionData,
-  useRetrieveClaimData,
 } from "@state/sessionData/hooks"
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
@@ -36,21 +28,11 @@ const Claim: FunctionComponent = () => {
   const sessionData = useCurrentSessionData()
   const networkSymbol = useGetCurrentNetwork()
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
-  const claimData = useSelector<
-    AppState,
-    AppState["sessionData"]["currentSessionData"]["claimPositions"]
-  >((state) => state.sessionData.currentSessionData.claimPositions)
-
-  const retrieveClaimData = useRetrieveClaimData()
 
   const canUserInteract = useCanUserInteract()
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
 
   const { onClaim, isPending } = useOnClaim()
-
-  useEffect(() => {
-    retrieveClaimData()
-  }, [retrieveClaimData])
 
   const theme = useContext(ThemeContext)
   return (
@@ -104,22 +86,6 @@ const Claim: FunctionComponent = () => {
               minimumFractionDigits: 2,
               maximumFractionDigits: 4,
             })} ETH`}
-            disabled
-          />
-        </ListGroupItem>
-        <ListGroupItem>
-          <InputWithTitle
-            title="Total Reward Left"
-            id="totalRewardLeft"
-            placeholder="0"
-            value={
-              claimData
-                ? `${claimData.totalProfit.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 4,
-                  })} ETH`
-                : "-"
-            }
             disabled
           />
         </ListGroupItem>
