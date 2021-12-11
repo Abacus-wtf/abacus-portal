@@ -7,6 +7,7 @@ import {
   useWeb3Contract,
   useActiveWeb3React,
   useWeb3EthContract,
+  useMultiCall,
 } from "@hooks/index"
 import {
   ABC_PRICING_SESSION_ADDRESS,
@@ -17,6 +18,8 @@ import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.j
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 import _ from "lodash"
 import {
+  formatPricingSessionCheckMulticall,
+  formatPricingSessionCoreMulticall,
   openseaGet,
   openseaGetMany,
   OpenSeaGetResponse,
@@ -30,14 +33,12 @@ import {
   CurrentSessionState,
   UserState,
   SessionState,
-  ClaimState,
 } from "./reducer"
 import {
   setMultipleSessionData,
   setMultipleSessionFetchStatus,
   getCurrentSessionData,
   setUserStatus,
-  setClaimPosition,
   setCurrentSessionFetchStatus,
   setCurrentSessionErrorMessage,
   setMySessionsFetchStatus,
@@ -194,50 +195,6 @@ export const useCanUserInteract = () => {
     default:
       return false
   }
-}
-
-export const useRetrieveClaimData = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
-  const sessionData = useCurrentSessionData()
-  const networkSymbol = useGetCurrentNetwork()
-
-  return useCallback(async () => {
-    const pricingSession = getPricingSessionContract(
-      ABC_PRICING_SESSION_ADDRESS(networkSymbol)
-    )
-    try {
-      const [getEthPayout, ethToAbc, core] = await Promise.all([
-        pricingSession.methods
-          .getEthPayout(sessionData.address, sessionData.tokenId)
-          .call(),
-        pricingSession.methods.ethToAbc().call(),
-        pricingSession.methods
-          .NftSessionCore(
-            sessionData.nonce,
-            sessionData.address,
-            sessionData.tokenId
-          )
-          .call(),
-      ])
-
-      const claimData: ClaimState = {
-        abcClaimAmount: Number(formatEther(getEthPayout * ethToAbc)),
-        ethClaimAmount: Number(formatEther(getEthPayout)),
-        totalProfit: Number(formatEther(core.totalProfit)),
-      }
-      dispatch(setClaimPosition(claimData))
-    } catch (e) {
-      console.error(e)
-    }
-  }, [
-    getPricingSessionContract,
-    networkSymbol,
-    sessionData.address,
-    sessionData.tokenId,
-    sessionData.nonce,
-    dispatch,
-  ])
 }
 
 const findAsset = (
@@ -591,30 +548,40 @@ export const useGetCurrentSessionData = () => {
   const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
   const { account } = useActiveWeb3React()
+  const multicall = useMultiCall(ABC_PRICING_SESSION_ABI)
 
   return useCallback(
     async (address: string, tokenId: string, nonce: number) => {
       dispatch(setCurrentSessionFetchStatus(PromiseStatus.Pending))
-      const pricingSession = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol)
-      )
       const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
       const URL = `asset/${address}/${tokenId}`
-      const [
+
+      let [
         pricingSessionMetadata,
-        pricingSessionCore,
-        getStatus,
-        pricingSessionCheck,
-        finalAppraisalResult,
+        [
+          pricingSessionCore,
+          getStatus,
+          pricingSessionCheck,
+          finalAppraisalResult,
+        ],
         grtData,
-      ] = await Promise.all([
+      ]: any = await Promise.all([
         openseaGet(URL),
-        pricingSession.methods.NftSessionCore(nonce, address, tokenId).call(),
-        pricingSession.methods.getStatus(address, tokenId).call(),
-        pricingSession.methods.NftSessionCheck(nonce, address, tokenId).call(),
-        pricingSession.methods
-          .finalAppraisalValue(nonce, address, tokenId)
-          .call(),
+        multicall(
+          ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+          [
+            "NftSessionCore",
+            "getStatus",
+            "NftSessionCheck",
+            "finalAppraisalValue",
+          ],
+          [
+            [nonce, address, tokenId],
+            [address, tokenId],
+            [nonce, address, tokenId],
+            [nonce, address, tokenId],
+          ]
+        ),
         axios.post<GetPricingSessionQueryResponse>(
           GRAPHQL_ENDPOINT(networkSymbol),
           {
@@ -627,6 +594,11 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
+      pricingSessionCore = formatPricingSessionCoreMulticall(pricingSessionCore)
+      pricingSessionCheck =
+        formatPricingSessionCheckMulticall(pricingSessionCheck)
+      getStatus = `${parseInt(getStatus[0].hex, 16)}`
+      finalAppraisalResult = `${parseInt(finalAppraisalResult[0].hex, 16)}`
       const { pricingSession: pricingSessionGrt } = grtData?.data.data ?? {}
 
       let ethUsd
@@ -652,6 +624,8 @@ export const useGetCurrentSessionData = () => {
       if (sessionStatus >= SessionState.Harvest && account) {
         const index = _.findIndex(
           pricingSessionGrt.participants,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           (participant) => participant.user.id === account.toLowerCase()
         )
         if (index !== -1) {
@@ -696,7 +670,7 @@ export const useGetCurrentSessionData = () => {
 
       const sessionData: SessionData = {
         rankings,
-        bounty: Number(formatEther(pricingSessionCore.bounty)),
+        bounty: pricingSessionCore.bounty,
         image_url:
           pricingSessionMetadata?.image_url ||
           pricingSessionMetadata?.image_preview_url,
@@ -706,20 +680,18 @@ export const useGetCurrentSessionData = () => {
         numPpl:
           sessionStatus >= 2
             ? Number(pricingSessionGrt.numParticipants)
-            : Number(pricingSessionCore.uniqueVoters),
+            : pricingSessionCore.uniqueVoters,
         collectionTitle: pricingSessionMetadata?.collection?.name,
         totalStaked:
           sessionStatus >= 2
             ? Number(formatEther(pricingSessionGrt.totalStaked))
-            : Number(formatEther(pricingSessionCore.totalSessionStake)),
+            : pricingSessionCore.totalSessionStake,
         totalStakedInUSD:
           sessionStatus >= 2
             ? Number(formatEther(pricingSessionGrt.totalStaked)) *
               Number(ethUsd)
-            : Number(formatEther(pricingSessionCore.totalSessionStake)) *
-              Number(ethUsd),
-        bountyInUSD:
-          Number(formatEther(pricingSessionCore.bounty)) * Number(ethUsd),
+            : pricingSessionCore.totalSessionStake * Number(ethUsd),
+        bountyInUSD: pricingSessionCore.bounty * Number(ethUsd),
         nftName: pricingSessionMetadata?.name,
         address,
         tokenId,
@@ -731,7 +703,7 @@ export const useGetCurrentSessionData = () => {
             ? pricingSessionMetadata?.owner?.user?.username
             : shortenAddress(pricingSessionMetadata?.owner?.address),
         ownerAddress: pricingSessionMetadata?.owner?.address,
-        maxAppraisal: Number(formatEther(pricingSessionCore.maxAppraisal)),
+        maxAppraisal: pricingSessionCore.maxAppraisal,
       }
 
       const userStatus = await getUserStatus({
@@ -756,6 +728,7 @@ export const useGetCurrentSessionData = () => {
       getEthUsdContract,
       account,
       dispatch,
+      multicall,
     ]
   )
 }

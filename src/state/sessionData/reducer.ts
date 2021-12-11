@@ -3,7 +3,6 @@ import { PromiseStatus } from "@models/PromiseStatus"
 import {
   getCurrentSessionData,
   setUserStatus,
-  setClaimPosition,
   setMultipleSessionData,
   setMultipleSessionFetchStatus,
   setMultipleSessionErrorMessage,
@@ -81,7 +80,6 @@ export interface CurrentSessionState {
   sessionData: SessionData
   sessionStatus: SessionState
   userStatus: UserState
-  claimPositions?: ClaimState
   fetchStatus?: PromiseStatus
   errorMessage?: string | null
 }
@@ -149,9 +147,6 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(setUserStatus, (state, action) => {
       state.currentSessionData.userStatus = action.payload
-    })
-    .addCase(setClaimPosition, (state, action) => {
-      state.currentSessionData.claimPositions = action.payload
     })
     .addCase(setCurrentSessionFetchStatus, (state, action) => {
       if (state.currentSessionData !== null) {
