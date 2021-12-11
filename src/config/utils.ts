@@ -7,8 +7,34 @@ import { Web3Provider, JsonRpcSigner } from "@ethersproject/providers"
 import { Contract } from "@ethersproject/contracts"
 import { AddressZero } from "@ethersproject/constants"
 import { keccak256 } from "@ethersproject/keccak256"
+import { formatEther } from "ethers/lib/utils"
 
 axiosRetry(axios, { retries: 3 })
+
+export const formatPricingSessionCoreMulticall = (pricingSessionCore: any) => ({
+  endTime: parseInt(pricingSessionCore[0].hex, 16),
+  bounty: Number(formatEther(pricingSessionCore[1])),
+  keeperReward: Number(formatEther(pricingSessionCore[2])),
+  lowestStake: Number(formatEther(pricingSessionCore[3])),
+  maxAppraisal: Number(formatEther(pricingSessionCore[4])),
+  totalAppraisalValue: Number(formatEther(pricingSessionCore[5])),
+  totalSessionStake: Number(formatEther(pricingSessionCore[6])),
+  totalProfit: Number(formatEther(pricingSessionCore[7])),
+  totalWinnerPoints: parseInt(pricingSessionCore[8].hex, 16),
+  totalVotes: parseInt(pricingSessionCore[11].hex, 9),
+  uniqueVotes: parseInt(pricingSessionCore[11].hex, 10),
+  votingTime: parseInt(pricingSessionCore[11].hex, 16),
+})
+
+export const formatPricingSessionCheckMulticall = (
+  pricingSessionCheck: any
+) => ({
+  sessionProgression: `${parseInt(pricingSessionCheck[0].hex, 16)}`,
+  calls: `${parseInt(pricingSessionCheck[1].hex, 16)}`,
+  correct: `${parseInt(pricingSessionCheck[2].hex, 16)}`,
+  incorrect: `${parseInt(pricingSessionCheck[3].hex, 16)}`,
+  timeFinalAppraisalSet: `${parseInt(pricingSessionCheck[4].hex, 16)}`,
+})
 
 export function isWithinFivePercent(appraisal: number, finalAppraisal: number) {
   return (

@@ -8,6 +8,7 @@ import {
 } from "@config/constants"
 import {
   useActiveWeb3React,
+  useMultiCall,
   useWeb3Contract,
   useWeb3EthContract,
 } from "@hooks/index"
@@ -27,6 +28,7 @@ export const useSetAuctionData = () => {
   const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
   const { account } = useActiveWeb3React()
+  const multicall = useMultiCall(ABC_AUCTION_ABI)
 
   return useCallback(async () => {
     const auctionContract = getAuctionContract(
@@ -37,11 +39,14 @@ export const useSetAuctionData = () => {
     let nonce = await auctionContract.methods.nonce().call()
     nonce = Number(nonce)
 
-    const [highestBid, highestBidder, endTime] = await Promise.all([
-      auctionContract.methods.highestBid(nonce).call(),
-      auctionContract.methods.highestBidder(nonce).call(),
-      auctionContract.methods.endTime(nonce).call(),
-    ])
+    let [highestBid, highestBidder, endTime]: any = await multicall(
+      ABC_AUCTION_ADDRESS(networkSymbol),
+      ["highestBid", "highestBidder", "endTime"],
+      [[nonce], [nonce], [nonce]]
+    )
+    highestBid = highestBid[0]
+    highestBidder = highestBidder[0]
+    endTime = parseInt(endTime[0].hex, 16)
 
     let ethUsd
     try {
@@ -88,33 +93,39 @@ export const useSetAuctionData = () => {
           : undefined,
     }
     dispatch(setAuctionData(auctionData))
-  }, [getAuctionContract, networkSymbol, getEthUsdContract, account, dispatch])
+  }, [
+    getAuctionContract,
+    networkSymbol,
+    getEthUsdContract,
+    account,
+    dispatch,
+    multicall,
+  ])
 }
 
 export const useSetPayoutData = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const networkSymbol = useGetCurrentNetwork()
+  const multicall = useMultiCall(ABC_PRICING_SESSION_ABI)
 
   return useCallback(
     async (account: string) => {
       if (!account) {
         return
       }
-      const pricingSessionContract = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol)
+
+      const [profitStored, ethToAbc, principalStored]: any = await multicall(
+        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ["profitStored", "ethToAbc", "principalStored"],
+        [[account], [], [account]]
       )
-      const [ethPayout, ethToAbc, principalStored] = await Promise.all([
-        pricingSessionContract.methods.profitStored(account).call(),
-        pricingSessionContract.methods.ethToAbc().call(),
-        pricingSessionContract.methods.principalStored(account).call(),
-      ])
-      const eth = Number(formatEther(ethPayout))
-      const abc = Number(ethToAbc) * Number(formatEther(ethPayout))
-      const ethCredit = Number(formatEther(principalStored))
+      const eth = Number(formatEther(profitStored[0]))
+      const abc =
+        parseInt(ethToAbc[0].hex, 16) * Number(formatEther(profitStored[0]))
+      const ethCredit = Number(formatEther(principalStored[0]))
       dispatch(setClaimData({ ethPayout: eth, abcPayout: abc, ethCredit }))
     },
-    [getPricingSessionContract, networkSymbol, dispatch]
+    [networkSymbol, dispatch, multicall]
   )
 }
 

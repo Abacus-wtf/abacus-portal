@@ -1,6 +1,6 @@
 import { PromiseStatus } from "@models/PromiseStatus"
 import { createAction } from "@reduxjs/toolkit"
-import { SessionData, CurrentSessionState, ClaimState } from "./reducer"
+import { SessionData, CurrentSessionState } from "./reducer"
 
 export const setCurrentSessionFetchStatus = createAction<PromiseStatus>(
   "sessionData/setCurrentSessionFetchStatus"
@@ -13,9 +13,6 @@ export const getCurrentSessionData = createAction<CurrentSessionState>(
 )
 export const setUserStatus = createAction<CurrentSessionState["userStatus"]>(
   "sessionData/setUserStatus"
-)
-export const setClaimPosition = createAction<ClaimState>(
-  "sessionData/setClaimPosition"
 )
 export const setMultipleSessionData = createAction<SessionData[]>(
   "sessionData/setMultipleSessionData"
