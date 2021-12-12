@@ -547,7 +547,7 @@ export const useGetCurrentSessionData = () => {
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const multicall = useMultiCall(ABC_PRICING_SESSION_ABI)
 
   return useCallback(
@@ -722,6 +722,7 @@ export const useGetCurrentSessionData = () => {
       dispatch(getCurrentSessionData(currentSessionData))
       dispatch(setCurrentSessionFetchStatus(PromiseStatus.Resolved))
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       getPricingSessionContract,
       networkSymbol,
@@ -729,6 +730,7 @@ export const useGetCurrentSessionData = () => {
       account,
       dispatch,
       multicall,
+      chainId,
     ]
   )
 }
