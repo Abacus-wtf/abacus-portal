@@ -59,7 +59,9 @@ export function getEtherscanLink(
   data: string,
   type: "transaction" | "token" | "address" | "block"
 ): string {
-  const prefix = `https://${ETHERSCAN_PREFIXES[chainId]}`
+  const prefix = chainId
+    ? `https://${ETHERSCAN_PREFIXES[chainId]}`
+    : `https://${ETHERSCAN_PREFIXES[42161]}`
 
   switch (type) {
     case "transaction": {
@@ -104,7 +106,8 @@ export function useMultiCall(abi: any) {
   return useCallback(
     async (contractAddress: string, methods: string[], args: any[][]) => {
       let multicall: any
-      if (chainId === 421611) {
+      console.log(chainId)
+      if (chainId === 421611 || chainId === undefined) {
         multicall = new Multicall({
           multicallCustomContractAddress:
             "0x977923a4097cd0c21b272c0644d18b57d3676b8f",
