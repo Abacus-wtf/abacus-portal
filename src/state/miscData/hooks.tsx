@@ -93,7 +93,7 @@ export const useSetAuctionData = () => {
           : undefined,
     }
     dispatch(setAuctionData(auctionData))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     getAuctionContract,
     networkSymbol,
