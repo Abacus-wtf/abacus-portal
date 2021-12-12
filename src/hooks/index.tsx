@@ -107,7 +107,7 @@ export function useMultiCall(abi: any) {
     async (contractAddress: string, methods: string[], args: any[][]) => {
       let multicall: any
       console.log(chainId)
-      if (chainId === 421611 || chainId === undefined) {
+      if (chainId === 421611) {
         multicall = new Multicall({
           multicallCustomContractAddress:
             "0x977923a4097cd0c21b272c0644d18b57d3676b8f",
