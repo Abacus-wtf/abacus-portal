@@ -21,8 +21,8 @@ export const formatPricingSessionCoreMulticall = (pricingSessionCore: any) => ({
   totalSessionStake: Number(formatEther(pricingSessionCore[6])),
   totalProfit: Number(formatEther(pricingSessionCore[7])),
   totalWinnerPoints: parseInt(pricingSessionCore[8].hex, 16),
-  totalVotes: parseInt(pricingSessionCore[11].hex, 9),
-  uniqueVotes: parseInt(pricingSessionCore[11].hex, 10),
+  totalVotes: parseInt(pricingSessionCore[9].hex, 16),
+  uniqueVoters: parseInt(pricingSessionCore[10].hex, 16),
   votingTime: parseInt(pricingSessionCore[11].hex, 16),
 })
 
