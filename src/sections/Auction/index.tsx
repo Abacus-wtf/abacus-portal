@@ -38,7 +38,7 @@ const Auction = () => {
     ) {
       loadUserData()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
   if (!account && !isNetworkSymbolNone) {
