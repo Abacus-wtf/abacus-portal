@@ -3,6 +3,7 @@ import { Web3Provider, TransactionResponse } from "@ethersproject/providers"
 import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 import {
+  IS_PRODUCTION,
   NetworkContextName,
   NetworkSymbolEnum,
   web3,
@@ -106,8 +107,7 @@ export function useMultiCall(abi: any) {
   return useCallback(
     async (contractAddress: string, methods: string[], args: any[][]) => {
       let multicall: any
-      console.log(chainId)
-      if (chainId === 421611) {
+      if (chainId === 421611 || (!IS_PRODUCTION && chainId === undefined)) {
         multicall = new Multicall({
           multicallCustomContractAddress:
             "0x977923a4097cd0c21b272c0644d18b57d3676b8f",
