@@ -27,7 +27,7 @@ export const useSetAuctionData = () => {
   const getAuctionContract = useWeb3Contract(ABC_AUCTION_ABI)
   const getEthUsdContract = useWeb3EthContract(ETH_USD_ORACLE_ABI)
   const networkSymbol = useGetCurrentNetwork()
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const multicall = useMultiCall(ABC_AUCTION_ABI)
 
   return useCallback(async () => {
@@ -93,6 +93,7 @@ export const useSetAuctionData = () => {
           : undefined,
     }
     dispatch(setAuctionData(auctionData))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     getAuctionContract,
     networkSymbol,
@@ -100,6 +101,7 @@ export const useSetAuctionData = () => {
     account,
     dispatch,
     multicall,
+    chainId,
   ])
 }
 
@@ -107,6 +109,7 @@ export const useSetPayoutData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const networkSymbol = useGetCurrentNetwork()
   const multicall = useMultiCall(ABC_PRICING_SESSION_ABI)
+  const { chainId } = useActiveWeb3React()
 
   return useCallback(
     async (account: string) => {
@@ -125,7 +128,8 @@ export const useSetPayoutData = () => {
       const ethCredit = Number(formatEther(principalStored[0]))
       dispatch(setClaimData({ ethPayout: eth, abcPayout: abc, ethCredit }))
     },
-    [networkSymbol, dispatch, multicall]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [networkSymbol, dispatch, multicall, chainId]
   )
 }
 
