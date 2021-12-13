@@ -9,21 +9,14 @@ import Claim from "./Claim"
 import SessionCompleted from "./SessionCompleted"
 
 const CurrentState = ({
-  congratsOpen,
   setCongratsOpen,
 }: {
-  congratsOpen: boolean
   setCongratsOpen: (input: boolean) => void
 }) => {
   const status = useCurrentSessionStatus()
   switch (status) {
     case SessionState.Vote:
-      return (
-        <Vote
-          congratsOpen={congratsOpen}
-          setCongratsOpen={(input) => setCongratsOpen(input)}
-        />
-      )
+      return <Vote setCongratsOpen={(input) => setCongratsOpen(input)} />
     case SessionState.Weigh:
       return <Weigh />
     case SessionState.SetFinalAppraisal:

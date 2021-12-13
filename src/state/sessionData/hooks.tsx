@@ -221,6 +221,7 @@ const parseSubgraphPricingSessions = async (
         image_url: (asset?.image_preview_url || asset?.image_url) ?? "",
         animation_url: null,
         endTime: Number(session.endTime),
+        votingTime: Number(session.votingTime),
         numPpl: Number(session.numParticipants),
         collectionTitle: asset?.asset_contract.name ?? "",
         totalStaked: Number(formatEther(session.totalStaked)),
@@ -488,6 +489,7 @@ export const useGetCurrentSessionDataGRT = () => {
           image_url: asset.image_preview_url || asset.image_url,
           animation_url: asset.animation_url || null,
           endTime: Number(endTime),
+          votingTime: Number(pricingSession.votingTime),
           numPpl: Number(pricingSession.numParticipants),
           collectionTitle: asset.asset_contract.name,
           totalStaked: Number(formatEther(pricingSession.totalStaked)),
@@ -667,7 +669,6 @@ export const useGetCurrentSessionData = () => {
           return 0
         })
       }
-
       const sessionData: SessionData = {
         rankings,
         bounty: pricingSessionCore.bounty,
@@ -676,6 +677,7 @@ export const useGetCurrentSessionData = () => {
           pricingSessionMetadata?.image_preview_url,
         animation_url: pricingSessionMetadata?.animation_url || null,
         endTime,
+        votingTime: pricingSessionCore.votingTime,
         guessedAppraisal,
         numPpl:
           sessionStatus >= 2

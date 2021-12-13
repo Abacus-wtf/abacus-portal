@@ -5,6 +5,7 @@ import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
   useCurrentSessionFetchStatus,
+  useCurrentSessionStatus,
   useCurrentSessionUserStatus,
   useGetCurrentSessionData,
   useGetUserStatus,
@@ -18,6 +19,7 @@ import { OutboundLink } from "gatsby-plugin-google-gtag"
 import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import RankingsModal from "@components/RankingsModal"
 import { NetworkSymbolEnum } from "@config/constants"
+import { SessionState } from "@state/sessionData/reducer"
 import {
   SplitContainer,
   VerticalContainer,
@@ -26,8 +28,11 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
+import CongratsModal from "./CongratsModal"
+import SubscribeModal from "./SubscribeModal"
 
 const CurrentSession = ({ location }) => {
+  const status = useCurrentSessionStatus()
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const getCurrentSessionData = useGetCurrentSessionData()
   const { account, chainId } = useActiveWeb3React()
@@ -41,11 +46,7 @@ const CurrentSession = ({ location }) => {
   const getUserStatus = useGetUserStatus()
   const userStatus = useCurrentSessionUserStatus()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
-  const [isFisk] = useState(
-    tokenId ===
-      "103662588172564032573538786729890701797701353903294947741648606022377129639937" &&
-      address === "0x495f947276749ce646f68ac8c248420045cb7b5e"
-  )
+  const [isSubscribeModalOpen, setSubscribeModalOpen] = useState(false)
   const [congratsOpen, setCongratsOpen] = useState(false)
 
   useEffect(() => {
@@ -131,6 +132,14 @@ const CurrentSession = ({ location }) => {
                 Rankings
               </ButtonsWhite>
             )}
+            {status === SessionState.Vote && (
+              <ButtonsWhite
+                onClick={() => setSubscribeModalOpen(true)}
+                style={{ borderRadius: 8 }}
+              >
+                Subscribe
+              </ButtonsWhite>
+            )}
           </div>
         </VerticalContainer>
         <VerticalContainer>
@@ -143,17 +152,21 @@ const CurrentSession = ({ location }) => {
               Owned by{" "}
               <OutboundLink
                 target="_blank"
-                href={`https://opensea.io/${
-                  isFisk ? "fiskantes" : sessionData.ownerAddress
-                }`}
+                href={`https://opensea.io/${sessionData.ownerAddress}`}
               >
-                {isFisk ? "Fiskantes" : sessionData.owner}
+                {sessionData.owner}
               </OutboundLink>
             </SubText>
           </VerticalSmallGapContainer>
-          <CurrentState
-            congratsOpen={congratsOpen}
-            setCongratsOpen={(input) => setCongratsOpen(input)}
+          <CurrentState setCongratsOpen={(input) => setCongratsOpen(input)} />
+          <CongratsModal
+            open={congratsOpen}
+            toggle={() => setCongratsOpen(!congratsOpen)}
+            openSubscribeModal={() => setSubscribeModalOpen(true)}
+          />
+          <SubscribeModal
+            open={isSubscribeModalOpen}
+            toggle={() => setSubscribeModalOpen(!isSubscribeModalOpen)}
           />
         </VerticalContainer>
       </SplitContainer>

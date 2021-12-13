@@ -36,13 +36,10 @@ import {
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
-import CongratsModal from "../CongratsModal"
 
 const Vote = ({
-  congratsOpen,
   setCongratsOpen,
 }: {
-  congratsOpen: boolean
   setCongratsOpen: (input: boolean) => void
 }) => {
   const [appraisalHash, setAppraisalHash] = useState("")
@@ -74,24 +71,6 @@ const Vote = ({
     <>
       <HorizontalListGroup>
         <ListGroupItemMinWidth>
-          <Label>Total Staked</Label>
-          <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })}{" "}
-            ETH
-          </ListGroupHeader>
-          <ListGroupSubtext>
-            ($
-            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-            )
-          </ListGroupSubtext>
-        </ListGroupItemMinWidth>
-        <ListGroupItemMinWidth>
           <Label>Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
             {sessionData.bounty.toLocaleString("en-US", {
@@ -103,6 +82,24 @@ const Vote = ({
           <ListGroupSubtext>
             ($
             {sessionData.bountyInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Total Staked</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}{" "}
+            ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -217,7 +214,7 @@ const Vote = ({
                 ? "Pending..."
                 : userStatus === UserState.CompletedVote
                 ? "Update"
-                : "Submit"}
+                : "Submit Concealed Appraisal"}
             </Button>
           </div>
           <Tooltip
@@ -305,10 +302,6 @@ const Vote = ({
           </div>
         </ListGroup>
       </Form>
-      <CongratsModal
-        open={congratsOpen}
-        toggle={() => setCongratsOpen(false)}
-      />
     </>
   )
 }
