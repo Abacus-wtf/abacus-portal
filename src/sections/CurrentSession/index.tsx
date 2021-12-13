@@ -20,8 +20,6 @@ import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import RankingsModal from "@components/RankingsModal"
 import { NetworkSymbolEnum } from "@config/constants"
 import { SessionState } from "@state/sessionData/reducer"
-import { hashValues } from "@config/utils"
-import { parseEther } from "ethers/lib/utils"
 import {
   SplitContainer,
   VerticalContainer,
@@ -50,14 +48,6 @@ const CurrentSession = ({ location }) => {
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
   const [isSubscribeModalOpen, setSubscribeModalOpen] = useState(false)
   const [congratsOpen, setCongratsOpen] = useState(false)
-
-  console.log(
-    hashValues({
-      appraisalValue: parseEther("159.42424242424"),
-      password: 3,
-      account: "0x4Af8C784213A4c2f2A2681c3b3a62104Cf5239A8",
-    })
-  )
 
   useEffect(() => {
     const loadData = async () => {
