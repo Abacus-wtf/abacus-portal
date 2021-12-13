@@ -144,6 +144,16 @@ const Vote = ({
             return
           }
 
+          if (appraisalVal.includes(".")) {
+            const numDecimals = appraisalVal.split(".")[1].length
+            if (numDecimals > 11) {
+              alert(
+                "Please use a appraisal value that has less than 11 decimal places."
+              )
+              return
+            }
+          }
+
           const hash = hashValues({
             appraisalValue: parseEther(`${appraisalVal}`),
             account: account || "",
