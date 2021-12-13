@@ -3,15 +3,22 @@ import { ButtonsWhite } from "@components/Button"
 import { ListGroupItem, Tooltip } from "shards-react"
 import { InputWithTitle } from "@components/Input"
 import { useActiveWeb3React } from "@hooks/index"
-import { useCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCurrentSessionData,
+  useCurrentSessionUserStatus,
+} from "@state/sessionData/hooks"
 import { encodeSessionData } from "@config/utils"
+import { UserState } from "@state/sessionData/reducer"
+import { useClaimPayoutData } from "@state/miscData/hooks"
 import { HorizontalListGroupModified } from "./CurrentSession.styles"
 
 interface HashSystem {
   onCreateHash: (appraisalValue: number, password: number) => void
+  stakeVal: string
+  setStakeVal: (string) => void
 }
 
-export default ({ onCreateHash }: HashSystem) => {
+export default ({ onCreateHash, stakeVal, setStakeVal }: HashSystem) => {
   const [isAppraisalValid, setIsAppraisalValid] = useState(true)
   const [isPasswordValid, setIsPasswordValid] = useState(true)
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
@@ -19,6 +26,8 @@ export default ({ onCreateHash }: HashSystem) => {
   const [passwordValue, setPasswordValue] = useState("")
   const { account } = useActiveWeb3React()
   const sessionData = useCurrentSessionData()
+  const userStatus = useCurrentSessionUserStatus()
+  const claimData = useClaimPayoutData()
 
   const onSubmit = () => {
     if (!account) return
@@ -96,27 +105,46 @@ export default ({ onCreateHash }: HashSystem) => {
             onChange={(e) => setAppraisalValue(e.target.value)}
           />
         </ListGroupItem>
-        <ListGroupItem style={{ display: "flex", alignItems: "center" }}>
-          <div>
+        {userStatus !== UserState.CompletedVote ? (
+          <ListGroupItem>
             <InputWithTitle
-              title="Password (Number)"
-              id="password"
-              placeholder="5"
-              value={passwordValue}
-              invalid={!isPasswordValid}
-              onChange={(e) => setPasswordValue(e.target.value)}
+              title={`Stake - Max: ${
+                !claimData ? "-" : claimData.ethCredit
+              } ETH`}
+              id="stake"
+              value={stakeVal}
+              onChange={(e) => setStakeVal(e.target.value)}
+              placeholder="0.001"
             />
-          </div>
-          <ButtonsWhite
-            id="hashButton"
-            style={{ maxHeight: 40 }}
-            disabled={appraisalValue === "" || passwordValue === ""}
-            onClick={onSubmit}
-          >
-            Hash
-          </ButtonsWhite>
-        </ListGroupItem>
+          </ListGroupItem>
+        ) : null}
       </HorizontalListGroupModified>
+      <ListGroupItem
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <InputWithTitle
+            title="Password (Number)"
+            id="password"
+            placeholder="5"
+            value={passwordValue}
+            invalid={!isPasswordValid}
+            onChange={(e) => setPasswordValue(e.target.value)}
+          />
+        </div>
+        <ButtonsWhite
+          id="hashButton"
+          style={{ maxHeight: 40 }}
+          disabled={appraisalValue === "" || passwordValue === ""}
+          onClick={onSubmit}
+        >
+          Hash
+        </ButtonsWhite>
+      </ListGroupItem>
       {!account && (
         <Tooltip
           open={isToolTipOpen}
