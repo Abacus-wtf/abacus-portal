@@ -52,6 +52,7 @@ export interface SessionData {
   image_url: string
   animation_url: string | null
   endTime: number
+  votingTime: number
   numPpl: number
   collectionTitle: string
   totalStaked: number

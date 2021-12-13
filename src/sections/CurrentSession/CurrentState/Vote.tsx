@@ -232,6 +232,7 @@ const Vote = ({
                 placeholder="0"
                 value={stakeAddition}
                 onChange={(e) => setStakeAddition(e.target.value)}
+                infoText="Increase the amount of Eth that you are staking."
               />
             </ListGroupItem>
             <div
@@ -262,6 +263,7 @@ const Vote = ({
               placeholder="0"
               value={bountyAddition}
               onChange={(e) => setBountyAddition(e.target.value)}
+              infoText="Add to the total bounty to incentivize more people to participate in this session."
             />
           </ListGroupItem>
           <div

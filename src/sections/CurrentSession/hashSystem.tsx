@@ -60,6 +60,7 @@ export default ({
               placeholder="5"
               value={appraisalVal}
               onChange={(e) => setAppraisalVal(e.target.value)}
+              infoText="Determine what you think this NFT is worth (in ETH) and input it here."
             />
           </ListGroupItem>
           <ListGroupItem>
@@ -71,6 +72,7 @@ export default ({
               value={stakeVal}
               onChange={(e) => setStakeVal(e.target.value)}
               placeholder="0.001"
+              infoText="Determine how much ETH you are willing to stake."
             />
           </ListGroupItem>
         </HorizontalListGroupModified>
@@ -82,6 +84,7 @@ export default ({
             placeholder="5"
             value={appraisalVal}
             onChange={(e) => setAppraisalVal(e.target.value)}
+            infoText="Determine what you think this NFT is worth (in ETH) and input it here."
           />
         </ListGroupItem>
       )}
@@ -98,6 +101,7 @@ export default ({
           placeholder="5"
           value={passwordVal}
           onChange={(e) => setPasswordVal(e.target.value)}
+          infoText="Input a random seed number so that we can effectively hide your appraisal value. This will be used later during reveal so make sure you remember this number!"
         />
       </ListGroupItem>
     </div>

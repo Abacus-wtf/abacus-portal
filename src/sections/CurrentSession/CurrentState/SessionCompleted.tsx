@@ -66,6 +66,7 @@ const SessionCompleted: FunctionComponent = () => {
             minimumFractionDigits: 2,
             maximumFractionDigits: 4,
           })} ETH`}
+          infoText="The final appraisal value has been determined for this pricing session."
           disabled
         />
       </ListGroupItem>

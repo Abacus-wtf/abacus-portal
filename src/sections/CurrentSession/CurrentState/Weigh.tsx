@@ -138,6 +138,7 @@ const Weigh: FunctionComponent = () => {
                 placeholder="0"
                 value={appraisalValue}
                 onChange={(e) => setAppraisalValue(e.target.value)}
+                infoText="Re-input your appraisal value for weighting."
               />
             </ListGroupItem>
             <ListGroupItem>
@@ -147,6 +148,7 @@ const Weigh: FunctionComponent = () => {
                 placeholder="Input"
                 value={passwordValue}
                 onChange={(e) => setPasswordValue(e.target.value)}
+                infoText="Re-input your password value for weighting."
               />
             </ListGroupItem>
           </HorizontalListGroup>
