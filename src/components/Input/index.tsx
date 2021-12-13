@@ -1,7 +1,8 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
-import { FormInput } from "shards-react"
+import { FormInput, Tooltip } from "shards-react"
 import { ButtonsWhite } from "@components/Button"
+import { Info } from "react-feather"
 import { Label } from "../global.styles"
 
 export const MainInput = styled(FormInput).attrs((props) => ({
@@ -59,27 +60,51 @@ interface InputWithTitle extends React.ComponentProps<FormInput> {
   title: string
   id: string
   type?: string
+  infoText?: string
 }
 
 export const InputWithTitle = ({
   title,
   type,
   id,
+  infoText,
   ...props
-}: InputWithTitle) => (
-  <Container type={type}>
-    <Label style={{ marginBottom: type === "checkbox" ? 0 : 10 }} htmlFor={id}>
-      {title}
-    </Label>
-    <MainInput
-      id={id}
-      style={{ borderRadius: 0 }}
-      size="lg"
-      inputtype={type}
-      {...props}
-    />
-  </Container>
-)
+}: InputWithTitle) => {
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
+  return (
+    <Container type={type}>
+      <Label
+        style={{ marginBottom: type === "checkbox" ? 0 : 10 }}
+        htmlFor={id}
+      >
+        {title}
+        {infoText && (
+          <>
+            <Info
+              style={{ height: 15, marginTop: -2, marginLeft: 1 }}
+              id={id}
+            />
+            <Tooltip
+              open={isToolTipOpen}
+              target={`#${id}`}
+              toggle={() => setIsToolTipOpen(!isToolTipOpen)}
+              placement="right"
+              trigger="hover"
+            >
+              {infoText}
+            </Tooltip>
+          </>
+        )}
+      </Label>
+      <MainInput
+        style={{ borderRadius: 0 }}
+        size="lg"
+        inputtype={type}
+        {...props}
+      />
+    </Container>
+  )
+}
 
 InputWithTitle.defaultProps = {
   type: "",

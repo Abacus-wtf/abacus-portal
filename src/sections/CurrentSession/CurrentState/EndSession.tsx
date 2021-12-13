@@ -79,6 +79,7 @@ const EndSession: FunctionComponent = () => {
             maximumFractionDigits: 4,
           })} ETH`}
           disabled
+          infoText="The final appraisal value has been determined for this pricing session."
         />
       </ListGroupItem>
       <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
