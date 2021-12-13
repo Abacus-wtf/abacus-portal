@@ -142,7 +142,7 @@ const Weigh: FunctionComponent = () => {
             </ListGroupItem>
             <ListGroupItem>
               <InputWithTitle
-                title="Seed"
+                title="Password (Number)"
                 id="password"
                 placeholder="Input"
                 value={passwordValue}

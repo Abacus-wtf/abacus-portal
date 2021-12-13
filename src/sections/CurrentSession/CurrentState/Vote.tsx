@@ -42,7 +42,6 @@ const Vote = ({
 }: {
   setCongratsOpen: (input: boolean) => void
 }) => {
-  const [appraisalHash, setAppraisalHash] = useState("")
   const { account } = useActiveWeb3React()
   const networkSymbol = useGetCurrentNetwork()
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
@@ -61,6 +60,8 @@ const Vote = ({
   const { onAddToStake, isPending: addToStakePending } = useOnAddToStake()
 
   const [stakeVal, setStakeVal] = useState("")
+  const [passwordVal, setPasswordVal] = useState("")
+  const [appraisalVal, setAppraisalVal] = useState("")
   const [bountyAddition, setBountyAddition] = useState("")
   const [stakeAddition, setStakeAddition] = useState("")
 
@@ -120,9 +121,7 @@ const Vote = ({
           e.preventDefault()
           const target = e.target as any
           const stake = Number(target.stake?.value)
-          if (
-            Number(target.appraisalValue?.value) >= sessionData.maxAppraisal
-          ) {
+          if (Number(appraisalVal) >= sessionData.maxAppraisal) {
             alert(
               `The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${target.appraisalValue.value} Ether.`
             )
@@ -145,16 +144,23 @@ const Vote = ({
             return
           }
 
+          const hash = hashValues({
+            appraisalValue: parseEther(`${appraisalVal}`),
+            account: account || "",
+            password: Number(passwordVal),
+          })
           switch (userStatus) {
             case UserState.NotVoted:
               await onSubmitVote(
-                target.appraise.value,
-                target.stake.value,
+                passwordVal,
+                appraisalVal,
+                stakeVal,
+                hash,
                 () => setCongratsOpen(true)
               )
               break
             case UserState.CompletedVote:
-              await onUpdateVote(target.appraise.value)
+              await onUpdateVote(passwordVal, appraisalVal, hash)
               break
             default:
               break
@@ -163,27 +169,13 @@ const Vote = ({
       >
         <ListGroup>
           <HashSystem
-            onCreateHash={(appraisalValue, password) => {
-              setAppraisalHash(
-                hashValues({
-                  appraisalValue: parseEther(`${appraisalValue}`),
-                  account: account || "",
-                  password,
-                })
-              )
-            }}
+            appraisalVal={appraisalVal}
+            passwordVal={passwordVal}
+            setPasswordVal={setPasswordVal}
+            setAppraisalVal={setAppraisalVal}
             stakeVal={stakeVal}
             setStakeVal={setStakeVal}
           />
-          <ListGroupItem>
-            <InputWithTitle
-              title="Appraisal Result (Hashed)"
-              id="appraise"
-              placeholder="0"
-              value={appraisalHash}
-              disabled
-            />
-          </ListGroupItem>
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <div style={{ width: "100%" }} id="submitVoteButton">
@@ -192,7 +184,8 @@ const Vote = ({
                 !canUserInteract ||
                 isNetworkSymbolNone ||
                 isPending ||
-                appraisalHash === "" ||
+                appraisalVal === "" ||
+                passwordVal === "" ||
                 (userStatus === UserState.NotVoted &&
                   (Number.isNaN(Number(stakeVal)) || stakeVal === ""))
               }
