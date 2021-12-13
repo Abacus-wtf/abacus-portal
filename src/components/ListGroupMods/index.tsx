@@ -28,6 +28,10 @@ export const HorizontalListGroup = styled(ListGroup)`
     border-top-left-radius: 0.375rem;
     border-top-right-radius: 0rem;
   }
+
+  @media ${theme.mediaMin.splitCenter} {
+    overflow: unset;
+  }
 `
 
 export const ListGroupHeader = styled(ListGroupItemHeading)`

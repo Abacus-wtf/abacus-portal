@@ -172,6 +172,8 @@ const Vote = ({
                 })
               )
             }}
+            stakeVal={stakeVal}
+            setStakeVal={setStakeVal}
           />
           <ListGroupItem>
             <InputWithTitle
@@ -182,19 +184,6 @@ const Vote = ({
               disabled
             />
           </ListGroupItem>
-          {userStatus !== UserState.CompletedVote ? (
-            <ListGroupItem>
-              <InputWithTitle
-                title={`Stake - Max: ${
-                  !claimData ? "-" : claimData.ethCredit
-                } ETH`}
-                id="stake"
-                value={stakeVal}
-                onChange={(e) => setStakeVal(e.target.value)}
-                placeholder="0.001"
-              />
-            </ListGroupItem>
-          ) : null}
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <div style={{ width: "100%" }} id="submitVoteButton">
