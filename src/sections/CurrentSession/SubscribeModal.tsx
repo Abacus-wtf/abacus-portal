@@ -24,7 +24,7 @@ const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
   open,
   toggle,
 }) => {
-  const { votingTime, endTime } = useCurrentSessionData()
+  const { votingTime, endTime, id, tokenId, nonce } = useCurrentSessionData()
   const [email, setEmail] = useState("")
   const [complete, setComplete] = useState(false)
 
@@ -45,6 +45,7 @@ const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
       email,
       sessionStartTime: endTime - votingTime * 1000,
       interval: votingTime * 1000,
+      sessionId: `${id}/${tokenId}/${nonce}`,
     })
 
     localStorage.setItem("email", email)
