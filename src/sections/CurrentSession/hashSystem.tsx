@@ -99,7 +99,7 @@ export default ({ onCreateHash }: HashSystem) => {
         <ListGroupItem style={{ display: "flex", alignItems: "center" }}>
           <div>
             <InputWithTitle
-              title="Seed"
+              title="Password (Number)"
               id="password"
               placeholder="5"
               value={passwordValue}

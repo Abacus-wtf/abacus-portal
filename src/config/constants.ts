@@ -39,6 +39,7 @@ export const ARBITRUM_NETWORK_CHAIN_ID = Number(
 export const NETWORK_CHAIN_ID = Number(process.env.GATSBY_CHAIN_ID as string)
 export const IS_PRODUCTION = process.env.GATSBY_IS_PRODUCTION === "true"
 export const OPENSEA_LINK = process.env.GATSBY_OPENSEA_API as string
+export const BACKEND_LINK = process.env.GATSBY_APP_SERVER as string
 
 const ARB_CURRENT_SESSIONS = IS_PRODUCTION
   ? []
