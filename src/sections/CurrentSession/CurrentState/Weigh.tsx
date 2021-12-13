@@ -171,8 +171,8 @@ const Weigh: FunctionComponent = () => {
               {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedWeigh
-                ? "Vote Weighed"
-                : "Weigh"}
+                ? "Vote Revealed"
+                : "Reveal Vote"}
             </Button>
           </div>
           <Tooltip
