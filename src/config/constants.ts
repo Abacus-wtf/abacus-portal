@@ -28,6 +28,7 @@ export enum NetworkSymbolEnum {
   ARBITRUM = "AETH",
 }
 
+export const OPENSEA_API_KEY = process.env.GATSBY_OPENSEA_API_KEY || undefined
 export const NetworkContextName = "NETWORK"
 export const ETH_RPC = process.env.GATSBY_NETWORK_URL as string
 export const ARBITRUM_ETH_RPC = process.env
