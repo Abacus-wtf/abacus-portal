@@ -24,7 +24,8 @@ const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
   open,
   toggle,
 }) => {
-  const { votingTime, endTime, address, tokenId, nonce } = useCurrentSessionData()
+  const { votingTime, endTime, address, tokenId, nonce } =
+    useCurrentSessionData()
   const [email, setEmail] = useState("")
   const [complete, setComplete] = useState(false)
 
