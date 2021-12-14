@@ -1,5 +1,5 @@
 import { getAddress } from "@ethersproject/address"
-import { OPENSEA_LINK, web3Eth } from "@config/constants"
+import { OPENSEA_API_KEY, OPENSEA_LINK, web3Eth } from "@config/constants"
 import axios, { AxiosResponse } from "axios"
 import axiosRetry from "axios-retry"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -104,6 +104,11 @@ export async function openseaGet<T = OpenSeaAsset>(input: string) {
   try {
     result = await axios.get<T>(OPENSEA_LINK + input, {
       decompress: false,
+      headers: OPENSEA_API_KEY
+        ? {
+            "X-API-KEY": OPENSEA_API_KEY,
+          }
+        : {},
     })
     return result.data
   } catch (e) {
