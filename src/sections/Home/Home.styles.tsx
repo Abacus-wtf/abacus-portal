@@ -33,16 +33,16 @@ export const HeaderBar = styled.div`
 
 export const CardContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 25% 25% 25% 25%;
   grid-gap: 20px;
   row-gap: 40px;
 
   @media ${theme.media.tablet} {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: calc(100% / 3) calc(100% / 3) calc(100% / 3);
   }
 
   @media ${theme.media.splitCenter} {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 50% 50%;
   }
 
   @media ${theme.media.phone} {
