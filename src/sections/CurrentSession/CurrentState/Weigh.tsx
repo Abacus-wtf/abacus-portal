@@ -28,6 +28,7 @@ import {
 import { encodeSessionData } from "@config/utils"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { NetworkSymbolEnum } from "@config/constants"
+import SubscribeNotifications from "@components/SubscribeNotifications"
 import SessionCountdown from "./SessionCountdown"
 import {
   VerticalContainer,
@@ -195,6 +196,7 @@ const Weigh: FunctionComponent = () => {
           </SubText>
         </VerticalContainer>
       </Form>
+      <SubscribeNotifications />
     </>
   )
 }
