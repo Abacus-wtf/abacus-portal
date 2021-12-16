@@ -1,4 +1,4 @@
-import { render, fireEvent, getByText } from "@testing-library/react"
+import { render, fireEvent, getByText } from "@test-utils/index"
 import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import Button, { ButtonsWhite, ButtonClear } from "."
