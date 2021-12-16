@@ -604,7 +604,6 @@ export const useGetCurrentSessionData = () => {
         userStatus,
         sessionStatus,
       }
-      console.log(currentSessionData, 'currentsession')
       dispatch(getCurrentSessionData(currentSessionData))
       dispatch(setCurrentSessionFetchStatus(PromiseStatus.Resolved))
     },
