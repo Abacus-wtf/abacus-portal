@@ -25,7 +25,7 @@ type SubscribeModalProps = {
   toggle: () => void
 }
 
-const SUBSCRIBE_ENDPOINT = `${BACKEND_LINK}/api/v1/emails/set-reminders`
+const SUBSCRIBE_ENDPOINT = `${BACKEND_LINK}/emails/set-reminders`
 
 const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
   open,

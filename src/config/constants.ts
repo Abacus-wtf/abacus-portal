@@ -42,29 +42,7 @@ export const IS_PRODUCTION = process.env.GATSBY_IS_PRODUCTION === "true"
 export const OPENSEA_LINK = process.env.GATSBY_OPENSEA_API as string
 export const BACKEND_LINK = process.env.GATSBY_APP_SERVER as string
 
-const ARB_CURRENT_SESSIONS = IS_PRODUCTION
-  ? []
-  : [
-      {
-        address: "0x16baf0de678e52367adc69fd067e5edd1d33e3bf",
-        tokenId: "5770",
-      },
-    ]
-
-const ETH_CURRENT_SESSIONS = IS_PRODUCTION
-  ? [
-      {
-        address: "0x251b5f14a825c537ff788604ea1b58e49b70726f",
-        tokenId: "7274",
-      },
-    ]
-  : [
-      {
-        address: "0x38ec00f7a966ece849f796d1d71aae2eb4c41c2d",
-        tokenId: "1",
-      },
-    ]
-
+const ETH_ABC_VAULT_CONTRACT = IS_PRODUCTION ? "" : ""
 const ETH_ABC_TREASURY_ADDRESS = IS_PRODUCTION
   ? "0xA20B4b391Cd5f581Ab17a8d61388e0fe78dde28C"
   : "0x593978a0Db0473D813943b0dAfB5bCE1aF3Ab506"
@@ -78,23 +56,34 @@ const ETH_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? "0x37b4932ECeAE6b07b761F4B86975325Cb36c31aD"
   : "0x0816DdF293398927736E117Bc60eb6F7fB1195AA"
 
+const ARB_ABC_VAULT_CONTRACT = IS_PRODUCTION
+  ? ""
+  : "0x919FD1373e7A2cdf5573aAf0D9AEB5D47B4BEa18"
 const ARB_ABC_TREASURY_ADDRESS = IS_PRODUCTION
   ? "0xdc0B4eb507d483B77ECF3B82503D5630037aF3cF"
-  : "0xBA874F7d3b194643BE2558c73fdA28DadD394Ac4"
+  : "0xae3bC10024D671C66874BD2952b246Aa1dbB60ad"
 const ARB_ABC_TOKEN_ADDRESS = IS_PRODUCTION
   ? ""
-  : "0xaEF96deC5b6A61DdA8D11F9cB23C2b9fa98696d8"
+  : "0xee67Ba7cE197d0eC0Ff34E4653E040d2B339c7b8"
 const ARB_ABC_AUCTION_ADDRESS = IS_PRODUCTION
   ? "0x396dd1f7E3c8044784937935F834C3F8d58EB497"
-  : "0xB1B8A7FcF35615051B0cDEE38A03002F87278b09"
+  : "0xB13b4F30f88d59B3Fd2Dc6413A1786081008BD4f"
 const ARB_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? "0x06060a6258c84dfcd42c1fb82e0028758808f5ac"
-  : "0x554feAd617d7EB05eF3C001582cDC4f3405059C0"
+  : "0xdA1A7C756C63744e6Fc04b389901bfb5824C2Fa0"
 
-export const CURRENT_SESSIONS = (networkSymbol: NetworkSymbolEnum) =>
-  networkSymbol === NetworkSymbolEnum.ETH
-    ? ETH_CURRENT_SESSIONS
-    : ARB_CURRENT_SESSIONS
+export const ABC_VAULT_ADDRESS = (networkSymbol: NetworkSymbolEnum) => {
+  switch (networkSymbol) {
+    case NetworkSymbolEnum.ETH:
+      return ETH_ABC_VAULT_CONTRACT
+    case NetworkSymbolEnum.ARBITRUM:
+      return ARB_ABC_VAULT_CONTRACT
+    case NetworkSymbolEnum.NONE:
+      return ARB_ABC_VAULT_CONTRACT
+    default:
+      return ""
+  }
+}
 
 export const ABC_TREASURY_ADDRESS = (networkSymbol: NetworkSymbolEnum) =>
   networkSymbol === NetworkSymbolEnum.ETH
