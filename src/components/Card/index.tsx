@@ -90,7 +90,7 @@ export default ({
   finalAppraisalValue,
   totalStaked,
   collectionTitle,
-}: SessionData) => (
+}: Partial<SessionData>) => (
   <CardContainer>
     <ImageContainer src={image_url}>
       <MiniText>
