@@ -11,15 +11,7 @@ exports[`Card Matches snapshot 1`] = `
     >
       <div
         class="sc-kEjbQP dfbwfv"
-      >
-        <span>
-          4
-          :
-          35
-          :
-          50
-        </span>
-      </div>
+      />
       <div
         class="sc-kEjbQP dfbwfv"
       >
@@ -84,6 +76,7 @@ exports[`Card Matches snapshot 1`] = `
         </span>
         <span
           class="sc-bdfBQB sc-kstqJO jExror ifOUGr"
+          data-testid="subtext"
         >
           Final Appraisal
         </span>

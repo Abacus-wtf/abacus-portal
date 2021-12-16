@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react"
+import { getByTestId, render } from "@testing-library/react"
 import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import Card from "./index"
@@ -6,7 +6,7 @@ import Card from "./index"
 const defaultProps = {
   tokenId: "5007",
   image_url: "http://example.com",
-  endTime: 1639681833580,
+  endTime: 0,
   numPpl: 2,
   nftName: "Deez Nuts",
   finalAppraisalValue: 22,
@@ -16,7 +16,15 @@ const defaultProps = {
 
 describe("Card", () => {
   it("Matches snapshot", () => {
-    const component = render(<Card {...defaultProps} />)
-    expect(component.container).toMatchSnapshot()
+    const { container } = render(<Card {...defaultProps} />)
+    expect(container).toMatchSnapshot()
+  })
+
+  it("shows Total Staked when no finalAppraisalValue", () => {
+    const { container } = render(
+      <Card {...defaultProps} finalAppraisalValue={undefined} />
+    )
+    const { innerHTML } = getByTestId(container, "subtext")
+    expect(innerHTML).toBe("Total Staked")
   })
 })

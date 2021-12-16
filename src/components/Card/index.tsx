@@ -81,6 +81,17 @@ const EthText = styled(BoldText)`
   margin-bottom: -1px;
 `
 
+type CardProps = {
+  tokenId: SessionData["tokenId"]
+  image_url: SessionData["image_url"]
+  endTime: SessionData["endTime"]
+  numPpl: SessionData["numPpl"]
+  nftName: SessionData["nftName"]
+  finalAppraisalValue: SessionData["finalAppraisalValue"]
+  totalStaked: SessionData["totalStaked"]
+  collectionTitle: SessionData["collectionTitle"]
+}
+
 export default ({
   tokenId,
   image_url,
@@ -90,7 +101,7 @@ export default ({
   finalAppraisalValue,
   totalStaked,
   collectionTitle,
-}: Partial<SessionData>) => (
+}: CardProps) => (
   <CardContainer>
     <ImageContainer src={image_url}>
       <MiniText>
@@ -135,7 +146,7 @@ export default ({
         <SubText style={{ maxWidth: "min-content", overflow: "hidden" }}>
           {collectionTitle}
         </SubText>
-        <SubText>
+        <SubText data-testid="subtext">
           {finalAppraisalValue !== undefined
             ? "Final Appraisal"
             : "Total Staked"}
