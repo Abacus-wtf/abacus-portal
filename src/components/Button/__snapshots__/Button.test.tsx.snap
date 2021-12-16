@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button Matches snapshot 1`] = `
+<div>
+  <button
+    class="sc-bdfBQB jjXNlU btn btn-primary"
+    type="button"
+  />
+</div>
+`;
+
+exports[`ButtonClear Matches snapshot 1`] = `
+<div>
+  <button
+    class="sc-bdfBQB sc-dlfnuX jjXNlU ipwiFM btn btn-primary"
+    type="button"
+  />
+</div>
+`;
+
+exports[`ButtonsWhite Matches snapshot 1`] = `
+<div>
+  <button
+    class="sc-bdfBQB sc-gsTEea jjXNlU dYSOdb btn btn-primary"
+    type="button"
+  />
+</div>
+`;

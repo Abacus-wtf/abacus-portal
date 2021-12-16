@@ -1,6 +1,5 @@
 import { NetworkSymbolEnum } from "@config/constants"
 import { createAction } from "@reduxjs/toolkit"
-import { AppState } from ".."
 
 export const toggleWalletModal = createAction<boolean>(
   "application/toggleWalletModal"
@@ -8,6 +7,6 @@ export const toggleWalletModal = createAction<boolean>(
 export const selectNetwork = createAction<NetworkSymbolEnum>(
   "application/selectNetwork"
 )
-export const setGeneralizedContractErrorMessage = createAction<
-  AppState["application"]["generalizedContract"]["errorMessage"]
->("application/generalizedContract/errorMessage")
+export const setGeneralizedContractErrorMessage = createAction<string>(
+  "application/generalizedContract/errorMessage"
+)
