@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from "react"
 import { ThemeContext } from "styled-components"
-import { Label } from "@components/global.styles"
+import { Label, UniversalContainer } from "@components/global.styles"
 import Button from "@components/Button"
 import {
   HorizontalListGroup,
@@ -28,18 +28,19 @@ import {
 import { encodeSessionData } from "@config/utils"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { NetworkSymbolEnum } from "@config/constants"
-import SubscribeNotifications from "@components/SubscribeNotifications"
 import SessionCountdown from "./SessionCountdown"
 import {
   VerticalContainer,
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
+import SubscribeModal from "../SubscribeModal"
 
 const Weigh: FunctionComponent = () => {
   const { account } = useActiveWeb3React()
   const { onWeightVote, isPending } = useOnWeightVote()
   const networkSymbol = useGetCurrentNetwork()
+  const [subscribeOpen, setSubscribeOpen] = useState(false)
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
 
   const userStatus = useCurrentSessionUserStatus()
@@ -196,7 +197,17 @@ const Weigh: FunctionComponent = () => {
           </SubText>
         </VerticalContainer>
       </Form>
-      <SubscribeNotifications />
+      <UniversalContainer
+        style={{ display: "flex", alignItems: "center", marginTop: "15px" }}
+      >
+        <Button onClick={() => setSubscribeOpen(true)}>
+          Subscribe to Notifications
+        </Button>
+      </UniversalContainer>
+      <SubscribeModal
+        open={subscribeOpen}
+        toggle={() => setSubscribeOpen(false)}
+      />
     </>
   )
 }
