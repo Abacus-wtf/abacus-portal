@@ -7,8 +7,12 @@ import HappyDoge from "@images/happy_doge.gif"
 import { InputWithTitle } from "@components/Input"
 import axios from "axios"
 import { BACKEND_LINK } from "@config/constants"
-import { useCurrentSessionData } from "@state/sessionData/hooks"
+import {
+  useCurrentSessionData,
+  useCurrentSessionStatus,
+} from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
+import { SessionState } from "@state/sessionData/reducer"
 
 const ButtonsContainer = styled.div`
   margin-top: 25px;
@@ -29,6 +33,7 @@ const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
 }) => {
   const { votingTime, endTime, address, tokenId, nonce } =
     useCurrentSessionData()
+  const sessionState = useCurrentSessionStatus()
   const [isSubscribingStatus, setIsSubscribingStatus] = useState(
     PromiseStatus.Idle
   )
@@ -57,6 +62,7 @@ const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
         sessionStartTime: endTime - votingTime * 1000,
         interval: votingTime * 1000,
         sessionId: `${address}/${tokenId}/${nonce}`,
+        completedVote: sessionState === SessionState.Weigh,
       })
 
       if (emailPost.data.success) {

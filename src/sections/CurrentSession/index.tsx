@@ -132,7 +132,8 @@ const CurrentSession = ({ location }) => {
                 Rankings
               </ButtonsWhite>
             )}
-            {status === SessionState.Vote && (
+            {(status === SessionState.Vote ||
+              status === SessionState.Weigh) && (
               <ButtonsWhite
                 onClick={() => setSubscribeModalOpen(true)}
                 style={{ borderRadius: 8 }}
