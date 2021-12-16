@@ -6,7 +6,6 @@ import { getContract } from "@config/utils"
 import {
   ABC_PRICING_SESSION_ADDRESS,
   ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY,
-  ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2,
 } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import {
@@ -18,7 +17,7 @@ import {
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 
-export const useOnClaimPayout = (isLegacy = 1) => {
+export const useOnClaimPayout = (legacy = 1) => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
@@ -35,9 +34,7 @@ export const useOnClaimPayout = (isLegacy = 1) => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        isLegacy === 1
-          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
-          : ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2,
+        ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY(legacy),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -70,7 +67,7 @@ export const useOnClaimPayout = (isLegacy = 1) => {
       })
     },
     [
-      isLegacy,
+      legacy,
       networkSymbol,
       library,
       account,
@@ -85,7 +82,7 @@ export const useOnClaimPayout = (isLegacy = 1) => {
   }
 }
 
-export const useOnClaimPrincipalAmount = (isLegacy = 1) => {
+export const useOnClaimPrincipalAmount = (legacy = 1) => {
   const { account, library } = useActiveWeb3React()
   const { generalizedContractCall, isPending } = useGeneralizedContractCall(
     ReloadDataType.ClaimPool
@@ -100,9 +97,7 @@ export const useOnClaimPrincipalAmount = (isLegacy = 1) => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        isLegacy === 1
-          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
-          : ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2,
+        ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY(legacy),
         ABC_PRICING_SESSION_ABI,
         library,
         account
@@ -124,7 +119,7 @@ export const useOnClaimPrincipalAmount = (isLegacy = 1) => {
         cb: txnCb,
       })
     },
-    [isLegacy, library, account, generalizedContractCall, addTransaction]
+    [legacy, library, account, generalizedContractCall, addTransaction]
   )
   return {
     onClaimPrincipal,

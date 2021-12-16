@@ -32,20 +32,16 @@ export const HeaderBar = styled.div`
 
 export const CardContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 33% 33% 33%;
   grid-gap: 20px;
   row-gap: 40px;
 
-  @media ${({ theme }) => theme.media.tablet} {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
   @media ${({ theme }) => theme.media.splitCenter} {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 50% 50%;
   }
 
   @media ${({ theme }) => theme.media.phone} {
-    grid-template-columns: 1fr;
+    grid-template-columns: 100%;
   }
 `
 

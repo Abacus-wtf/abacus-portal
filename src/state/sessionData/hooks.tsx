@@ -11,7 +11,6 @@ import {
 import {
   ABC_PRICING_SESSION_ADDRESS,
   ARB_LEGACY_GRAPHS,
-  ARB_LEGACY_GRAPHS_V2,
   ETH_USD_ORACLE_ADDRESS,
   NetworkSymbolEnum,
 } from "@config/constants"
@@ -78,15 +77,7 @@ import {
   activeSessionsStateSelector,
 } from "./selectors"
 
-const GRAPHQL_ENDPOINT = (
-  networkSymbol: NetworkSymbolEnum,
-  isLegacy = 1
-): string => {
-  if (isLegacy === 1) {
-    return ARB_LEGACY_GRAPHS
-  }
-  return ARB_LEGACY_GRAPHS_V2
-}
+const GRAPHQL_ENDPOINT = (legacy = 1): string => ARB_LEGACY_GRAPHS(legacy)
 
 const modifyTimeAndSession = (
   getStatus: string,
@@ -289,7 +280,7 @@ const parseSubgraphPricingSessions = async (
   return sessionData
 }
 
-export const useGetMultiSessionData = (isLegacy = 1) => {
+export const useGetMultiSessionData = (legacy = 1) => {
   const dispatch = useDispatch<AppDispatch>()
   const whereRef = useRef("")
   const { page, multiSessionData } = useMultiSessionState()
@@ -313,11 +304,10 @@ export const useGetMultiSessionData = (isLegacy = 1) => {
         first: PAGINATE_BY,
         skip: currentPage * PAGINATE_BY,
       }
-      console.log(GRAPHQL_ENDPOINT(networkSymbol, isLegacy))
       try {
         const { pricingSessions } =
           await request<GetPricingSessionsQueryResponse>(
-            GRAPHQL_ENDPOINT(networkSymbol, isLegacy),
+            GRAPHQL_ENDPOINT(legacy),
             GET_PRICING_SESSIONS(where),
             variables
           )
@@ -331,7 +321,7 @@ export const useGetMultiSessionData = (isLegacy = 1) => {
         dispatch(setMultipleSessionFetchStatus(PromiseStatus.Rejected))
       }
     },
-    [dispatch, page, multiSessionData, networkSymbol, isLegacy]
+    [dispatch, page, multiSessionData, networkSymbol, legacy]
   )
 }
 
@@ -473,7 +463,7 @@ const getUserStatus = async ({
   return Number(getVoterCheck)
 }
 
-export const useGetCurrentSessionDataGRT = (isLegacy = 1) => {
+export const useGetCurrentSessionDataGRT = (legacy = 1) => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
   const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
@@ -488,7 +478,7 @@ export const useGetCurrentSessionDataGRT = (isLegacy = 1) => {
         const URL = `asset/${address}/${tokenId}`
         const [data, asset] = await Promise.all([
           axios.post<GetPricingSessionQueryResponse>(
-            GRAPHQL_ENDPOINT(networkSymbol, isLegacy),
+            GRAPHQL_ENDPOINT(legacy),
             {
               query: GET_PRICING_SESSION(`${address}/${tokenId}/${nonce}`),
             },
@@ -582,7 +572,7 @@ export const useGetCurrentSessionDataGRT = (isLegacy = 1) => {
       dispatch,
       getEthUsdContract,
       getPricingSessionContract,
-      isLegacy,
+      legacy,
       networkSymbol,
     ]
   )

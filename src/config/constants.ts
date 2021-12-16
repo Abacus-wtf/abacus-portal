@@ -89,21 +89,53 @@ const ARB_ABC_PRICING_SESSION_ADDRESS = IS_PRODUCTION
   ? "0xc34fe8aa917716B6c12C7234EE4a7D91B231cBE1"
   : "0xAf9D4eeb825F9aE4915d52630c41032ECe990bb4"
 
-export const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY = IS_PRODUCTION
+const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V1 = IS_PRODUCTION
   ? "0xB07E1a1383F705898ef01E3ba5Aba75531CE810C"
   : "0x986596ba2b3156A8a2A944fb0A82de134A6DB170"
 
-export const ARB_LEGACY_GRAPHS = IS_PRODUCTION
-  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrum"
-  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkeby"
-
-export const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2 = IS_PRODUCTION
+const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2 = IS_PRODUCTION
   ? "0xc34fe8aa917716B6c12C7234EE4a7D91B231cBE1"
   : "0xAf9D4eeb825F9aE4915d52630c41032ECe990bb4"
 
-export const ARB_LEGACY_GRAPHS_V2 = IS_PRODUCTION
+const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V3 = IS_PRODUCTION
+  ? "0x06060a6258c84dfcd42c1fb82e0028758808f5ac"
+  : "0x554feAd617d7EB05eF3C001582cDC4f3405059C0"
+
+const ARB_LEGACY_GRAPHS_V1 = IS_PRODUCTION
+  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrum"
+  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkeby"
+
+const ARB_LEGACY_GRAPHS_V2 = IS_PRODUCTION
   ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv2"
   : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv2"
+
+const ARB_LEGACY_GRAPHS_V3 = IS_PRODUCTION
+  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv3"
+  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv3"
+
+export const ARB_LEGACY_GRAPHS = (legacyVersion: number) => {
+  switch (legacyVersion) {
+    case 1:
+      return ARB_LEGACY_GRAPHS_V1
+    case 2:
+      return ARB_LEGACY_GRAPHS_V2
+    default:
+      return ARB_LEGACY_GRAPHS_V3
+  }
+}
+
+export const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY = (
+  legacyVersion: number
+) => {
+  switch (legacyVersion) {
+    case 1:
+      return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V1
+    case 2:
+      return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2
+    default:
+      return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V3
+  }
+}
 
 export const CURRENT_SESSIONS = (networkSymbol: NetworkSymbolEnum) =>
   networkSymbol === NetworkSymbolEnum.ETH

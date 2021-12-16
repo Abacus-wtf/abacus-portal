@@ -5,7 +5,6 @@ import {
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
   ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY,
-  ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2,
 } from "@config/constants"
 import {
   useActiveWeb3React,
@@ -90,16 +89,14 @@ export const useSetAuctionData = () => {
   }, [getAuctionContract, networkSymbol, getEthUsdContract, account, dispatch])
 }
 
-export const useSetPayoutData = (isLegacy = 1) => {
+export const useSetPayoutData = (legacy = 1) => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
 
   return useCallback(
     async (account: string) => {
       const pricingSessionContract = getPricingSessionContract(
-        isLegacy === 1
-          ? ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY
-          : ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2
+        ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY(legacy)
       )
       const [ethPayout, ethToAbc, principalStored] = await Promise.all([
         pricingSessionContract.methods.profitStored(account).call(),
@@ -111,7 +108,7 @@ export const useSetPayoutData = (isLegacy = 1) => {
       const ethCredit = Number(formatEther(principalStored))
       dispatch(setClaimData({ ethPayout: eth, abcPayout: abc, ethCredit }))
     },
-    [getPricingSessionContract, dispatch, isLegacy]
+    [getPricingSessionContract, dispatch, legacy]
   )
 }
 
