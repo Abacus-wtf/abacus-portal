@@ -15,11 +15,10 @@ const defaultProps = {
 }
 
 describe("FilterModal", () => {
-  // eslint-disable-next-line jest/no-commented-out-tests
-  /* it("Matches snapshot", () => {
+  it("Matches snapshot", () => {
     const component = render(<FilterModal {...defaultProps} />)
     expect(component.container).toMatchSnapshot()
-  }) */
+  })
 
   it("calls applyFilters and setFilters on submit", () => {
     const { getByText } = render(<FilterModal {...defaultProps} />)
