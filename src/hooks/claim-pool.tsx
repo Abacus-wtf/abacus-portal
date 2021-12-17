@@ -3,8 +3,8 @@ import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { parseEther } from "ethers/lib/utils"
 import { getContract } from "@config/utils"
-import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
-import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
+import { ABC_VAULT_ADDRESS } from "@config/constants"
+import ABC_VAULT_CONTRACT_ABI from "@config/contracts/ABC_VAULT_CONTRACT_ABI.json"
 import {
   useActiveWeb3React,
   useGeneralizedContractCall,
@@ -21,7 +21,7 @@ export const useOnClaimPayout = () => {
   )
   const addTransaction = useTransactionAdder()
   const networkSymbol = useGetCurrentNetwork()
-  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const getPricingSessionContract = useWeb3Contract(ABC_VAULT_CONTRACT_ABI)
 
   const onClaim = useCallback(
     async (isEth: boolean, amount: string) => {
@@ -31,14 +31,14 @@ export const useOnClaimPayout = () => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
-        ABC_PRICING_SESSION_ABI,
+        ABC_VAULT_ADDRESS(networkSymbol),
+        ABC_VAULT_CONTRACT_ABI,
         library,
         account
       )
 
       const pricingSessionRead = getPricingSessionContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol)
+        ABC_VAULT_ADDRESS(networkSymbol)
       )
 
       const ethToAbc = await pricingSessionRead.methods.ethToAbc().call()
@@ -94,8 +94,8 @@ export const useOnClaimPrincipalAmount = () => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
-        ABC_PRICING_SESSION_ABI,
+        ABC_VAULT_ADDRESS(networkSymbol),
+        ABC_VAULT_CONTRACT_ABI,
         library,
         account
       )
@@ -140,8 +140,8 @@ export const useOnDepositPrincipal = () => {
       let value: BigNumber | null
 
       const pricingSessionContract = getContract(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
-        ABC_PRICING_SESSION_ABI,
+        ABC_VAULT_ADDRESS(networkSymbol),
+        ABC_VAULT_CONTRACT_ABI,
         library,
         account
       )

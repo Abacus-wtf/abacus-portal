@@ -4,7 +4,7 @@ import {
   ETH_USD_ORACLE_ADDRESS,
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
-  ABC_PRICING_SESSION_ADDRESS,
+  ABC_VAULT_ADDRESS,
 } from "@config/constants"
 import {
   useActiveWeb3React,
@@ -15,7 +15,7 @@ import {
 import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
 import { openseaGet } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
-import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
+import ABC_VAULT_CONTRACT_ABI from "@config/contracts/ABC_VAULT_CONTRACT_ABI.json"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { AppDispatch, AppState } from "../index"
@@ -108,7 +108,7 @@ export const useSetAuctionData = () => {
 export const useSetPayoutData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const networkSymbol = useGetCurrentNetwork()
-  const multicall = useMultiCall(ABC_PRICING_SESSION_ABI)
+  const multicall = useMultiCall(ABC_VAULT_CONTRACT_ABI)
   const { chainId } = useActiveWeb3React()
 
   return useCallback(
@@ -118,7 +118,7 @@ export const useSetPayoutData = () => {
       }
 
       const [profitStored, ethToAbc, principalStored]: any = await multicall(
-        ABC_PRICING_SESSION_ADDRESS(networkSymbol),
+        ABC_VAULT_ADDRESS(networkSymbol),
         ["profitStored", "ethToAbc", "principalStored"],
         [[account], [], [account]]
       )
