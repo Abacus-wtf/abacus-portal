@@ -12,8 +12,8 @@ export const MainInput = styled(FormInput).attrs((props) => ({
   border: #c3c8d7;
   border-radius: 53px;
   padding: 0px;
-  ${({ type }) =>
-    type === "checkbox" &&
+  ${({ inputtype }) =>
+    inputtype === "checkbox" &&
     `
     width: 20px;
   `};
@@ -92,14 +92,7 @@ export const InputWithTitle = ({
           </>
         )}
       </Label>
-      <MainInput
-        style={{ borderRadius: 0 }}
-        size="lg"
-        type={type}
-        name={id}
-        id={id}
-        {...props}
-      />
+      <MainInput size="lg" inputtype={type} {...props} />
     </Container>
   )
 }
