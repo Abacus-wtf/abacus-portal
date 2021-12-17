@@ -18,12 +18,7 @@ import {
 import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
-import {
-  useOnAddToBountyVote,
-  useOnAddToStake,
-  useOnSubmitVote,
-  useOnUpdateVote,
-} from "@hooks/current-session"
+import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
 import { hashValues } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"
@@ -55,9 +50,6 @@ const Vote = ({
 
   const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
-  const { onAddToBounty, isPending: addToBountyPending } =
-    useOnAddToBountyVote()
-  const { onAddToStake, isPending: addToStakePending } = useOnAddToStake()
 
   const [stakeVal, setStakeVal] = useState("")
   const [passwordVal, setPasswordVal] = useState("")
@@ -245,24 +237,6 @@ const Vote = ({
                 infoText="Increase the amount of Eth that you are staking."
               />
             </ListGroupItem>
-            <div
-              style={{ width: "100%", margin: "35px 0px 10px 0px" }}
-              id="addtoStakeButton"
-            >
-              <Button
-                disabled={
-                  addToStakePending ||
-                  Number.isNaN(Number(stakeAddition)) ||
-                  stakeAddition === ""
-                }
-                style={{ width: "100%" }}
-                onClick={async () => {
-                  await onAddToStake(stakeAddition)
-                }}
-              >
-                {addToStakePending ? "Pending..." : "Add to Stake"}
-              </Button>
-            </div>
           </ListGroup>
         )}
         <ListGroup style={{ marginTop: 35 }}>
@@ -276,24 +250,6 @@ const Vote = ({
               infoText="Add to the total bounty to incentivize more people to participate in this session."
             />
           </ListGroupItem>
-          <div
-            style={{ width: "100%", margin: "35px 0px 10px 0px" }}
-            id="addToBountyButton"
-          >
-            <Button
-              disabled={
-                addToBountyPending ||
-                Number.isNaN(Number(bountyAddition)) ||
-                bountyAddition === ""
-              }
-              style={{ width: "100%" }}
-              onClick={async () => {
-                await onAddToBounty(bountyAddition)
-              }}
-            >
-              {addToBountyPending ? "Pending..." : "Add to Bounty"}
-            </Button>
-          </div>
         </ListGroup>
       </Form>
     </>
