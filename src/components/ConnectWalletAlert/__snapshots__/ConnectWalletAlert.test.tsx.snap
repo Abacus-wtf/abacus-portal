@@ -18,6 +18,7 @@ exports[`ConnectWalletAlert Matches snapshot 1`] = `
       </div>
       <button
         class="sc-bdfBQB jjXNlU btn btn-primary"
+        data-testid="CONNECT_WALLET_BUTTON_ID"
         type="button"
       >
         Connect Wallet
