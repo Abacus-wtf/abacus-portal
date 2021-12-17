@@ -7,14 +7,13 @@ import { Label } from "../global.styles"
 
 export const MainInput = styled(FormInput).attrs((props) => ({
   size: props.size || "sm",
-  inputtype: props.inputtype,
   ...props,
 }))`
   border: #c3c8d7;
   border-radius: 53px;
   padding: 0px;
-  ${({ inputtype }) =>
-    inputtype === "checkbox" &&
+  ${({ type }) =>
+    type === "checkbox" &&
     `
     width: 20px;
   `};
@@ -65,7 +64,7 @@ interface InputWithTitle extends React.ComponentProps<FormInput> {
 
 export const InputWithTitle = ({
   title,
-  type,
+  type = "text",
   id,
   infoText,
   ...props
@@ -80,10 +79,7 @@ export const InputWithTitle = ({
         {title}
         {infoText && (
           <>
-            <Info
-              style={{ height: 15, marginTop: -2, marginLeft: 1 }}
-              id={id}
-            />
+            <Info style={{ height: 15, marginTop: -2, marginLeft: 1 }} />
             <Tooltip
               open={isToolTipOpen}
               target={`#${id}`}
@@ -99,7 +95,9 @@ export const InputWithTitle = ({
       <MainInput
         style={{ borderRadius: 0 }}
         size="lg"
-        inputtype={type}
+        type={type}
+        name={id}
+        id={id}
         {...props}
       />
     </Container>
@@ -138,7 +136,7 @@ export const InputWithTitleAndButton = ({
         id={id}
         style={{ borderRadius: 0 }}
         size="lg"
-        inputtype={type}
+        type={type}
         {...props}
       />
       <ButtonsWhite onClick={onClick}>{buttonText}</ButtonsWhite>

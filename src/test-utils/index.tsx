@@ -14,5 +14,7 @@ function render(ui, { ...renderOptions } = {}) {
 // re-export everything
 // eslint-disable-next-line import/no-extraneous-dependencies
 export * from "@testing-library/react"
+// eslint-disable-next-line import/no-extraneous-dependencies
+export { default as userEvent } from "@testing-library/user-event"
 // override render method
 export { render }

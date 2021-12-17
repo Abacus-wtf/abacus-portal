@@ -1,0 +1,263 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterModal Matches snapshot 1`] = `
+<div>
+  <div
+    class="modal-backdrop fade"
+  />
+  <div
+    aria-hidden="true"
+    class="modal fade top"
+    role="dialog"
+    style="display: block;"
+  >
+    <div
+      class="modal-dialog modal-md modal-dialog-centered"
+      role="document"
+    >
+      <div
+        class="modal-content"
+      >
+        <div
+          class="modal-body sc-kstqJO bPizxN"
+        >
+          <h4>
+            Select Filters
+          </h4>
+          <form
+            class=""
+          >
+            <ul
+              class="list-group"
+            >
+              <li
+                class="list-group-item"
+              >
+                <div
+                  class="sc-dQoVA QhqRQ"
+                  type=""
+                >
+                  <label
+                    class="sc-iqHYmW ibuPqX"
+                    for="nftAddress"
+                    style="margin-bottom: 10px;"
+                  >
+                    NFT Address
+                  </label>
+                  <input
+                    class="sc-crrszt qfvYa form-control form-control-lg"
+                    id="nftAddress"
+                    name="nftAddress"
+                    placeholder="0x16baf0de678e52367adc69fd067e5edd1d33e3bf"
+                    style="border-radius: 0;"
+                    theme="[object Object]"
+                    type=""
+                    value=""
+                  />
+                </div>
+              </li>
+              <li
+                class="list-group-item"
+              >
+                <div
+                  class="sc-dQoVA QhqRQ"
+                  type=""
+                >
+                  <label
+                    class="sc-iqHYmW ibuPqX"
+                    for="tokenId"
+                    style="margin-bottom: 10px;"
+                  >
+                    Token ID
+                  </label>
+                  <input
+                    class="sc-crrszt qfvYa form-control form-control-lg"
+                    id="tokenId"
+                    name="tokenId"
+                    placeholder="6407"
+                    style="border-radius: 0;"
+                    theme="[object Object]"
+                    type=""
+                    value=""
+                  />
+                </div>
+              </li>
+            </ul>
+            <label
+              class="sc-iqHYmW ibuPqX"
+              for="session-state"
+              style="margin: 25px 0px 5px 5px;"
+            >
+              Session Status:
+            </label>
+            <div
+              class="sc-hBEYId hUxTgA"
+              id="session-state"
+            >
+              <ul
+                class="list-group"
+              >
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      for="vote"
+                      style="margin-bottom: 0px;"
+                    >
+                      Vote
+                    </label>
+                    <input
+                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      id="vote"
+                      name="vote"
+                      style="border-radius: 0;"
+                      theme="[object Object]"
+                      type="checkbox"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      for="weigh"
+                      style="margin-bottom: 0px;"
+                    >
+                      Weigh
+                    </label>
+                    <input
+                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      id="weigh"
+                      name="weigh"
+                      style="border-radius: 0;"
+                      theme="[object Object]"
+                      type="checkbox"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      for="setFinalAppraisal"
+                      style="margin-bottom: 0px;"
+                    >
+                      Set Final
+                    </label>
+                    <input
+                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      id="setFinalAppraisal"
+                      name="setFinalAppraisal"
+                      style="border-radius: 0;"
+                      theme="[object Object]"
+                      type="checkbox"
+                    />
+                  </div>
+                </li>
+              </ul>
+              <ul
+                class="list-group"
+              >
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      for="harvest"
+                      style="margin-bottom: 0px;"
+                    >
+                      Harvest
+                    </label>
+                    <input
+                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      id="harvest"
+                      name="harvest"
+                      style="border-radius: 0;"
+                      theme="[object Object]"
+                      type="checkbox"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      for="claim"
+                      style="margin-bottom: 0px;"
+                    >
+                      Claim
+                    </label>
+                    <input
+                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      id="claim"
+                      name="claim"
+                      style="border-radius: 0;"
+                      theme="[object Object]"
+                      type="checkbox"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      for="complete"
+                      style="margin-bottom: 0px;"
+                    >
+                      Complete
+                    </label>
+                    <input
+                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      id="complete"
+                      name="complete"
+                      style="border-radius: 0;"
+                      theme="[object Object]"
+                      type="checkbox"
+                    />
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <button
+              class="sc-bdfBQB jjXNlU btn btn-primary"
+              style="width: 100%; margin-top: 15px;"
+              type="submit"
+            >
+              Apply Filters
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
