@@ -79,9 +79,9 @@ const FilterModal: FunctionComponent<FilterModalProps> = ({
     >
     const statuses = Array.from(sessionStatuses)
     const filters: PricingSessionFilters = {
-      ...(tokenId.value && { tokenId: Number(tokenId.value) }),
-      ...(nftAddress.value && { nftAddress: nftAddress.value }),
-      ...(statuses.length && {
+      ...(tokenId?.value && { tokenId: Number(tokenId.value) }),
+      ...(nftAddress?.value && { nftAddress: nftAddress.value }),
+      ...(statuses?.length && {
         sessionStatus: statuses,
       }),
     }

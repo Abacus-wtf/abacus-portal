@@ -76,6 +76,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.0.3",
     "@types/react-helmet": "^5.0.15",
     "@types/styled-components": "^5.0.1",
