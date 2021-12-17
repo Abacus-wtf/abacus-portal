@@ -9,14 +9,14 @@ export const MainInput = styled(FormInput).attrs((props) => ({
   size: props.size || "sm",
   ...props,
 }))`
-  border: #c3c8d7;
-  border-radius: 53px;
+  border: transparent;
+  border-radius: 0px;
   padding: 0px;
   ${({ inputtype }) =>
     inputtype === "checkbox" &&
     `
     width: 20px;
-  `};
+  `}
 
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
@@ -92,7 +92,7 @@ export const InputWithTitle = ({
           </>
         )}
       </Label>
-      <MainInput size="lg" inputtype={type} {...props} />
+      <MainInput id={id} size="lg" inputtype={type} {...props} />
     </Container>
   )
 }
