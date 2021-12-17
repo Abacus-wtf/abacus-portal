@@ -45,7 +45,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                     NFT Address
                   </label>
                   <input
-                    class="sc-crrszt qfvYa form-control form-control-lg"
+                    class="sc-crrszt coXBYq form-control form-control-lg"
+                    id="nftAddress"
                     inputtype=""
                     placeholder="0x16baf0de678e52367adc69fd067e5edd1d33e3bf"
                     theme="[object Object]"
@@ -68,7 +69,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                     Token ID
                   </label>
                   <input
-                    class="sc-crrszt qfvYa form-control form-control-lg"
+                    class="sc-crrszt coXBYq form-control form-control-lg"
+                    id="tokenId"
                     inputtype=""
                     placeholder="6407"
                     theme="[object Object]"
@@ -106,7 +108,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                       Vote
                     </label>
                     <input
-                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="vote"
                       inputtype="checkbox"
                       theme="[object Object]"
                     />
@@ -127,7 +130,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                       Weigh
                     </label>
                     <input
-                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="weigh"
                       inputtype="checkbox"
                       theme="[object Object]"
                     />
@@ -148,7 +152,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                       Set Final
                     </label>
                     <input
-                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="setFinalAppraisal"
                       inputtype="checkbox"
                       theme="[object Object]"
                     />
@@ -173,7 +178,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                       Harvest
                     </label>
                     <input
-                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="harvest"
                       inputtype="checkbox"
                       theme="[object Object]"
                     />
@@ -194,7 +200,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                       Claim
                     </label>
                     <input
-                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="claim"
                       inputtype="checkbox"
                       theme="[object Object]"
                     />
@@ -215,7 +222,8 @@ exports[`FilterModal Matches snapshot 1`] = `
                       Complete
                     </label>
                     <input
-                      class="sc-crrszt fUcmOv form-control form-control-lg"
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="complete"
                       inputtype="checkbox"
                       theme="[object Object]"
                     />
