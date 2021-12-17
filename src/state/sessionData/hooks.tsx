@@ -40,7 +40,6 @@ import {
   getCurrentSessionData,
   setUserStatus,
   setCurrentSessionFetchStatus,
-  setCurrentSessionErrorMessage,
   setMySessionsFetchStatus,
   setActiveSessionsFetchStatus,
   setActiveSessionsData,
@@ -429,121 +428,6 @@ const getUserStatus = async ({
   return Number(getVoterCheck)
 }
 
-export const useGetCurrentSessionDataGRT = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
-  const getEthUsdContract = useWeb3Contract(ETH_USD_ORACLE_ABI)
-  const { account } = useActiveWeb3React()
-  const networkSymbol = useGetCurrentNetwork()
-
-  return useCallback(
-    async (address: string, tokenId: string, nonce: number) => {
-      dispatch(setCurrentSessionFetchStatus(PromiseStatus.Pending))
-      const ethUsdOracle = getEthUsdContract(ETH_USD_ORACLE_ADDRESS)
-      try {
-        const URL = `asset/${address}/${tokenId}`
-        const [data, asset] = await Promise.all([
-          axios.post<GetPricingSessionQueryResponse>(
-            GRAPHQL_ENDPOINT(networkSymbol),
-            {
-              query: GET_PRICING_SESSION(`${address}/${tokenId}/${nonce}`),
-            },
-            {
-              headers: {
-                "content-type": "application/json",
-              },
-            }
-          ),
-          openseaGet(URL),
-        ])
-        const { pricingSession } = data.data.data
-
-        let ethUsd
-        try {
-          ethUsd = await ethUsdOracle.methods.latestRoundData().call()
-          ethUsd = Number(ethUsd.answer) / 100000000
-        } catch (e) {
-          ethUsd = 4500
-        }
-
-        const { endTime, sessionStatus } = modifyTimeAndSession(
-          `${pricingSession.sessionStatus}`,
-          pricingSession,
-          pricingSession
-        )
-
-        let guessedAppraisal = -1
-        if (sessionStatus >= SessionState.Harvest && account) {
-          const index = _.findIndex(
-            pricingSession.participants,
-            (participant) => participant.user.id === account.toLowerCase()
-          )
-          if (index !== -1) {
-            guessedAppraisal = Number(
-              formatEther(pricingSession.participants[index].appraisal)
-            )
-          }
-        }
-
-        const sessionData: SessionData = {
-          image_url: asset.image_preview_url || asset.image_url,
-          animation_url: asset.animation_url || null,
-          endTime: Number(endTime),
-          votingTime: Number(pricingSession.votingTime),
-          numPpl: Number(pricingSession.numParticipants),
-          collectionTitle: asset.asset_contract.name,
-          totalStaked: Number(formatEther(pricingSession.totalStaked)),
-          totalStakedInUSD:
-            Number(formatEther(pricingSession.totalStaked)) * Number(ethUsd),
-          bountyInUSD:
-            Number(formatEther(pricingSession.bounty)) * Number(ethUsd),
-          bounty: Number(formatEther(pricingSession.bounty)),
-          nftName: asset.name,
-          finalAppraisalValue:
-            sessionStatus >= 3
-              ? Number(formatEther(pricingSession.finalAppraisalValue))
-              : undefined,
-          address: pricingSession.nftAddress,
-          tokenId: pricingSession.tokenId,
-          nonce: Number(pricingSession.nonce),
-          ownerAddress: asset.owner?.address,
-          owner:
-            asset?.owner?.user && asset?.owner?.user?.username
-              ? asset?.owner?.user?.username
-              : shortenAddress(asset?.owner?.address),
-          maxAppraisal: Number(formatEther(pricingSession?.maxAppraisal)),
-          guessedAppraisal,
-        }
-        const userStatus = await getUserStatus({
-          address,
-          account,
-          getPricingSessionContract,
-          tokenId,
-          networkSymbol,
-        })
-
-        const currentSessionData: CurrentSessionState = {
-          sessionData,
-          userStatus,
-          sessionStatus,
-        }
-        dispatch(getCurrentSessionData(currentSessionData))
-        dispatch(setCurrentSessionFetchStatus(PromiseStatus.Resolved))
-      } catch (e) {
-        dispatch(setCurrentSessionFetchStatus(PromiseStatus.Rejected))
-        dispatch(setCurrentSessionErrorMessage("Failed to get Session Data"))
-      }
-    },
-    [
-      account,
-      dispatch,
-      getEthUsdContract,
-      getPricingSessionContract,
-      networkSymbol,
-    ]
-  )
-}
-
 export const useGetCurrentSessionData = () => {
   const dispatch = useDispatch<AppDispatch>()
   const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
@@ -602,7 +486,6 @@ export const useGetCurrentSessionData = () => {
       getStatus = `${parseInt(getStatus[0].hex, 16)}`
       finalAppraisalResult = `${parseInt(finalAppraisalResult[0].hex, 16)}`
       const { pricingSession: pricingSessionGrt } = grtData?.data.data ?? {}
-
       let ethUsd
       try {
         ethUsd = await ethUsdOracle.methods.latestRoundData().call()
