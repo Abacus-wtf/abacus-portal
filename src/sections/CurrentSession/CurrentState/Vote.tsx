@@ -8,14 +8,13 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
+import { ListGroup, Form, Tooltip } from "shards-react"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
   useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
-import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
@@ -54,8 +53,6 @@ const Vote = ({
   const [stakeVal, setStakeVal] = useState("")
   const [passwordVal, setPasswordVal] = useState("")
   const [appraisalVal, setAppraisalVal] = useState("")
-  const [bountyAddition, setBountyAddition] = useState("")
-  const [stakeAddition, setStakeAddition] = useState("")
 
   const isPending = submitVotePending || updateVotePending
 
@@ -223,34 +220,6 @@ const Vote = ({
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>
         </div>
-        {userStatus === UserState.CompletedVote && (
-          <ListGroup style={{ marginTop: 35 }}>
-            <ListGroupItem>
-              <InputWithTitle
-                title={`Add to Stake - Max: ${
-                  !claimData ? "-" : claimData.ethCredit
-                } ETH`}
-                id="stakeAddition"
-                placeholder="0"
-                value={stakeAddition}
-                onChange={(e) => setStakeAddition(e.target.value)}
-                infoText="Increase the amount of Eth that you are staking."
-              />
-            </ListGroupItem>
-          </ListGroup>
-        )}
-        <ListGroup style={{ marginTop: 35 }}>
-          <ListGroupItem>
-            <InputWithTitle
-              title="Add to Bounty"
-              id="bountyAddition"
-              placeholder="0"
-              value={bountyAddition}
-              onChange={(e) => setBountyAddition(e.target.value)}
-              infoText="Add to the total bounty to incentivize more people to participate in this session."
-            />
-          </ListGroupItem>
-        </ListGroup>
       </Form>
     </>
   )
