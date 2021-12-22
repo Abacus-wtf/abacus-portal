@@ -101,6 +101,14 @@ const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V3 = IS_PRODUCTION
   ? "0x06060a6258c84dfcd42c1fb82e0028758808f5ac"
   : "0x554feAd617d7EB05eF3C001582cDC4f3405059C0"
 
+const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V4 = IS_PRODUCTION
+  ? "0x4Bbd138e2Ba312754B1d075DEdf2F337521Dd638"
+  : "0xdA1A7C756C63744e6Fc04b389901bfb5824C2Fa0"
+
+const ARB_ABC_VAULT_ADDRESS_LEGACY_V4 = IS_PRODUCTION
+  ? "0xB3f1069B04726C145197853Db772483Bd6B9650D"
+  : "0x919FD1373e7A2cdf5573aAf0D9AEB5D47B4BEa18"
+
 const ARB_LEGACY_GRAPHS_V1 = IS_PRODUCTION
   ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrum"
   : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkeby"
@@ -113,14 +121,27 @@ const ARB_LEGACY_GRAPHS_V3 = IS_PRODUCTION
   ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv3"
   : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv3"
 
+const ARB_LEGACY_GRAPHS_V4 = IS_PRODUCTION
+  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv4"
+  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv4"
+
 export const ARB_LEGACY_GRAPHS = (legacyVersion: number) => {
   switch (legacyVersion) {
     case 1:
       return ARB_LEGACY_GRAPHS_V1
     case 2:
       return ARB_LEGACY_GRAPHS_V2
-    default:
+    case 3:
       return ARB_LEGACY_GRAPHS_V3
+    default:
+      return ARB_LEGACY_GRAPHS_V4
+  }
+}
+
+export const ARB_ABC_VAULT_ADDRESS_LEGACY = (legacyVersion: number) => {
+  switch (legacyVersion) {
+    default:
+      return ARB_ABC_VAULT_ADDRESS_LEGACY_V4
   }
 }
 
@@ -132,8 +153,10 @@ export const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY = (
       return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V1
     case 2:
       return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2
-    default:
+    case 3:
       return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V3
+    default:
+      return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V4
   }
 }
 

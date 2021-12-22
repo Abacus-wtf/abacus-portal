@@ -5,6 +5,7 @@ import {
   ZERO_ADDRESS,
   ABC_AUCTION_ADDRESS,
   ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY,
+  ARB_ABC_VAULT_ADDRESS_LEGACY,
 } from "@config/constants"
 import {
   useActiveWeb3React,
@@ -15,6 +16,7 @@ import ABC_AUCTION_ABI from "@config/contracts/ABC_AUCTION_ABI.json"
 import { openseaGet } from "@config/utils"
 import { formatEther } from "ethers/lib/utils"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
+import ABC_VAULT_ABI from "@config/contracts/ABC_VAULT_CONTRACT_ABI.json"
 import ETH_USD_ORACLE_ABI from "@config/contracts/ETH_USD_ORACLE_ABI.json"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { AppDispatch, AppState } from "../index"
@@ -91,12 +93,16 @@ export const useSetAuctionData = () => {
 
 export const useSetPayoutData = (legacy = 1) => {
   const dispatch = useDispatch<AppDispatch>()
-  const getPricingSessionContract = useWeb3Contract(ABC_PRICING_SESSION_ABI)
+  const getContract = useWeb3Contract(
+    legacy >= 4 ? ABC_VAULT_ABI : ABC_PRICING_SESSION_ABI
+  )
 
   return useCallback(
     async (account: string) => {
-      const pricingSessionContract = getPricingSessionContract(
-        ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY(legacy)
+      const pricingSessionContract = getContract(
+        legacy >= 4
+          ? ARB_ABC_VAULT_ADDRESS_LEGACY(legacy)
+          : ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY(legacy)
       )
       const [ethPayout, ethToAbc, principalStored] = await Promise.all([
         pricingSessionContract.methods.profitStored(account).call(),
@@ -108,7 +114,7 @@ export const useSetPayoutData = (legacy = 1) => {
       const ethCredit = Number(formatEther(principalStored))
       dispatch(setClaimData({ ethPayout: eth, abcPayout: abc, ethCredit }))
     },
-    [getPricingSessionContract, dispatch, legacy]
+    [getContract, dispatch, legacy]
   )
 }
 
