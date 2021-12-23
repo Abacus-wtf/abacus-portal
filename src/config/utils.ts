@@ -36,7 +36,7 @@ export const formatPricingSessionCheckMulticall = (
   defender: `${parseInt(pricingSessionCheck[4].hex, 16)}`,
   spread: `${parseInt(pricingSessionCheck[5].hex, 16)}`,
   riskFactor: `${parseInt(pricingSessionCheck[6].hex, 16)}`,
-  finalStdev: `${parseInt(pricingSessionCheck[7].hex, 16)}`,
+  finalStdev: `${formatEther(pricingSessionCheck[7].hex)}`,
   secondaryPoints: `${parseInt(pricingSessionCheck[8].hex, 16)}`,
 })
 
@@ -51,8 +51,8 @@ export function isWithinWinRange(
     )
   }
   return (
-    appraisal >= finalAppraisal - winnerAmount &&
-    appraisal <= finalAppraisal + winnerAmount
+    appraisal >= finalAppraisal - Number(winnerAmount) &&
+    appraisal <= finalAppraisal + Number(winnerAmount)
   )
 }
 

@@ -461,7 +461,6 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
-      console.log(pricingSessionCheck, "pricingsessioncheck")
       pricingSessionCore = formatPricingSessionCoreMulticall(pricingSessionCore)
       pricingSessionCheck =
         formatPricingSessionCheckMulticall(pricingSessionCheck)
@@ -535,7 +534,7 @@ export const useGetCurrentSessionData = () => {
       }
       const sessionData: SessionData = {
         winnerAmount:
-          pricingSessionCore.totalWinnerPoints === 0
+          pricingSessionCore.totalWinnerPoints !== 0
             ? 0.05
             : pricingSessionCheck.finalStdev,
         rankings,
