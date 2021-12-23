@@ -461,7 +461,7 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
-      console.log(pricingSessionCheck, 'pricingsessioncheck')
+      console.log(pricingSessionCheck, "pricingsessioncheck")
       pricingSessionCore = formatPricingSessionCoreMulticall(pricingSessionCore)
       pricingSessionCheck =
         formatPricingSessionCheckMulticall(pricingSessionCheck)
