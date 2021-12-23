@@ -43,11 +43,16 @@ export const formatPricingSessionCheckMulticall = (
 export function isWithinWinRange(
   appraisal: number,
   finalAppraisal: number,
-  difference: number
+  winnerAmount: number
 ) {
+  if (winnerAmount === 0.05) {
+    return (
+      appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
+    )
+  }
   return (
-    appraisal >= finalAppraisal * (1 - difference) &&
-    appraisal <= finalAppraisal * (1 + difference)
+    appraisal >= finalAppraisal - winnerAmount &&
+    appraisal <= finalAppraisal + winnerAmount
   )
 }
 

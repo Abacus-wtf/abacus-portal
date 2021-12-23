@@ -534,7 +534,7 @@ export const useGetCurrentSessionData = () => {
         })
       }
       const sessionData: SessionData = {
-        winnerPercentage:
+        winnerAmount:
           pricingSessionCore.totalWinnerPoints === 0
             ? 0.05
             : pricingSessionCheck.finalStdev,

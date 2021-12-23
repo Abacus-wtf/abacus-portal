@@ -41,7 +41,7 @@ const Row = (props: RowProps) => {
                   isWithinWinRange(
                     Number(appraisal),
                     sessionData.finalAppraisalValue,
-                    sessionData.winnerPercentage
+                    sessionData.winnerAmount
                   )
                     ? "Won 🎉."
                     : "Lost 😔."
