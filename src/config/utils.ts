@@ -33,12 +33,21 @@ export const formatPricingSessionCheckMulticall = (
   calls: `${parseInt(pricingSessionCheck[1].hex, 16)}`,
   correct: `${parseInt(pricingSessionCheck[2].hex, 16)}`,
   incorrect: `${parseInt(pricingSessionCheck[3].hex, 16)}`,
-  timeFinalAppraisalSet: `${parseInt(pricingSessionCheck[4].hex, 16)}`,
+  defender: `${parseInt(pricingSessionCheck[4].hex, 16)}`,
+  spread: `${parseInt(pricingSessionCheck[5].hex, 16)}`,
+  riskFactor: `${parseInt(pricingSessionCheck[6].hex, 16)}`,
+  finalStdev: `${parseInt(pricingSessionCheck[7].hex, 16)}`,
+  secondaryPoints: `${parseInt(pricingSessionCheck[8].hex, 16)}`,
 })
 
-export function isWithinFivePercent(appraisal: number, finalAppraisal: number) {
+export function isWithinWinRange(
+  appraisal: number,
+  finalAppraisal: number,
+  difference: number
+) {
   return (
-    appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
+    appraisal >= finalAppraisal * (1 - difference) &&
+    appraisal <= finalAppraisal * (1 + difference)
   )
 }
 

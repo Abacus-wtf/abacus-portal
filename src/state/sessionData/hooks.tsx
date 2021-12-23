@@ -89,30 +89,11 @@ const GRAPHQL_ENDPOINT = (networkSymbol: NetworkSymbolEnum): string => {
   }
 }
 
-const modifyTimeAndSession = (
-  getStatus: string,
-  pricingSessionData: any,
-  stateVals: any
-) => {
+const modifyTimeAndSession = (getStatus: string, pricingSessionData: any) => {
   let sessionStatus = Number(getStatus)
   let endTime = Number(pricingSessionData.endTime) * 1000
   const currentTime = Date.now()
-  if (sessionStatus === 3) {
-    endTime =
-      Number(stateVals.timeFinalAppraisalSet) * 1000 +
-      Number(pricingSessionData.votingTime) * 1000
-    if (currentTime >= endTime) {
-      sessionStatus = 4
-    }
-  } else if (sessionStatus === 4) {
-    endTime =
-      Number(stateVals.timeFinalAppraisalSet) * 1000 +
-      Number(pricingSessionData.votingTime) * 2 * 1000
-
-    if (currentTime >= endTime) {
-      sessionStatus = 5
-    }
-  } else if (sessionStatus === 1) {
+  if (sessionStatus === 1) {
     endTime += Number(pricingSessionData.votingTime) * (2 / 3) * 1000
     if (currentTime >= endTime) {
       sessionStatus = 2
@@ -480,6 +461,7 @@ export const useGetCurrentSessionData = () => {
           }
         ),
       ])
+      console.log(pricingSessionCheck, 'pricingsessioncheck')
       pricingSessionCore = formatPricingSessionCoreMulticall(pricingSessionCore)
       pricingSessionCheck =
         formatPricingSessionCheckMulticall(pricingSessionCheck)
@@ -496,8 +478,7 @@ export const useGetCurrentSessionData = () => {
 
       const { endTime, sessionStatus } = modifyTimeAndSession(
         getStatus,
-        pricingSessionCore,
-        pricingSessionCheck
+        pricingSessionCore
       )
 
       const finalAppraisalValue =
@@ -553,6 +534,10 @@ export const useGetCurrentSessionData = () => {
         })
       }
       const sessionData: SessionData = {
+        winnerPercentage:
+          pricingSessionCore.totalWinnerPoints === 0
+            ? 0.05
+            : pricingSessionCheck.finalStdev,
         rankings,
         bounty: pricingSessionCore.bounty,
         image_url:

@@ -7,7 +7,7 @@ import {
 } from "@state/sessionData/hooks"
 import { SessionState, Vote } from "@state/sessionData/reducer"
 import { getEtherscanLink, useActiveWeb3React } from "@hooks/index"
-import { shortenAddress, isWithinFivePercent } from "@config/utils"
+import { shortenAddress, isWithinWinRange } from "@config/utils"
 import { Title } from "@components/global.styles"
 import styled from "styled-components"
 import { theme } from "@config/theme"
@@ -38,9 +38,10 @@ const Row = (props: RowProps) => {
           <b>{`${
             index
               ? `#${index} ${
-                  isWithinFivePercent(
+                  isWithinWinRange(
                     Number(appraisal),
-                    sessionData.finalAppraisalValue
+                    sessionData.finalAppraisalValue,
+                    sessionData.winnerPercentage
                   )
                     ? "Won 🎉."
                     : "Lost 😔."
