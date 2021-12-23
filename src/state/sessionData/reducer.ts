@@ -44,8 +44,6 @@ export enum UserState {
   NotVoted = 0,
   CompletedVote = 1,
   CompletedWeigh = 2,
-  CompletedHarvest = 3,
-  CompletedClaim = 4,
 }
 
 export interface SessionData {

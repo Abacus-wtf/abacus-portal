@@ -188,7 +188,7 @@ export const useCanUserInteract = () => {
     case SessionState.Harvest:
       return userStatus === UserState.CompletedWeigh
     case SessionState.Claim:
-      return userStatus === UserState.CompletedHarvest
+      return userStatus === UserState.CompletedWeigh
     case SessionState.Complete:
       return true
     default:

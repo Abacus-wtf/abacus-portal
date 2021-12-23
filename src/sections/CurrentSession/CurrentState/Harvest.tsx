@@ -137,7 +137,7 @@ const Harvest: FunctionComponent = () => {
             >
               {isPending
                 ? "Pending..."
-                : userStatus === UserState.CompletedHarvest
+                : userStatus === UserState.CompletedWeigh
                 ? "Harvested"
                 : "Harvest"}
             </Button>
