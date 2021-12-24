@@ -39,7 +39,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                 >
                   <label
                     class="sc-iqHYmW ibuPqX"
-                    for="nftAddress"
                     style="margin-bottom: 10px;"
                   >
                     NFT Address
@@ -63,7 +62,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                 >
                   <label
                     class="sc-iqHYmW ibuPqX"
-                    for="tokenId"
                     style="margin-bottom: 10px;"
                   >
                     Token ID
@@ -102,7 +100,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                   >
                     <label
                       class="sc-iqHYmW ibuPqX"
-                      for="vote"
                       style="margin-bottom: 0px;"
                     >
                       Vote
@@ -124,7 +121,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                   >
                     <label
                       class="sc-iqHYmW ibuPqX"
-                      for="weigh"
                       style="margin-bottom: 0px;"
                     >
                       Weigh
@@ -146,7 +142,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                   >
                     <label
                       class="sc-iqHYmW ibuPqX"
-                      for="setFinalAppraisal"
                       style="margin-bottom: 0px;"
                     >
                       Set Final
@@ -172,7 +167,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                   >
                     <label
                       class="sc-iqHYmW ibuPqX"
-                      for="harvest"
                       style="margin-bottom: 0px;"
                     >
                       Harvest
@@ -194,7 +188,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                   >
                     <label
                       class="sc-iqHYmW ibuPqX"
-                      for="claim"
                       style="margin-bottom: 0px;"
                     >
                       Claim
@@ -216,7 +209,6 @@ exports[`FilterModal Matches snapshot 1`] = `
                   >
                     <label
                       class="sc-iqHYmW ibuPqX"
-                      for="complete"
                       style="margin-bottom: 0px;"
                     >
                       Complete
