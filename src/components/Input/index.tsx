@@ -72,14 +72,14 @@ export const InputWithTitle = ({
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   return (
     <Container type={type}>
-      <Label
-        style={{ marginBottom: type === "checkbox" ? 0 : 10 }}
-        htmlFor={id}
-      >
+      <Label style={{ marginBottom: type === "checkbox" ? 0 : 10 }}>
         {title}
         {infoText && (
           <>
-            <Info style={{ height: 15, marginTop: -2, marginLeft: 1 }} />
+            <Info
+              id={id}
+              style={{ height: 15, marginTop: -2, marginLeft: 1 }}
+            />
             <Tooltip
               open={isToolTipOpen}
               target={`#${id}`}
