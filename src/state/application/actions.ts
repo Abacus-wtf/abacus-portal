@@ -7,6 +7,6 @@ export const toggleWalletModal = createAction<boolean>(
 export const selectNetwork = createAction<NetworkSymbolEnum>(
   "application/selectNetwork"
 )
-export const setGeneralizedContractErrorMessage = createAction<string>(
+export const setGeneralizedContractErrorMessage = createAction<any>(
   "application/generalizedContract/errorMessage"
 )
