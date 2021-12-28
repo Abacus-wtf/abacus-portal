@@ -67,7 +67,7 @@ export interface SessionData {
   finalAppraisalValue?: number
   totalStakedInUSD?: number
   rankings?: Vote[]
-  winnerPercentage?: number
+  winnerAmount?: number
 }
 
 export interface ClaimState {
