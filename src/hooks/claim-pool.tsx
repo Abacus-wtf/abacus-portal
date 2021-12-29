@@ -9,7 +9,6 @@ import {
   useActiveWeb3React,
   useGeneralizedContractCall,
   ReloadDataType,
-  useWeb3Contract,
 } from "@hooks/index"
 import { useTransactionAdder } from "@state/transactions/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
@@ -21,7 +20,6 @@ export const useOnClaimPayout = () => {
   )
   const addTransaction = useTransactionAdder()
   const networkSymbol = useGetCurrentNetwork()
-  const getPricingSessionContract = useWeb3Contract(ABC_VAULT_CONTRACT_ABI)
 
   const onClaim = useCallback(
     async (isEth: boolean, amount: string) => {
@@ -36,18 +34,12 @@ export const useOnClaimPayout = () => {
         library,
         account
       )
-
-      const pricingSessionRead = getPricingSessionContract(
-        ABC_VAULT_ADDRESS(networkSymbol)
-      )
-
-      const ethToAbc = await pricingSessionRead.methods.ethToAbc().call()
       method = pricingSessionContract.claimProfitsEarned
       estimate = pricingSessionContract.estimateGas.claimProfitsEarned
       if (isEth) {
         args = [1, parseEther(amount)]
       } else {
-        args = [2, parseEther(`${Number(amount) / Number(ethToAbc)}`)]
+        args = [2, parseEther(amount)]
       }
       value = null
       const txnCb = async (response: any) => {
@@ -63,14 +55,7 @@ export const useOnClaimPayout = () => {
         cb: txnCb,
       })
     },
-    [
-      networkSymbol,
-      library,
-      account,
-      getPricingSessionContract,
-      generalizedContractCall,
-      addTransaction,
-    ]
+    [networkSymbol, library, account, generalizedContractCall, addTransaction]
   )
   return {
     onClaim,
