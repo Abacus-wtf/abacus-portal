@@ -198,7 +198,7 @@ const CurrentSession = ({ location }) => {
           />
           <LostModal
             open={isLostModalOpen}
-            toggle={() => setIsLostModalOpen(!isSubscribeModalOpen)}
+            toggle={() => setIsLostModalOpen(!isLostModalOpen)}
           />
         </VerticalContainer>
       </SplitContainer>
