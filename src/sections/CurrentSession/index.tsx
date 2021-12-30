@@ -20,6 +20,7 @@ import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import RankingsModal from "@components/RankingsModal"
 import { NetworkSymbolEnum } from "@config/constants"
 import { SessionState } from "@state/sessionData/reducer"
+import { isWithinWinRange } from "@config/utils"
 import {
   SplitContainer,
   VerticalContainer,
@@ -30,6 +31,7 @@ import {
 import CurrentState from "./CurrentState"
 import CongratsModal from "./CongratsModal"
 import SubscribeModal from "./SubscribeModal"
+import LostModal from "./LostModal"
 
 const CurrentSession = ({ location }) => {
   const status = useCurrentSessionStatus()
@@ -47,6 +49,7 @@ const CurrentSession = ({ location }) => {
   const userStatus = useCurrentSessionUserStatus()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
   const [isSubscribeModalOpen, setSubscribeModalOpen] = useState(false)
+  const [isLostModalOpen, setIsLostModalOpen] = useState(false)
   const [congratsOpen, setCongratsOpen] = useState(false)
 
   useEffect(() => {
@@ -75,6 +78,29 @@ const CurrentSession = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [claimData, sessionData, userStatus])
 
+  useEffect(() => {
+    const localString = `${sessionData.address}${sessionData.tokenId}${sessionData.nonce}`
+    const wasShown = localStorage.getItem(localString)
+    if (
+      wasShown === null &&
+      sessionData &&
+      sessionData.finalAppraisalValue &&
+      sessionData.guessedAppraisal &&
+      sessionData.guessedAppraisal !== -1 &&
+      sessionData.winnerAmount &&
+      !isWithinWinRange(
+        sessionData.guessedAppraisal,
+        sessionData.finalAppraisalValue,
+        sessionData.winnerAmount
+      )
+    ) {
+      console.log("guessed", sessionData.guessedAppraisal)
+      setIsLostModalOpen(true)
+
+      localStorage.setItem(localString, "true")
+    }
+  }, [sessionData])
+
   if (!account && !isNetworkSymbolNone) {
     return (
       <SmallUniversalContainer
@@ -94,6 +120,7 @@ const CurrentSession = ({ location }) => {
       </SmallUniversalContainer>
     )
   }
+
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <RankingsModal
@@ -168,6 +195,10 @@ const CurrentSession = ({ location }) => {
           <SubscribeModal
             open={isSubscribeModalOpen}
             toggle={() => setSubscribeModalOpen(!isSubscribeModalOpen)}
+          />
+          <LostModal
+            open={isLostModalOpen}
+            toggle={() => setIsLostModalOpen(!isLostModalOpen)}
           />
         </VerticalContainer>
       </SplitContainer>
