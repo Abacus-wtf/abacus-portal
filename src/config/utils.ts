@@ -29,15 +29,16 @@ export const formatPricingSessionCoreMulticall = (pricingSessionCore: any) => ({
 export const formatPricingSessionCheckMulticall = (
   pricingSessionCheck: any
 ) => ({
-  sessionProgression: `${parseInt(pricingSessionCheck[0].hex, 16)}`,
-  calls: `${parseInt(pricingSessionCheck[1].hex, 16)}`,
-  correct: `${parseInt(pricingSessionCheck[2].hex, 16)}`,
-  incorrect: `${parseInt(pricingSessionCheck[3].hex, 16)}`,
-  defender: `${parseInt(pricingSessionCheck[4].hex, 16)}`,
-  spread: `${parseInt(pricingSessionCheck[5].hex, 16)}`,
-  riskFactor: `${parseInt(pricingSessionCheck[6].hex, 16)}`,
-  finalStdev: `${formatEther(pricingSessionCheck[7].hex)}`,
-  secondaryPoints: `${parseInt(pricingSessionCheck[8].hex, 16)}`,
+  revealedStake: `${parseInt(pricingSessionCheck[0].hex, 16)}`,
+  sessionProgression: `${parseInt(pricingSessionCheck[1].hex, 16)}`,
+  calls: `${parseInt(pricingSessionCheck[2].hex, 16)}`,
+  correct: `${parseInt(pricingSessionCheck[3].hex, 16)}`,
+  incorrect: `${parseInt(pricingSessionCheck[4].hex, 16)}`,
+  defender: `${parseInt(pricingSessionCheck[5].hex, 16)}`,
+  spread: `${parseInt(pricingSessionCheck[6].hex, 16)}`,
+  riskFactor: `${parseInt(pricingSessionCheck[7].hex, 16)}`,
+  finalStdev: `${formatEther(pricingSessionCheck[8].hex)}`,
+  secondaryPoints: `${parseInt(pricingSessionCheck[9].hex, 16)}`,
 })
 
 export function isWithinWinRange(
