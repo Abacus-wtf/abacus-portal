@@ -94,7 +94,7 @@ const modifyTimeAndSession = (getStatus: string, pricingSessionData: any) => {
   let endTime = Number(pricingSessionData.endTime) * 1000
   const currentTime = Date.now()
   if (sessionStatus === 1) {
-    endTime += Number(pricingSessionData.votingTime) * (2 / 3) * 1000
+    endTime += Number(pricingSessionData.votingTime) * 1000
     if (currentTime >= endTime) {
       sessionStatus = 2
     }
