@@ -237,6 +237,11 @@
     "outputs": [
       {
         "internalType": "uint256",
+        "name": "revealedStake",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "sessionProgression",
         "type": "uint256"
       },
