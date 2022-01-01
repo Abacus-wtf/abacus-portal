@@ -133,7 +133,7 @@ const Vote = ({
             return
           }
 
-          if (appraisalVal && appraisalVal.includes(".")) {
+          if (appraisalVal.indexOf(".") !== -1) {
             const numDecimals = appraisalVal.split(".")[1].length
             if (numDecimals > 11) {
               alert(
