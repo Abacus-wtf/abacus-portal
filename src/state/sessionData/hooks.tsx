@@ -534,7 +534,7 @@ export const useGetCurrentSessionData = () => {
       }
       const sessionData: SessionData = {
         winnerAmount:
-          pricingSessionCore.totalWinnerPoints !== 0
+          pricingSessionCheck.secondaryPoints !== 0
             ? 0.05
             : pricingSessionCheck.finalStdev,
         rankings,
