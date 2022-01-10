@@ -1,26 +1,29 @@
 import * as React from "react"
 
-const SSRPage = ({ serverData }) => (
-  <main>
-    <h1>SSR Page with Dogs</h1>
-    <img alt="Happy dog" src={serverData.message} />
-  </main>
-)
-export default SSRPage
-export async function getServerData() {
-  try {
-    const res = await fetch(`https://dog.ceo/api/breeds/image/random`)
-    if (!res.ok) {
-      throw new Error(`Response failed`)
-    }
-    return {
-      props: await res.json(),
-    }
-  } catch (error) {
-    return {
-      status: 500,
-      headers: {},
-      props: {},
-    }
+type PageProps = {
+  serverData: {
+    dogImage: { message: string }
   }
 }
+const Page = ({ serverData }: PageProps) => {
+  const { dogImage } = serverData
+  // Use dogImage in your page...
+  console.log(serverData)
+  return (
+    <div>
+      <p>Hello</p>
+      <img src={dogImage.message} alt="Happy Dog" />
+    </div>
+  )
+}
+
+export async function getServerData() {
+  const res = await fetch(`https://dog.ceo/api/breeds/image/random`)
+  const data = await res.json()
+  return {
+    props: {
+      dogImage: data,
+    },
+  }
+}
+export default Page
