@@ -3,7 +3,7 @@
 exports[`Button Matches snapshot 1`] = `
 <div>
   <button
-    class="sc-bdfBQB jjXNlU btn btn-primary"
+    class="sc-bdvvtL gAgHBR btn btn-primary"
     type="button"
   />
 </div>
@@ -12,7 +12,7 @@ exports[`Button Matches snapshot 1`] = `
 exports[`ButtonClear Matches snapshot 1`] = `
 <div>
   <button
-    class="sc-bdfBQB sc-dlfnuX jjXNlU ipwiFM btn btn-primary"
+    class="sc-bdvvtL sc-dkPtRN gAgHBR FSLNo btn btn-primary"
     type="button"
   />
 </div>
@@ -21,7 +21,7 @@ exports[`ButtonClear Matches snapshot 1`] = `
 exports[`ButtonsWhite Matches snapshot 1`] = `
 <div>
   <button
-    class="sc-bdfBQB sc-gsTEea jjXNlU dYSOdb btn btn-primary"
+    class="sc-bdvvtL sc-gsDKAQ gAgHBR fuXhKv btn btn-primary"
     type="button"
   />
 </div>
