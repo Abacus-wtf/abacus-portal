@@ -32,24 +32,6 @@ const EndSession: FunctionComponent = () => {
     <>
       <HorizontalListGroup>
         <ListGroupItemMinWidth>
-          <Label>Total Staked</Label>
-          <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })}{" "}
-            ETH
-          </ListGroupHeader>
-          <ListGroupSubtext>
-            ($
-            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-            )
-          </ListGroupSubtext>
-        </ListGroupItemMinWidth>
-        <ListGroupItemMinWidth>
           <Label>Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
             {sessionData.bounty.toLocaleString("en-US", {
@@ -61,6 +43,24 @@ const EndSession: FunctionComponent = () => {
           <ListGroupSubtext>
             ($
             {sessionData.bountyInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Total Staked</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}{" "}
+            ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -79,6 +79,7 @@ const EndSession: FunctionComponent = () => {
             maximumFractionDigits: 4,
           })} ETH`}
           disabled
+          infoText="The final appraisal value has been determined for this pricing session."
         />
       </ListGroupItem>
       <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>

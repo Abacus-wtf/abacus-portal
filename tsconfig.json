@@ -26,7 +26,8 @@
       "@config/*": ["config/*"],
       "@templates/*": ["templates/*"],
       "@layouts/*": ["layouts/*"],
-      "@models/*": ["models/*"]
+      "@models/*": ["models/*"],
+      "@test-utils/*": ["test-utils/*"]
     }
   }
 }

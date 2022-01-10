@@ -8,9 +8,12 @@ module.exports = {
     "!**/models/**",
     // 'pages/**/*.{ts,tsx}'
   ],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: "<rootDir>/src/",
-  }),
+  moduleNameMapper: {
+    "\\.(svg)$": "<rootDir>/tests/__mocks__/svgMock.js",
+    ...pathsToModuleNameMapper(compilerOptions.paths, {
+      prefix: "<rootDir>/src/",
+    }),
+  },
   coverageThreshold: {
     global: {
       branches: 100,

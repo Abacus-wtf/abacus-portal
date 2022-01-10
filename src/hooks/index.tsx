@@ -3,6 +3,7 @@ import { Web3Provider, TransactionResponse } from "@ethersproject/providers"
 import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types"
 import {
+  IS_PRODUCTION,
   NetworkContextName,
   NetworkSymbolEnum,
   web3,
@@ -22,6 +23,12 @@ import { useSetAuctionData, useSetPayoutData } from "@state/miscData/hooks"
 import { useDispatch } from "react-redux"
 import { setGeneralizedContractErrorMessage } from "@state/application/actions"
 import styled from "styled-components"
+import {
+  Multicall,
+  ContractCallResults,
+  ContractCallContext,
+} from "ethereum-multicall"
+import _ from "lodash"
 
 const ErrorMessageLabel = styled.label`
   font-size: 1.4rem;
@@ -53,7 +60,9 @@ export function getEtherscanLink(
   data: string,
   type: "transaction" | "token" | "address" | "block"
 ): string {
-  const prefix = `https://${ETHERSCAN_PREFIXES[chainId]}`
+  const prefix = chainId
+    ? `https://${ETHERSCAN_PREFIXES[chainId]}`
+    : `https://${ETHERSCAN_PREFIXES[42161]}`
 
   switch (type) {
     case "transaction": {
@@ -86,6 +95,58 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> & 
   const context = useWeb3ReactCore<Web3Provider>()
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
   return context.active ? context : contextNetwork
+}
+
+export function useMultiCall(abi: any) {
+  const { chainId } = useActiveWeb3React()
+  let networkSymbol = useGetCurrentNetwork()
+  if (networkSymbol === NetworkSymbolEnum.NONE) {
+    networkSymbol = NetworkSymbolEnum.ARBITRUM
+  }
+
+  return useCallback(
+    async (contractAddress: string, methods: string[], args: any[][]) => {
+      let multicall: any
+      if (chainId === 421611 || (!IS_PRODUCTION && chainId === undefined)) {
+        multicall = new Multicall({
+          multicallCustomContractAddress:
+            "0x977923a4097cd0c21b272c0644d18b57d3676b8f",
+          web3Instance: web3(networkSymbol),
+          tryAggregate: false,
+        })
+      } else {
+        multicall = new Multicall({
+          web3Instance: web3(networkSymbol),
+          tryAggregate: false,
+        })
+      }
+
+      const context: ContractCallContext[] = _.map(
+        _.range(0, methods.length),
+        (index) => ({
+          reference: methods[index],
+          contractAddress,
+          abi,
+          calls: [
+            {
+              reference: methods[index],
+              methodName: methods[index],
+              methodParameters: args[index],
+            },
+          ],
+        })
+      )
+      const resultsMulticall: ContractCallResults = await multicall.call(
+        context
+      )
+      const resultsData = resultsMulticall.results
+      return _.map(
+        Object.keys(resultsData),
+        (method) => resultsData[method].callsReturnContext[0].returnValues
+      )
+    },
+    [abi, networkSymbol, chainId]
+  )
 }
 
 export function useWeb3Contract(ABI: any) {

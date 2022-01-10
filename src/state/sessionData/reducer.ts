@@ -3,7 +3,6 @@ import { PromiseStatus } from "@models/PromiseStatus"
 import {
   getCurrentSessionData,
   setUserStatus,
-  setClaimPosition,
   setMultipleSessionData,
   setMultipleSessionFetchStatus,
   setMultipleSessionErrorMessage,
@@ -45,14 +44,13 @@ export enum UserState {
   NotVoted = 0,
   CompletedVote = 1,
   CompletedWeigh = 2,
-  CompletedHarvest = 3,
-  CompletedClaim = 4,
 }
 
 export interface SessionData {
   image_url: string
   animation_url: string | null
   endTime: number
+  votingTime: number
   numPpl: number
   collectionTitle: string
   totalStaked: number
@@ -69,6 +67,7 @@ export interface SessionData {
   finalAppraisalValue?: number
   totalStakedInUSD?: number
   rankings?: Vote[]
+  winnerAmount?: number
 }
 
 export interface ClaimState {
@@ -81,7 +80,6 @@ export interface CurrentSessionState {
   sessionData: SessionData
   sessionStatus: SessionState
   userStatus: UserState
-  claimPositions?: ClaimState
   fetchStatus?: PromiseStatus
   errorMessage?: string | null
 }
@@ -149,9 +147,6 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(setUserStatus, (state, action) => {
       state.currentSessionData.userStatus = action.payload
-    })
-    .addCase(setClaimPosition, (state, action) => {
-      state.currentSessionData.claimPositions = action.payload
     })
     .addCase(setCurrentSessionFetchStatus, (state, action) => {
       if (state.currentSessionData !== null) {

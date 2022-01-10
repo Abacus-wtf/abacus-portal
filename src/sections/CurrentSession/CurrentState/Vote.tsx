@@ -8,22 +8,16 @@ import {
   ListGroupHeader,
   ListGroupSubtext,
 } from "@components/ListGroupMods"
-import { ListGroupItem, ListGroup, Form, Tooltip } from "shards-react"
+import { ListGroup, Form, Tooltip } from "shards-react"
 import { UserState } from "@state/sessionData/reducer"
 import {
   useCanUserInteract,
   useCurrentSessionData,
   useCurrentSessionUserStatus,
 } from "@state/sessionData/hooks"
-import { InputWithTitle } from "@components/Input"
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
-import {
-  useOnAddToBountyVote,
-  useOnAddToStake,
-  useOnSubmitVote,
-  useOnUpdateVote,
-} from "@hooks/current-session"
+import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
 import { hashValues } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"
@@ -36,16 +30,12 @@ import {
   SubText,
   ListGroupItemMinWidth,
 } from "../CurrentSession.styles"
-import CongratsModal from "../CongratsModal"
 
 const Vote = ({
-  congratsOpen,
   setCongratsOpen,
 }: {
-  congratsOpen: boolean
   setCongratsOpen: (input: boolean) => void
 }) => {
-  const [appraisalHash, setAppraisalHash] = useState("")
   const { account } = useActiveWeb3React()
   const networkSymbol = useGetCurrentNetwork()
   const isNetworkSymbolNone = networkSymbol === NetworkSymbolEnum.NONE
@@ -59,13 +49,10 @@ const Vote = ({
 
   const { onSubmitVote, isPending: submitVotePending } = useOnSubmitVote()
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
-  const { onAddToBounty, isPending: addToBountyPending } =
-    useOnAddToBountyVote()
-  const { onAddToStake, isPending: addToStakePending } = useOnAddToStake()
 
   const [stakeVal, setStakeVal] = useState("")
-  const [bountyAddition, setBountyAddition] = useState("")
-  const [stakeAddition, setStakeAddition] = useState("")
+  const [passwordVal, setPasswordVal] = useState("")
+  const [appraisalVal, setAppraisalVal] = useState("")
 
   const isPending = submitVotePending || updateVotePending
 
@@ -73,24 +60,6 @@ const Vote = ({
   return (
     <>
       <HorizontalListGroup>
-        <ListGroupItemMinWidth>
-          <Label>Total Staked</Label>
-          <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })}{" "}
-            ETH
-          </ListGroupHeader>
-          <ListGroupSubtext>
-            ($
-            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-            )
-          </ListGroupSubtext>
-        </ListGroupItemMinWidth>
         <ListGroupItemMinWidth>
           <Label>Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
@@ -103,6 +72,24 @@ const Vote = ({
           <ListGroupSubtext>
             ($
             {sessionData.bountyInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Total Staked</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}{" "}
+            ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -123,9 +110,7 @@ const Vote = ({
           e.preventDefault()
           const target = e.target as any
           const stake = Number(target.stake?.value)
-          if (
-            Number(target.appraisalValue?.value) >= sessionData.maxAppraisal
-          ) {
+          if (Number(appraisalVal) >= sessionData.maxAppraisal) {
             alert(
               `The Max Appraisal you can do is ${sessionData.maxAppraisal} Ether but you submitted ${target.appraisalValue.value} Ether.`
             )
@@ -148,16 +133,33 @@ const Vote = ({
             return
           }
 
+          if (appraisalVal.indexOf(".") !== -1) {
+            const numDecimals = appraisalVal.split(".")[1].length
+            if (numDecimals > 11) {
+              alert(
+                "Please use a appraisal value that has less than 11 decimal places."
+              )
+              return
+            }
+          }
+
+          const hash = hashValues({
+            appraisalValue: parseEther(`${appraisalVal}`),
+            account: account || "",
+            password: Number(passwordVal),
+          })
           switch (userStatus) {
             case UserState.NotVoted:
               await onSubmitVote(
-                target.appraise.value,
-                target.stake.value,
+                passwordVal,
+                appraisalVal,
+                stakeVal,
+                hash,
                 () => setCongratsOpen(true)
               )
               break
             case UserState.CompletedVote:
-              await onUpdateVote(target.appraise.value)
+              await onUpdateVote(passwordVal, appraisalVal, hash)
               break
             default:
               break
@@ -166,38 +168,13 @@ const Vote = ({
       >
         <ListGroup>
           <HashSystem
-            onCreateHash={(appraisalValue, password) => {
-              setAppraisalHash(
-                hashValues({
-                  appraisalValue: parseEther(`${appraisalValue}`),
-                  account: account || "",
-                  password,
-                })
-              )
-            }}
+            appraisalVal={appraisalVal}
+            passwordVal={passwordVal}
+            setPasswordVal={setPasswordVal}
+            setAppraisalVal={setAppraisalVal}
+            stakeVal={stakeVal}
+            setStakeVal={setStakeVal}
           />
-          <ListGroupItem>
-            <InputWithTitle
-              title="Appraisal Result (Hashed)"
-              id="appraise"
-              placeholder="0"
-              value={appraisalHash}
-              disabled
-            />
-          </ListGroupItem>
-          {userStatus !== UserState.CompletedVote ? (
-            <ListGroupItem>
-              <InputWithTitle
-                title={`Stake - Max: ${
-                  !claimData ? "-" : claimData.ethCredit
-                } ETH`}
-                id="stake"
-                value={stakeVal}
-                onChange={(e) => setStakeVal(e.target.value)}
-                placeholder="0.001"
-              />
-            </ListGroupItem>
-          ) : null}
         </ListGroup>
         <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>
           <div style={{ width: "100%" }} id="submitVoteButton">
@@ -206,7 +183,8 @@ const Vote = ({
                 !canUserInteract ||
                 isNetworkSymbolNone ||
                 isPending ||
-                appraisalHash === "" ||
+                appraisalVal === "" ||
+                passwordVal === "" ||
                 (userStatus === UserState.NotVoted &&
                   (Number.isNaN(Number(stakeVal)) || stakeVal === ""))
               }
@@ -217,7 +195,7 @@ const Vote = ({
                 ? "Pending..."
                 : userStatus === UserState.CompletedVote
                 ? "Update"
-                : "Submit"}
+                : "Submit Concealed Appraisal"}
             </Button>
           </div>
           <Tooltip
@@ -242,73 +220,7 @@ const Vote = ({
             <User style={{ height: 14 }} /> {sessionData.numPpl} participants
           </SubText>
         </div>
-        {userStatus === UserState.CompletedVote && (
-          <ListGroup style={{ marginTop: 35 }}>
-            <ListGroupItem>
-              <InputWithTitle
-                title={`Add to Stake - Max: ${
-                  !claimData ? "-" : claimData.ethCredit
-                } ETH`}
-                id="stakeAddition"
-                placeholder="0"
-                value={stakeAddition}
-                onChange={(e) => setStakeAddition(e.target.value)}
-              />
-            </ListGroupItem>
-            <div
-              style={{ width: "100%", margin: "35px 0px 10px 0px" }}
-              id="addtoStakeButton"
-            >
-              <Button
-                disabled={
-                  addToStakePending ||
-                  Number.isNaN(Number(stakeAddition)) ||
-                  stakeAddition === ""
-                }
-                style={{ width: "100%" }}
-                onClick={async () => {
-                  await onAddToStake(stakeAddition)
-                }}
-              >
-                {addToStakePending ? "Pending..." : "Add to Stake"}
-              </Button>
-            </div>
-          </ListGroup>
-        )}
-        <ListGroup style={{ marginTop: 35 }}>
-          <ListGroupItem>
-            <InputWithTitle
-              title="Add to Bounty"
-              id="bountyAddition"
-              placeholder="0"
-              value={bountyAddition}
-              onChange={(e) => setBountyAddition(e.target.value)}
-            />
-          </ListGroupItem>
-          <div
-            style={{ width: "100%", margin: "35px 0px 10px 0px" }}
-            id="addToBountyButton"
-          >
-            <Button
-              disabled={
-                addToBountyPending ||
-                Number.isNaN(Number(bountyAddition)) ||
-                bountyAddition === ""
-              }
-              style={{ width: "100%" }}
-              onClick={async () => {
-                await onAddToBounty(bountyAddition)
-              }}
-            >
-              {addToBountyPending ? "Pending..." : "Add to Bounty"}
-            </Button>
-          </div>
-        </ListGroup>
       </Form>
-      <CongratsModal
-        open={congratsOpen}
-        toggle={() => setCongratsOpen(false)}
-      />
     </>
   )
 }

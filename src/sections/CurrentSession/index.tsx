@@ -5,6 +5,7 @@ import { navigate } from "gatsby"
 import {
   useCurrentSessionData,
   useCurrentSessionFetchStatus,
+  useCurrentSessionStatus,
   useCurrentSessionUserStatus,
   useGetCurrentSessionData,
   useGetUserStatus,
@@ -18,6 +19,8 @@ import { OutboundLink } from "gatsby-plugin-google-gtag"
 import { useSetPayoutData, useClaimPayoutData } from "@state/miscData/hooks"
 import RankingsModal from "@components/RankingsModal"
 import { NetworkSymbolEnum } from "@config/constants"
+import { SessionState } from "@state/sessionData/reducer"
+import { isWithinWinRange } from "@config/utils"
 import {
   SplitContainer,
   VerticalContainer,
@@ -26,8 +29,12 @@ import {
   SubText,
 } from "./CurrentSession.styles"
 import CurrentState from "./CurrentState"
+import CongratsModal from "./CongratsModal"
+import SubscribeModal from "./SubscribeModal"
+import LostModal from "./LostModal"
 
 const CurrentSession = ({ location }) => {
+  const status = useCurrentSessionStatus()
   const { address, tokenId, nonce } = queryString.parse(location.search)
   const getCurrentSessionData = useGetCurrentSessionData()
   const { account, chainId } = useActiveWeb3React()
@@ -41,11 +48,8 @@ const CurrentSession = ({ location }) => {
   const getUserStatus = useGetUserStatus()
   const userStatus = useCurrentSessionUserStatus()
   const [isRankingsModalOpen, setIsRankingsModalOpen] = useState(false)
-  const [isFisk] = useState(
-    tokenId ===
-      "103662588172564032573538786729890701797701353903294947741648606022377129639937" &&
-      address === "0x495f947276749ce646f68ac8c248420045cb7b5e"
-  )
+  const [isSubscribeModalOpen, setSubscribeModalOpen] = useState(false)
+  const [isLostModalOpen, setIsLostModalOpen] = useState(false)
   const [congratsOpen, setCongratsOpen] = useState(false)
 
   useEffect(() => {
@@ -74,6 +78,29 @@ const CurrentSession = ({ location }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [claimData, sessionData, userStatus])
 
+  useEffect(() => {
+    const localString = `${sessionData.address}${sessionData.tokenId}${sessionData.nonce}`
+    const wasShown = localStorage.getItem(localString)
+    if (
+      wasShown === null &&
+      sessionData &&
+      sessionData.finalAppraisalValue &&
+      sessionData.guessedAppraisal &&
+      sessionData.guessedAppraisal !== -1 &&
+      sessionData.winnerAmount &&
+      !isWithinWinRange(
+        sessionData.guessedAppraisal,
+        sessionData.finalAppraisalValue,
+        sessionData.winnerAmount
+      )
+    ) {
+      console.log("guessed", sessionData.guessedAppraisal)
+      setIsLostModalOpen(true)
+
+      localStorage.setItem(localString, "true")
+    }
+  }, [sessionData])
+
   if (!account && !isNetworkSymbolNone) {
     return (
       <SmallUniversalContainer
@@ -93,6 +120,7 @@ const CurrentSession = ({ location }) => {
       </SmallUniversalContainer>
     )
   }
+
   return (
     <SmallUniversalContainer style={{ alignItems: "center" }}>
       <RankingsModal
@@ -131,6 +159,15 @@ const CurrentSession = ({ location }) => {
                 Rankings
               </ButtonsWhite>
             )}
+            {(status === SessionState.Vote ||
+              status === SessionState.Weigh) && (
+              <ButtonsWhite
+                onClick={() => setSubscribeModalOpen(true)}
+                style={{ borderRadius: 8 }}
+              >
+                Subscribe
+              </ButtonsWhite>
+            )}
           </div>
         </VerticalContainer>
         <VerticalContainer>
@@ -143,17 +180,25 @@ const CurrentSession = ({ location }) => {
               Owned by{" "}
               <OutboundLink
                 target="_blank"
-                href={`https://opensea.io/${
-                  isFisk ? "fiskantes" : sessionData.ownerAddress
-                }`}
+                href={`https://opensea.io/${sessionData.ownerAddress}`}
               >
-                {isFisk ? "Fiskantes" : sessionData.owner}
+                {sessionData.owner}
               </OutboundLink>
             </SubText>
           </VerticalSmallGapContainer>
-          <CurrentState
-            congratsOpen={congratsOpen}
-            setCongratsOpen={(input) => setCongratsOpen(input)}
+          <CurrentState setCongratsOpen={(input) => setCongratsOpen(input)} />
+          <CongratsModal
+            open={congratsOpen}
+            toggle={() => setCongratsOpen(!congratsOpen)}
+            openSubscribeModal={() => setSubscribeModalOpen(true)}
+          />
+          <SubscribeModal
+            open={isSubscribeModalOpen}
+            toggle={() => setSubscribeModalOpen(!isSubscribeModalOpen)}
+          />
+          <LostModal
+            open={isLostModalOpen}
+            toggle={() => setIsLostModalOpen(!isLostModalOpen)}
           />
         </VerticalContainer>
       </SplitContainer>

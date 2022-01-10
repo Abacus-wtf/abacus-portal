@@ -76,24 +76,6 @@ const Weigh: FunctionComponent = () => {
     <>
       <HorizontalListGroup>
         <ListGroupItemMinWidth>
-          <Label>Total Staked</Label>
-          <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })}{" "}
-            ETH
-          </ListGroupHeader>
-          <ListGroupSubtext>
-            ($
-            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-            )
-          </ListGroupSubtext>
-        </ListGroupItemMinWidth>
-        <ListGroupItemMinWidth>
           <Label>Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
             {sessionData.bounty.toLocaleString("en-US", {
@@ -105,6 +87,24 @@ const Weigh: FunctionComponent = () => {
           <ListGroupSubtext>
             ($
             {sessionData.bountyInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Total Staked</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}{" "}
+            ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -138,15 +138,17 @@ const Weigh: FunctionComponent = () => {
                 placeholder="0"
                 value={appraisalValue}
                 onChange={(e) => setAppraisalValue(e.target.value)}
+                infoText="Re-input your appraisal value for weighting."
               />
             </ListGroupItem>
             <ListGroupItem>
               <InputWithTitle
-                title="Seed"
+                title="Password (Number)"
                 id="password"
                 placeholder="Input"
                 value={passwordValue}
                 onChange={(e) => setPasswordValue(e.target.value)}
+                infoText="Re-input your password value for weighting."
               />
             </ListGroupItem>
           </HorizontalListGroup>
@@ -171,8 +173,8 @@ const Weigh: FunctionComponent = () => {
               {isPending
                 ? "Pending..."
                 : userStatus === UserState.CompletedWeigh
-                ? "Vote Weighed"
-                : "Weigh"}
+                ? "Vote Revealed"
+                : "Reveal Vote"}
             </Button>
           </div>
           <Tooltip

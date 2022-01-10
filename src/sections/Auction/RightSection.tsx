@@ -66,11 +66,20 @@ const RightSection: FunctionComponent = () => {
         onSubmit={async (e: FormEvent<HTMLDivElement>) => {
           const target = e.target as any
           e.preventDefault()
-
           if (Number(target.bid.value) <= auctionData.highestBid) {
             alert(
               `You tried to bid lower than or the same as the highest bid. Please bid higher than ${auctionData.highestBid} Ether.`
             )
+            return
+          }
+
+          if (
+            target.initAppraisal.value === "" ||
+            target.bid.value === "" ||
+            target.nftAddress.value === "" ||
+            target.tokenId.value === ""
+          ) {
+            alert(`Please fill in every input field.`)
             return
           }
 
@@ -151,11 +160,7 @@ const RightSection: FunctionComponent = () => {
             const target = e.target as any
             e.preventDefault()
 
-            await onAddToBid(
-              target.newBid.value,
-              target.nftAddressAdd.value,
-              target.tokenIdAdd.value
-            )
+            await onAddToBid(target.newBid.value)
           }}
         >
           <VerticalContainer style={{ marginTop: 35, alignItems: "center" }}>

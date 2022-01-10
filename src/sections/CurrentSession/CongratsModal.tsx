@@ -11,17 +11,20 @@ import moment from "moment"
 const ButtonsContainer = styled.div`
   margin-top: 25px;
   display: flex;
+  grid-gap: 15px;
   justify-content: center;
 `
 
 type CongratsModalProps = {
   open: boolean
   toggle: () => void
+  openSubscribeModal: () => void
 }
 
 const CongratsModal: FunctionComponent<CongratsModalProps> = ({
   open,
   toggle,
+  openSubscribeModal,
 }) => {
   const { address, tokenId, nonce, collectionTitle, endTime } =
     useCurrentSessionData()
@@ -67,6 +70,15 @@ const CongratsModal: FunctionComponent<CongratsModalProps> = ({
               as={OutboundLink}
             >
               Share
+            </Button>
+            <Button
+              style={{ borderRadius: 8 }}
+              onClick={() => {
+                toggle()
+                openSubscribeModal()
+              }}
+            >
+              Subscribe For Updates
             </Button>
           </ButtonsContainer>
         </UniversalContainer>

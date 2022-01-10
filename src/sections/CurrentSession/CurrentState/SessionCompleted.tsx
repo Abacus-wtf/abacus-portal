@@ -20,24 +20,6 @@ const SessionCompleted: FunctionComponent = () => {
     <>
       <HorizontalListGroup>
         <ListGroupItemMinWidth>
-          <Label>Total Staked</Label>
-          <ListGroupHeader style={{ color: theme.colors.accent }}>
-            {sessionData.totalStaked.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })}{" "}
-            ETH
-          </ListGroupHeader>
-          <ListGroupSubtext>
-            ($
-            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-            )
-          </ListGroupSubtext>
-        </ListGroupItemMinWidth>
-        <ListGroupItemMinWidth>
           <Label>Bounty</Label>
           <ListGroupHeader style={{ color: theme.colors.accent }}>
             {sessionData.bounty.toLocaleString("en-US", {
@@ -55,6 +37,24 @@ const SessionCompleted: FunctionComponent = () => {
             )
           </ListGroupSubtext>
         </ListGroupItemMinWidth>
+        <ListGroupItemMinWidth>
+          <Label>Total Staked</Label>
+          <ListGroupHeader style={{ color: theme.colors.accent }}>
+            {sessionData.totalStaked.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 4,
+            })}{" "}
+            ETH
+          </ListGroupHeader>
+          <ListGroupSubtext>
+            ($
+            {sessionData.totalStakedInUSD.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            )
+          </ListGroupSubtext>
+        </ListGroupItemMinWidth>
         <SessionCountdown />
       </HorizontalListGroup>
 
@@ -66,6 +66,7 @@ const SessionCompleted: FunctionComponent = () => {
             minimumFractionDigits: 2,
             maximumFractionDigits: 4,
           })} ETH`}
+          infoText="The final appraisal value has been determined for this pricing session."
           disabled
         />
       </ListGroupItem>

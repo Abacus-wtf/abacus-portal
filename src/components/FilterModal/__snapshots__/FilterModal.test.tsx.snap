@@ -1,0 +1,239 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterModal Matches snapshot 1`] = `
+<div>
+  <div
+    class="modal-backdrop fade"
+  />
+  <div
+    aria-hidden="true"
+    class="modal fade top"
+    role="dialog"
+    style="display: block;"
+  >
+    <div
+      class="modal-dialog modal-md modal-dialog-centered"
+      role="document"
+    >
+      <div
+        class="modal-content"
+      >
+        <div
+          class="modal-body sc-kstqJO bPizxN"
+        >
+          <h4>
+            Select Filters
+          </h4>
+          <form
+            class=""
+          >
+            <ul
+              class="list-group"
+            >
+              <li
+                class="list-group-item"
+              >
+                <div
+                  class="sc-dQoVA QhqRQ"
+                  type=""
+                >
+                  <label
+                    class="sc-iqHYmW ibuPqX"
+                    style="margin-bottom: 10px;"
+                  >
+                    NFT Address
+                  </label>
+                  <input
+                    class="sc-crrszt coXBYq form-control form-control-lg"
+                    id="nftAddress"
+                    inputtype=""
+                    placeholder="0x16baf0de678e52367adc69fd067e5edd1d33e3bf"
+                    theme="[object Object]"
+                    value=""
+                  />
+                </div>
+              </li>
+              <li
+                class="list-group-item"
+              >
+                <div
+                  class="sc-dQoVA QhqRQ"
+                  type=""
+                >
+                  <label
+                    class="sc-iqHYmW ibuPqX"
+                    style="margin-bottom: 10px;"
+                  >
+                    Token ID
+                  </label>
+                  <input
+                    class="sc-crrszt coXBYq form-control form-control-lg"
+                    id="tokenId"
+                    inputtype=""
+                    placeholder="6407"
+                    theme="[object Object]"
+                    value=""
+                  />
+                </div>
+              </li>
+            </ul>
+            <label
+              class="sc-iqHYmW ibuPqX"
+              for="session-state"
+              style="margin: 25px 0px 5px 5px;"
+            >
+              Session Status:
+            </label>
+            <div
+              class="sc-hBEYId hUxTgA"
+              id="session-state"
+            >
+              <ul
+                class="list-group"
+              >
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      style="margin-bottom: 0px;"
+                    >
+                      Vote
+                    </label>
+                    <input
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="vote"
+                      inputtype="checkbox"
+                      theme="[object Object]"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      style="margin-bottom: 0px;"
+                    >
+                      Weigh
+                    </label>
+                    <input
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="weigh"
+                      inputtype="checkbox"
+                      theme="[object Object]"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      style="margin-bottom: 0px;"
+                    >
+                      Set Final
+                    </label>
+                    <input
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="setFinalAppraisal"
+                      inputtype="checkbox"
+                      theme="[object Object]"
+                    />
+                  </div>
+                </li>
+              </ul>
+              <ul
+                class="list-group"
+              >
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      style="margin-bottom: 0px;"
+                    >
+                      Harvest
+                    </label>
+                    <input
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="harvest"
+                      inputtype="checkbox"
+                      theme="[object Object]"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      style="margin-bottom: 0px;"
+                    >
+                      Claim
+                    </label>
+                    <input
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="claim"
+                      inputtype="checkbox"
+                      theme="[object Object]"
+                    />
+                  </div>
+                </li>
+                <li
+                  class="list-group-item"
+                >
+                  <div
+                    class="sc-dQoVA jImrOz"
+                    type="checkbox"
+                  >
+                    <label
+                      class="sc-iqHYmW ibuPqX"
+                      style="margin-bottom: 0px;"
+                    >
+                      Complete
+                    </label>
+                    <input
+                      class="sc-crrszt bcUOwn form-control form-control-lg"
+                      id="complete"
+                      inputtype="checkbox"
+                      theme="[object Object]"
+                    />
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <button
+              class="sc-bdfBQB jjXNlU btn btn-primary"
+              style="width: 100%; margin-top: 15px;"
+              type="submit"
+            >
+              Apply Filters
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

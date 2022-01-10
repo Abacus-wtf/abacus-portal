@@ -1,5 +1,5 @@
 import { getAddress } from "@ethersproject/address"
-import { OPENSEA_LINK, web3Eth } from "@config/constants"
+import { OPENSEA_API_KEY, OPENSEA_LINK, web3Eth } from "@config/constants"
 import axios, { AxiosResponse } from "axios"
 import axiosRetry from "axios-retry"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -7,12 +7,53 @@ import { Web3Provider, JsonRpcSigner } from "@ethersproject/providers"
 import { Contract } from "@ethersproject/contracts"
 import { AddressZero } from "@ethersproject/constants"
 import { keccak256 } from "@ethersproject/keccak256"
+import { formatEther } from "ethers/lib/utils"
 
 axiosRetry(axios, { retries: 3 })
 
-export function isWithinFivePercent(appraisal: number, finalAppraisal: number) {
+export const formatPricingSessionCoreMulticall = (pricingSessionCore: any) => ({
+  endTime: parseInt(pricingSessionCore[0].hex, 16),
+  bounty: Number(formatEther(pricingSessionCore[1])),
+  keeperReward: Number(formatEther(pricingSessionCore[2])),
+  lowestStake: Number(formatEther(pricingSessionCore[3])),
+  maxAppraisal: Number(formatEther(pricingSessionCore[4])),
+  totalAppraisalValue: Number(formatEther(pricingSessionCore[5])),
+  totalSessionStake: Number(formatEther(pricingSessionCore[6])),
+  totalProfit: Number(formatEther(pricingSessionCore[7])),
+  totalWinnerPoints: parseInt(pricingSessionCore[8].hex, 16),
+  totalVotes: parseInt(pricingSessionCore[9].hex, 16),
+  uniqueVoters: parseInt(pricingSessionCore[10].hex, 16),
+  votingTime: parseInt(pricingSessionCore[11].hex, 16),
+})
+
+export const formatPricingSessionCheckMulticall = (
+  pricingSessionCheck: any
+) => ({
+  revealedStake: `${parseInt(pricingSessionCheck[0].hex, 16)}`,
+  sessionProgression: `${parseInt(pricingSessionCheck[1].hex, 16)}`,
+  calls: `${parseInt(pricingSessionCheck[2].hex, 16)}`,
+  correct: `${parseInt(pricingSessionCheck[3].hex, 16)}`,
+  incorrect: `${parseInt(pricingSessionCheck[4].hex, 16)}`,
+  defender: `${parseInt(pricingSessionCheck[5].hex, 16)}`,
+  spread: `${parseInt(pricingSessionCheck[6].hex, 16)}`,
+  riskFactor: `${parseInt(pricingSessionCheck[7].hex, 16)}`,
+  finalStdev: `${formatEther(pricingSessionCheck[8].hex)}`,
+  secondaryPoints: `${parseInt(pricingSessionCheck[9].hex, 16)}`,
+})
+
+export function isWithinWinRange(
+  appraisal: number,
+  finalAppraisal: number,
+  winnerAmount: number
+) {
+  if (winnerAmount === 0.05) {
+    return (
+      appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
+    )
+  }
   return (
-    appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
+    appraisal >= finalAppraisal - Number(winnerAmount) &&
+    appraisal <= finalAppraisal + Number(winnerAmount)
   )
 }
 
@@ -78,6 +119,11 @@ export async function openseaGet<T = OpenSeaAsset>(input: string) {
   try {
     result = await axios.get<T>(OPENSEA_LINK + input, {
       decompress: false,
+      headers: OPENSEA_API_KEY
+        ? {
+            "X-API-KEY": OPENSEA_API_KEY,
+          }
+        : {},
     })
     return result.data
   } catch (e) {

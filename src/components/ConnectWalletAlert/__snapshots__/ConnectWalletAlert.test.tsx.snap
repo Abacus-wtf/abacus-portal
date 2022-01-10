@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectWalletAlert Matches snapshot 1`] = `
+<div>
+  <div
+    class="alert alert-light fade"
+    role="alert"
+    style="background-color: white;"
+  >
+    <div
+      class="sc-hKgJUU looSwH"
+      style="align-items: center;"
+    >
+      <div
+        class="sc-eCstlR dnXMhV"
+      >
+        You cannot participate until you connect your wallet
+      </div>
+      <button
+        class="sc-bdfBQB jjXNlU btn btn-primary"
+        data-testid="CONNECT_WALLET_BUTTON_ID"
+        type="button"
+      >
+        Connect Wallet
+      </button>
+    </div>
+  </div>
+</div>
+`;

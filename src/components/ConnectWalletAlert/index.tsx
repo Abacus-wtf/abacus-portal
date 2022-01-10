@@ -14,6 +14,8 @@ const AlertCopy = styled.div`
   padding-bottom: 10px;
 `
 
+export const CONNECT_WALLET_BUTTON_ID = "CONNECT_WALLET_BUTTON_ID"
+
 const ConnectWalletAlert: FunctionComponent = () => {
   const toggleWalletModal = useToggleWalletModal()
   return (
@@ -22,7 +24,12 @@ const ConnectWalletAlert: FunctionComponent = () => {
         <AlertCopy>
           You cannot participate until you connect your wallet
         </AlertCopy>
-        <Button onClick={() => toggleWalletModal()}>Connect Wallet</Button>
+        <Button
+          data-testid={CONNECT_WALLET_BUTTON_ID}
+          onClick={() => toggleWalletModal()}
+        >
+          Connect Wallet
+        </Button>
       </FlexContainer>
     </Alert>
   )

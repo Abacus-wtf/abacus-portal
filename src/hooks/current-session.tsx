@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { BigNumber } from "ethers"
 import { TransactionResponse } from "@ethersproject/providers"
 import { parseEther } from "ethers/lib/utils"
-import { getContract } from "@config/utils"
+import { encodeSessionData, getContract } from "@config/utils"
 import { ABC_PRICING_SESSION_ADDRESS } from "@config/constants"
 import ABC_PRICING_SESSION_ABI from "@config/contracts/ABC_PRICING_SESSION_ABI.json"
 import {
@@ -130,7 +130,28 @@ export const useOnSubmitVote = () => {
   const networkSymbol = useGetCurrentNetwork()
 
   const onSubmitVote = useCallback(
-    async (hash: string, stake: string, callback: () => void) => {
+    async (
+      passwordValue: string,
+      appraisalValue: string,
+      stakeValue: string,
+      hash: string,
+      callback: () => void
+    ) => {
+      const encodedVals = encodeSessionData({
+        account,
+        nftAddress: sessionData.address,
+        tokenId: sessionData.tokenId,
+        nonce: sessionData.nonce,
+      })
+
+      localStorage.setItem(
+        encodedVals,
+        JSON.stringify({
+          password: Number(passwordValue),
+          appraisal: Number(appraisalValue),
+        })
+      )
+
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
@@ -142,9 +163,15 @@ export const useOnSubmitVote = () => {
         library,
         account
       )
+
       method = pricingSessionContract.setVote
       estimate = pricingSessionContract.estimateGas.setVote
-      args = [sessionData.address, sessionData.tokenId, parseEther(stake), hash]
+      args = [
+        sessionData.address,
+        sessionData.tokenId,
+        parseEther(stakeValue),
+        hash,
+      ]
       value = null
       const txnCb = async (response: any) => {
         addTransaction(response, {
@@ -184,7 +211,22 @@ export const useOnUpdateVote = () => {
   const networkSymbol = useGetCurrentNetwork()
 
   const onUpdateVote = useCallback(
-    async (hash: string) => {
+    async (passwordValue: string, appraisalValue: string, hash: string) => {
+      const encodedVals = encodeSessionData({
+        account,
+        nftAddress: sessionData.address,
+        tokenId: sessionData.tokenId,
+        nonce: sessionData.nonce,
+      })
+
+      localStorage.setItem(
+        encodedVals,
+        JSON.stringify({
+          password: Number(passwordValue),
+          appraisal: Number(appraisalValue),
+        })
+      )
+
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,

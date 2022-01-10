@@ -10,6 +10,11 @@
         "internalType": "address",
         "name": "_auction",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_creditStore",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -56,87 +61,6 @@
       }
     ],
     "name": "PricingSessionCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "sender_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "nonce",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "nftAddress_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenid_",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount_",
-        "type": "uint256"
-      }
-    ],
-    "name": "bountyIncreased",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "ethClaimed",
-        "type": "uint256"
-      }
-    ],
-    "name": "ethClaimedByUser",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "ethExchanged",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "ppSent",
-        "type": "uint256"
-      }
-    ],
-    "name": "ethToABCExchange",
     "type": "event"
   },
   {
@@ -256,80 +180,6 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "nonce",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "nftAddress_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenid_",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount_",
-        "type": "uint256"
-      }
-    ],
-    "name": "stakeIncreased",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "nonce",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "nftAddress_",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenid_",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "harvested",
-        "type": "uint256"
-      }
-    ],
-    "name": "userHarvested",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
         "name": "user_",
         "type": "address"
       },
@@ -366,19 +216,6 @@
     "type": "fallback"
   },
   {
-    "inputs": [],
-    "name": "ABCToken",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -398,6 +235,11 @@
     ],
     "name": "NftSessionCheck",
     "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "revealedStake",
+        "type": "uint256"
+      },
       {
         "internalType": "uint256",
         "name": "sessionProgression",
@@ -420,7 +262,27 @@
       },
       {
         "internalType": "uint256",
-        "name": "timeFinalAppraisalSet",
+        "name": "defender",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "spread",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "riskFactor",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "finalStdev",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondaryPoints",
         "type": "uint256"
       }
     ],
@@ -514,107 +376,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "NftSessionVoters",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "Treasury",
-    "outputs": [
-      {
-        "internalType": "contract ABCTreasury",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "nftAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenid",
-        "type": "uint256"
-      }
-    ],
-    "name": "addToBounty",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "nftAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenid",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "addToStake",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "admin",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "nftAddress",
         "type": "address"
@@ -633,37 +394,6 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "claimPrincipalUsed",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "trigger",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "claimProfitsEarned",
-    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -693,26 +423,6 @@
     "name": "createNewSession",
     "outputs": [],
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "depositPrincipal",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ethToAbc",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -849,44 +559,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "principalStored",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "profitStored",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "_token",
         "type": "address"
       }
@@ -912,19 +584,6 @@
   {
     "inputs": [
       {
-        "internalType": "bool",
-        "name": "status",
-        "type": "bool"
-      }
-    ],
-    "name": "setAuctionStatus",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "nftAddress",
         "type": "address"
@@ -936,6 +595,19 @@
       }
     ],
     "name": "setFinalAppraisal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "treasury",
+        "type": "address"
+      }
+    ],
+    "name": "setTreasury",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
