@@ -55,7 +55,11 @@ const GlobalLayout: React.FC = (props: any) => {
       }
 
       // Check if User is already connected by retrieving the accounts
-      web3?.eth.getAccounts()
+      try {
+        await web3?.eth.getAccounts()
+      } catch (e) {
+        console.log(e)
+      }
     }
     checkConnection()
   }, [])
