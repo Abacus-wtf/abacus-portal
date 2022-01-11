@@ -3,20 +3,20 @@
 exports[`Card Matches snapshot 1`] = `
 <div>
   <div
-    class="sc-jrAFXE gKtaCv"
+    class="sc-jrQzAO jybMrK"
   >
     <div
-      class="sc-fubCzh FBFtj"
+      class="sc-furwcr sDSeG"
       src="http://example.com"
     >
       <div
-        class="sc-kEjbQP dfbwfv"
+        class="sc-kDTinF gSlXrc"
       />
       <div
-        class="sc-kEjbQP dfbwfv"
+        class="sc-kDTinF gSlXrc"
       >
         <svg
-          class="sc-iqHYmW iRfQUM"
+          class="sc-iqseJM cQyogo"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -41,41 +41,36 @@ exports[`Card Matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="sc-crrszt iNxCEk"
+      class="sc-crHmcD dHyDfz"
     >
       <div
-        class="sc-dQoVA gdUAbl"
+        class="sc-egiyK dlAXrL"
       >
         <span
-          class="sc-bdfBQB sc-bqyKOL jExror hwLekN"
+          class="sc-bdvvtL sc-bqiRlB vGFJi jqzReP"
         >
           Deez Nuts
            #
           5007
         </span>
         <span
-          class="sc-bdfBQB sc-bqyKOL sc-hBEYId jExror hwLekN fybUBL"
+          class="sc-bdvvtL sc-bqiRlB sc-hBUSln vGFJi jqzReP eZsBPs"
         >
-          <img
-            alt=""
-            src=""
-            style="height: 15px;"
-          />
            
           22.00
         </span>
       </div>
       <div
-        class="sc-dQoVA gdUAbl"
+        class="sc-egiyK dlAXrL"
       >
         <span
-          class="sc-bdfBQB sc-kstqJO jExror ifOUGr"
+          class="sc-bdvvtL sc-ksdxgE vGFJi eKSwan"
           style="max-width: min-content; overflow: hidden;"
         >
           Lazy Bird
         </span>
         <span
-          class="sc-bdfBQB sc-kstqJO jExror ifOUGr"
+          class="sc-bdvvtL sc-ksdxgE vGFJi eKSwan"
           data-testid="subtext"
         >
           Final Appraisal

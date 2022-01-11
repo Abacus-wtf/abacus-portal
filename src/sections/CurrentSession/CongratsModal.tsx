@@ -5,7 +5,7 @@ import { useCurrentSessionData } from "@state/sessionData/hooks"
 import { OutboundLink } from "gatsby-plugin-google-gtag"
 import React, { FunctionComponent } from "react"
 import { Modal, ModalBody } from "shards-react"
-import DancingPepe from "@images/dancing_pepe.gif"
+import { StaticImage } from "gatsby-plugin-image"
 import moment from "moment"
 
 const ButtonsContainer = styled.div`
@@ -43,8 +43,9 @@ const CongratsModal: FunctionComponent<CongratsModalProps> = ({
             Congratulations for appraising! Share it on Twitter 🎉🎉🎉
           </Label>
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <img
-            src={DancingPepe}
+          <StaticImage
+            src="../../images/dancing_pepe.gif"
+            alt="Pepe made of unicode characters dancing"
             style={{ maxHeight: 400, maxWidth: 200, margin: 25 }}
           />
           <Label

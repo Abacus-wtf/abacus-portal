@@ -15,6 +15,7 @@ import PaginationButton from "@components/PaginationButton"
 import { useActiveWeb3React } from "@hooks/index"
 import FilterModal from "@components/FilterModal"
 import { useGetCurrentNetwork } from "@state/application/hooks"
+import { Link } from "gatsby"
 import { HeaderBar, CardContainer } from "../Home/Home.styles"
 
 const HeaderBarStyled = styled(HeaderBar)`
@@ -106,12 +107,12 @@ const MySessions: React.FC = () => {
             )}
             <CardContainer>
               {_.map(data, (i) => (
-                <a
-                  href={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
+                <Link
+                  to={`/current-session?address=${i.address}&tokenId=${i.tokenId}&nonce=${i.nonce}`}
                   key={`${i.address}-${i.tokenId}-${i.nonce}`}
                 >
                   <Card {...i} />
-                </a>
+                </Link>
               ))}
             </CardContainer>
           </>
@@ -146,7 +147,6 @@ const MySessions: React.FC = () => {
             toggle={() => setFilterOpen(false)}
             applyFilters={getNextPage}
             setFilters={setFilters}
-            prefix={isMySessions ? "" : "pricingSession"}
           />
         </TabContainer>
       </HeaderBarStyled>

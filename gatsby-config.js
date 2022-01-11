@@ -57,17 +57,11 @@ module.exports = {
         },
       },
     },
+    `gatsby-plugin-image`,
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-typescript`,
     `gatsby-plugin-styled-components`,
-    {
-      resolve: `gatsby-plugin-swarm`,
-      options: {
-        prefix: `__PATH_PREFIX__`,
-        pattern: /^(\/bzz:\/[^/]+)/, // use /^(\/(?:ipfs|ipns)\/[^/]+)/ for IPFS
-      },
-    },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
