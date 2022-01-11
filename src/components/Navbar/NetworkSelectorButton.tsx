@@ -13,8 +13,6 @@ import { useActiveWeb3React } from "@hooks/index"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { Activity } from "react-feather"
 import { theme } from "@config/theme"
-import { useStaticImage } from "@hooks/useStaticImage"
-import { net } from "electron"
 import Button from "../Button"
 
 const StyledMenuButton = styled.button`

@@ -117,6 +117,7 @@
   "license": "MIT",
   "scripts": {
     "build": "gatsby build",
+    "prepare": "husky install",
     "dev": "gatsby develop",
     "start": "yarn run dev",
     "serve": "gatsby serve",
