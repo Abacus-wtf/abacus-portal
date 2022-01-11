@@ -218,7 +218,7 @@ const NetworkSelectorButton = () => {
           )}
           {networkSymbol && networkSymbol !== NetworkSymbolEnum.NONE
             ? networkSymbol
-            : "Chane Network"}
+            : "Change Network"}
         </Aligner>
       </StyledMenuButton>
       <NetworkSelectorModal
