@@ -7,11 +7,14 @@ import {
   NetworkSymbolAndId,
   ETH_RPC,
   NetworkSymbolEnum,
+  NetworkSymbolIcons,
 } from "@config/constants"
 import { useActiveWeb3React } from "@hooks/index"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { Activity } from "react-feather"
 import { theme } from "@config/theme"
+import { useStaticImage } from "@hooks/useStaticImage"
+import { net } from "electron"
 import Button from "../Button"
 
 const StyledMenuButton = styled.button`
@@ -159,6 +162,7 @@ export const NetworkSelectorModal = ({
         .then(() => setShowModal(false))
     }
   }
+
   return (
     <Modal
       size="md"
@@ -179,7 +183,7 @@ export const NetworkSelectorModal = ({
                 <Aligner>
                   <img
                     alt=""
-                    src={require(`../../images/${network.logo}`)}
+                    src={NetworkSymbolIcons[network.symbol]}
                     style={{ paddingRight: "10px", height: "18px" }}
                   />
                   {NetworkSymbolAndId[network.chainId]}
@@ -204,7 +208,7 @@ const NetworkSelectorButton = () => {
           {networkSymbol && networkSymbol !== NetworkSymbolEnum.NONE ? (
             <img
               alt=""
-              src={require(`../../images/${networkSymbol}.svg`)}
+              src={NetworkSymbolIcons[networkSymbol]}
               style={{ marginRight: "10px", height: "18px", width: "auto" }}
             />
           ) : (
@@ -212,8 +216,9 @@ const NetworkSelectorButton = () => {
               style={{ marginRight: "10px", height: "18px", width: "auto" }}
             />
           )}
-          {(networkSymbol && networkSymbol !== NetworkSymbolEnum.NONE) ||
-            "Change Network"}
+          {networkSymbol && networkSymbol !== NetworkSymbolEnum.NONE
+            ? networkSymbol
+            : "Chane Network"}
         </Aligner>
       </StyledMenuButton>
       <NetworkSelectorModal

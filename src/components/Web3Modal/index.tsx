@@ -9,6 +9,7 @@ import { Modal, ModalBody } from "shards-react"
 import { SUPPORTED_WALLETS } from "@config/constants"
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core"
 import _ from "lodash"
+import { graphql, useStaticQuery } from "gatsby"
 import Option from "./Option"
 
 export default () => {
@@ -39,7 +40,25 @@ export default () => {
           }
         })
   }
-
+  const {
+    allFile: { edges },
+  } = useStaticQuery<{
+    allFile: {
+      edges: { node: { publicURL: string; name: string; extension: string } }[]
+    }
+  }>(graphql`
+    {
+      allFile {
+        edges {
+          node {
+            publicURL
+            name
+            extension
+          }
+        }
+      }
+    }
+  `)
   return (
     <Modal
       size="md"
@@ -52,6 +71,10 @@ export default () => {
       >
         {_.map(_.keys(SUPPORTED_WALLETS), (key) => {
           const option = SUPPORTED_WALLETS[key]
+          const iconUrl = edges.find(
+            (edge) =>
+              `${edge.node.name}.${edge.node.extension}` === option.iconName
+          )
           return (
             <Option
               onClick={() => {
@@ -67,7 +90,7 @@ export default () => {
               link={option.href}
               header={option.name}
               subheader={null}
-              icon={require(`../../images/${option.iconName}`)}
+              icon={iconUrl?.node.publicURL}
             />
           )
         })}

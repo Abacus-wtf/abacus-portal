@@ -3,7 +3,7 @@ import styled from "styled-components"
 import Countdown from "react-countdown"
 import { theme } from "@config/theme"
 import { User } from "react-feather"
-import EthSymbol from "@images/ETH.svg"
+import { StaticImage } from "gatsby-plugin-image"
 import { Text, ImageContainer } from "@components/global.styles"
 import { SessionData } from "@state/sessionData/reducer"
 
@@ -87,7 +87,7 @@ type CardProps = {
   endTime: SessionData["endTime"]
   numPpl: SessionData["numPpl"]
   nftName: SessionData["nftName"]
-  finalAppraisalValue: SessionData["finalAppraisalValue"]
+  finalAppraisalValue?: SessionData["finalAppraisalValue"]
   totalStaked: SessionData["totalStaked"]
   collectionTitle: SessionData["collectionTitle"]
 }
@@ -130,7 +130,11 @@ export default ({
           {tokenId.length >= 8 ? `${tokenId.slice(0, 8)}...` : tokenId}
         </BoldText>
         <EthText>
-          <img alt="" style={{ height: 15 }} src={EthSymbol} />{" "}
+          <StaticImage
+            alt=""
+            style={{ height: 15 }}
+            src="../../images/ETH.svg"
+          />{" "}
           {finalAppraisalValue !== undefined
             ? finalAppraisalValue.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
