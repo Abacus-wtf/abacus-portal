@@ -1,4 +1,5 @@
 import * as React from "react"
+import { StaticImage } from "gatsby-plugin-image"
 
 type PageProps = {
   serverData: {
@@ -12,7 +13,7 @@ const Page = ({ serverData }: PageProps) => {
   return (
     <div>
       <p>Hello</p>
-      <img src={dogImage.message} alt="Happy Dog" />
+      <StaticImage src={dogImage.message} alt="Happy Dog" />
     </div>
   )
 }

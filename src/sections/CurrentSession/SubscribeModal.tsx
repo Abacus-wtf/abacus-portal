@@ -3,7 +3,6 @@ import { Label, UniversalContainer } from "@components/global.styles"
 import styled from "styled-components"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Modal, ModalBody, ListGroupItem, Alert } from "shards-react"
-import HappyDoge from "@images/happy_doge.gif"
 import { InputWithTitle } from "@components/Input"
 import axios from "axios"
 import { BACKEND_LINK } from "@config/constants"
@@ -13,6 +12,7 @@ import {
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { SessionState } from "@state/sessionData/reducer"
+import { StaticImage } from "gatsby-plugin-image"
 
 const ButtonsContainer = styled.div`
   margin-top: 25px;
@@ -83,8 +83,9 @@ const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
           {hasSubscribed ? (
             <>
               {/* eslint-disable-next-line jsx-a11y/alt-text */}
-              <img
-                src={HappyDoge}
+              <StaticImage
+                src="../../images/happy_doge.gif"
+                alt="Happy doge being scratched"
                 style={{ maxHeight: 400, maxWidth: 200, margin: 25 }}
               />
               <Label

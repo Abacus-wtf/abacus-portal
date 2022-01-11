@@ -10,6 +10,8 @@ import {
   walletlink,
   InjectedConnectorProps,
 } from "./connectors"
+import EthIcon from "../../images/ETH.svg"
+import AethIcon from "../../images/AETH.svg"
 
 export declare enum ChainId {
   MAINNET = 1,
@@ -27,6 +29,12 @@ export enum NetworkSymbolEnum {
   NONE = "SOLID_NUTHIN",
   ETH = "ETH",
   ARBITRUM = "AETH",
+}
+
+export const NetworkSymbolIcons = {
+  [NetworkSymbolEnum.NONE]: AethIcon,
+  [NetworkSymbolEnum.ETH]: EthIcon,
+  [NetworkSymbolEnum.ARBITRUM]: AethIcon,
 }
 
 export const OPENSEA_API_KEY = process.env.GATSBY_OPENSEA_API_KEY || undefined
