@@ -151,7 +151,6 @@ export const useOnSubmitVote = () => {
           appraisal: appraisalValue,
         })
       )
-
       let estimate,
         method: (...args: any) => Promise<TransactionResponse>,
         args: Array<BigNumber | number | string>,
