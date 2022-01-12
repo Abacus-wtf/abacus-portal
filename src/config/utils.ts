@@ -172,7 +172,7 @@ export function hashValues({
 }: {
   appraisalValue: BigNumber
   account: string
-  password: number
+  password: any
 }) {
   let encodedParams = web3Eth.eth.abi.encodeParameters(
     ["uint", "address", "uint"],
