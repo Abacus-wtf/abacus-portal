@@ -52,7 +52,6 @@ export function isWithinWinRange(
       appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
     )
   }
-  console.log(winnerAmount)
   return (
     appraisal >= finalAppraisal - Number(winnerAmount) &&
     appraisal <= finalAppraisal + Number(winnerAmount)
