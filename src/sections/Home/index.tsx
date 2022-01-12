@@ -29,6 +29,29 @@ import {
 } from "./Home.styles"
 
 const Home: React.FC = () => {
+  console.log("GATSBY_NETWORK_URL", process.env.GATSBY_NETWORK_URL)
+  console.log("GATSBY_CHAIN_ID", process.env.GATSBY_CHAIN_ID)
+  console.log("GATSBY_IS_PRODUCTION", process.env.GATSBY_IS_PRODUCTION)
+  console.log("GATSBY_OPENSEA_API", process.env.GATSBY_OPENSEA_API)
+  console.log("GATSBY_APP_FORTMATIC_KEY", process.env.GATSBY_APP_FORTMATIC_KEY)
+  console.log("GATSBY_APP_PORTIS_ID", process.env.GATSBY_APP_PORTIS_ID)
+  console.log(
+    "GATSBY_APP_SUBGRAPH_ENDPOINT_ETH",
+    process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ETH
+  )
+  console.log(
+    "GATSBY_APP_SUBGRAPH_ENDPOINT_ARBITRUM",
+    process.env.GATSBY_APP_SUBGRAPH_ENDPOINT_ARBITRUM
+  )
+  console.log(
+    "GATSBY_APP_ARBITRUM_NETWORK_URL",
+    process.env.GATSBY_APP_ARBITRUM_NETWORK_URL
+  )
+  console.log(
+    "GATSBY_APP_ARBITRUM_CHAIN_ID",
+    process.env.GATSBY_APP_ARBITRUM_CHAIN_ID
+  )
+  console.log("GATSBY_APP_SERVER", process.env.GATSBY_APP_SERVER)
   const isInitializedRef = useRef(false)
   const getMultiSessionData = useGetMultiSessionData()
   const { multiSessionData, fetchStatus, isLastPage } = useMultiSessionState()
