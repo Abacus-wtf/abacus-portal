@@ -52,7 +52,7 @@ const Vote = ({
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
 
   const [stakeVal, setStakeVal] = useState("")
-  const [passwordVal, setPasswordVal] = useState(`0x${genRanHex(40)}`)
+  const [passwordVal, setPasswordVal] = useState(`0x${genRanHex(20)}`)
   const [appraisalVal, setAppraisalVal] = useState("")
 
   const isPending = submitVotePending || updateVotePending
@@ -143,7 +143,6 @@ const Vote = ({
               return
             }
           }
-
           const hash = hashValues({
             appraisalValue: parseEther(`${appraisalVal}`),
             account: account || "",
