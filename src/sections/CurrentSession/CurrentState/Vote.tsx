@@ -18,7 +18,7 @@ import {
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
-import { hashValues } from "@config/utils"
+import { hashValues, genRanHex } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
@@ -51,9 +51,7 @@ const Vote = ({
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
 
   const [stakeVal, setStakeVal] = useState("")
-  const [passwordVal, setPasswordVal] = useState(
-    `${Math.round(Math.random() * 1000000)}`
-  )
+  const [passwordVal, setPasswordVal] = useState(`${genRanHex(40)}`)
   const [appraisalVal, setAppraisalVal] = useState("")
 
   const isPending = submitVotePending || updateVotePending
