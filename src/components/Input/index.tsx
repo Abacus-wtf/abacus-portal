@@ -17,6 +17,7 @@ export const MainInput = styled(FormInput).attrs((props) => ({
     `
     width: 20px;
   `}
+  width: 100%;
 
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {

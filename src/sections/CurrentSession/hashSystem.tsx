@@ -96,7 +96,6 @@ export default ({
         }}
       >
         <InputWithTitle
-          style={{ width: "100%" }}
           title="Password (Number)"
           id="password"
           placeholder="5"
