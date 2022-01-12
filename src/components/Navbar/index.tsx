@@ -129,28 +129,28 @@ const Navbar = ({ location }) => {
             <HeaderLink
               as="a"
               href="/legacyv1"
-              active={(location.pathname === "/legacyv1").toString()}
+              active={(location.pathname.indexOf("legacyv1") !== -1).toString()}
             >
               Legacy v1
             </HeaderLink>
             <HeaderLink
               as="a"
               href="/legacyv2"
-              active={(location.pathname === "/legacyv2").toString()}
+              active={(location.pathname.indexOf("legacyv2") !== -1).toString()}
             >
               Legacy v2
             </HeaderLink>
             <HeaderLink
               as="a"
               href="/legacyv3"
-              active={(location.pathname === "/legacyv3").toString()}
+              active={(location.pathname.indexOf("legacyv3") !== -1).toString()}
             >
               Legacy v3
             </HeaderLink>
             <HeaderLink
               as="a"
               href="/legacyv4"
-              active={(location.pathname === "/legacyv4").toString()}
+              active={(location.pathname.indexOf("legacyv4") !== -1).toString()}
             >
               Legacy v4
             </HeaderLink>
