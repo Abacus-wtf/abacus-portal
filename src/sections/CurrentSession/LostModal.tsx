@@ -1,7 +1,7 @@
 import { Label, UniversalContainer } from "@components/global.styles"
 import React, { FunctionComponent } from "react"
 import { Modal, ModalBody } from "shards-react"
-import { StaticImage } from "gatsby-plugin-image"
+import lostGIF from "../../images/lost.gif"
 
 type LostModalProps = {
   open: boolean
@@ -23,8 +23,8 @@ const LostModal: FunctionComponent<LostModalProps> = ({ open, toggle }) => (
           You unfortunately lost the pricing session! Better luck next time 😞
         </Label>
         {/* eslint-disable-next-line jsx-a11y/alt-text */}
-        <StaticImage
-          src="../../images/lost.gif"
+        <img
+          src={lostGIF}
           alt="Pepe stabbing an electrical outlet"
           style={{ maxHeight: 400, maxWidth: 200, margin: 25 }}
         />
