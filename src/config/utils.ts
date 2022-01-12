@@ -8,6 +8,7 @@ import { Contract } from "@ethersproject/contracts"
 import { AddressZero } from "@ethersproject/constants"
 import { keccak256 } from "@ethersproject/keccak256"
 import { formatEther } from "ethers/lib/utils"
+import _ from "lodash"
 
 axiosRetry(axios, { retries: 3 })
 
@@ -51,6 +52,7 @@ export function isWithinWinRange(
       appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
     )
   }
+  console.log(winnerAmount)
   return (
     appraisal >= finalAppraisal - Number(winnerAmount) &&
     appraisal <= finalAppraisal + Number(winnerAmount)
@@ -73,10 +75,13 @@ export function shortenAddress(address: string, chars = 4): string {
   return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`
 }
 
-export const genRanHex = (size) =>
-  [...Array(size)]
-    .map(() => Math.floor(Math.random() * 16).toString(16))
-    .join("")
+export const genRanHex = (size: number) => {
+  const randomArray = crypto.getRandomValues(new Uint8Array(size))
+  const hexVals = _.map(randomArray, (buffer) =>
+    buffer.toString(16).padStart(2, "0")
+  ).join("")
+  return hexVals
+}
 
 export type OpenSeaAsset = {
   image_preview_url?: string
