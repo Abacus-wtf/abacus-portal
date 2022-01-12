@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { Alert } from "shards-react"
 import styled from "styled-components"
 import Button from "@components/Button"
@@ -18,6 +18,10 @@ export const CONNECT_WALLET_BUTTON_ID = "CONNECT_WALLET_BUTTON_ID"
 
 const ConnectWalletAlert: FunctionComponent = () => {
   const toggleWalletModal = useToggleWalletModal()
+  const newTestVar = "Hello World"
+  useEffect(() => {
+    console.log(newTestVar)
+  }, [])
   return (
     <Alert theme="light" style={{ backgroundColor: "white" }}>
       <FlexContainer style={{ alignItems: "center" }}>
