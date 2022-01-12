@@ -17,7 +17,6 @@ export const MainInput = styled(FormInput).attrs((props) => ({
     `
     width: 20px;
   `}
-  width: 100%;
 
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
@@ -54,6 +53,7 @@ const Container = styled.div<ContainerProps>`
   align-items: ${({ type }) => (type === "checkbox" ? "center" : "flex-start")};
   justify-content: ${({ type }) =>
     type === "checkbox" ? "space-between" : "center"};
+  width: 100%;
 `
 
 interface InputWithTitle extends React.ComponentProps<FormInput> {
