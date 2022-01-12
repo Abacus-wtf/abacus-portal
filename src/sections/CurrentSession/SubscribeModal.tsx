@@ -12,7 +12,7 @@ import {
 } from "@state/sessionData/hooks"
 import { PromiseStatus } from "@models/PromiseStatus"
 import { SessionState } from "@state/sessionData/reducer"
-import { StaticImage } from "gatsby-plugin-image"
+import dogeGIF from "../../images/happy_doge.gif"
 
 const ButtonsContainer = styled.div`
   margin-top: 25px;
@@ -83,8 +83,8 @@ const SubscribeModal: FunctionComponent<SubscribeModalProps> = ({
           {hasSubscribed ? (
             <>
               {/* eslint-disable-next-line jsx-a11y/alt-text */}
-              <StaticImage
-                src="../../images/happy_doge.gif"
+              <img
+                src={dogeGIF}
                 alt="Happy doge being scratched"
                 style={{ maxHeight: 400, maxWidth: 200, margin: 25 }}
               />

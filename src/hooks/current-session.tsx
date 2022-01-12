@@ -147,8 +147,8 @@ export const useOnSubmitVote = () => {
       localStorage.setItem(
         encodedVals,
         JSON.stringify({
-          password: Number(passwordValue),
-          appraisal: Number(appraisalValue),
+          password: passwordValue,
+          appraisal: appraisalValue,
         })
       )
 
@@ -222,8 +222,8 @@ export const useOnUpdateVote = () => {
       localStorage.setItem(
         encodedVals,
         JSON.stringify({
-          password: Number(passwordValue),
-          appraisal: Number(appraisalValue),
+          password: passwordValue,
+          appraisal: appraisalValue,
         })
       )
 

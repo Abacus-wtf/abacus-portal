@@ -8,6 +8,7 @@ import { Contract } from "@ethersproject/contracts"
 import { AddressZero } from "@ethersproject/constants"
 import { keccak256 } from "@ethersproject/keccak256"
 import { formatEther } from "ethers/lib/utils"
+import _ from "lodash"
 
 axiosRetry(axios, { retries: 3 })
 
@@ -71,6 +72,14 @@ export function shortenAddress(address: string, chars = 4): string {
     return ""
   }
   return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`
+}
+
+export const genRanHex = (size: number) => {
+  const randomArray = crypto.getRandomValues(new Uint8Array(size))
+  const hexVals = _.map(randomArray, (buffer) =>
+    buffer.toString(16).padStart(2, "0")
+  ).join("")
+  return hexVals
 }
 
 export type OpenSeaAsset = {
@@ -167,7 +176,7 @@ export function hashValues({
 }: {
   appraisalValue: BigNumber
   account: string
-  password: number
+  password: any
 }) {
   let encodedParams = web3Eth.eth.abi.encodeParameters(
     ["uint", "address", "uint"],

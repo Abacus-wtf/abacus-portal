@@ -18,11 +18,12 @@ import {
 import { User } from "react-feather"
 import { useActiveWeb3React } from "@hooks/index"
 import { useOnSubmitVote, useOnUpdateVote } from "@hooks/current-session"
-import { hashValues } from "@config/utils"
+import { hashValues, genRanHex } from "@config/utils"
 import { parseEther } from "ethers/lib/utils"
 import { useClaimPayoutData } from "@state/miscData/hooks"
 import { useGetCurrentNetwork } from "@state/application/hooks"
 import { NetworkSymbolEnum } from "@config/constants"
+import { BigNumber } from "ethers"
 import HashSystem from "../hashSystem"
 import SessionCountdown from "./SessionCountdown"
 import {
@@ -51,7 +52,7 @@ const Vote = ({
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
 
   const [stakeVal, setStakeVal] = useState("")
-  const [passwordVal, setPasswordVal] = useState("")
+  const [passwordVal, setPasswordVal] = useState(`0x${genRanHex(40)}`)
   const [appraisalVal, setAppraisalVal] = useState("")
 
   const isPending = submitVotePending || updateVotePending
@@ -146,7 +147,9 @@ const Vote = ({
           const hash = hashValues({
             appraisalValue: parseEther(`${appraisalVal}`),
             account: account || "",
-            password: Number(passwordVal),
+            password: !passwordVal.startsWith("0x")
+              ? Number(passwordVal)
+              : BigNumber.from(passwordVal),
           })
           switch (userStatus) {
             case UserState.NotVoted:
