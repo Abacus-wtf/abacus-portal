@@ -51,7 +51,9 @@ const Vote = ({
   const { onUpdateVote, isPending: updateVotePending } = useOnUpdateVote()
 
   const [stakeVal, setStakeVal] = useState("")
-  const [passwordVal, setPasswordVal] = useState(`${Math.random() * 1000000}`)
+  const [passwordVal, setPasswordVal] = useState(
+    `${Math.round(Math.random() * 1000000)}`
+  )
   const [appraisalVal, setAppraisalVal] = useState("")
 
   const isPending = submitVotePending || updateVotePending
