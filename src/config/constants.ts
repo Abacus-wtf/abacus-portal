@@ -105,43 +105,31 @@ const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V4 = IS_PRODUCTION
   ? "0x4Bbd138e2Ba312754B1d075DEdf2F337521Dd638"
   : "0xdA1A7C756C63744e6Fc04b389901bfb5824C2Fa0"
 
+const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V5 = IS_PRODUCTION
+  ? "0xaEad2547e478A9483EE8dc6C876aE6b2caeB6DC9"
+  : "0x68BC528A0fE774927523e9387FA1CBa79591dEAC"
+
 const ARB_ABC_VAULT_ADDRESS_LEGACY_V4 = IS_PRODUCTION
   ? "0xB3f1069B04726C145197853Db772483Bd6B9650D"
   : "0x919FD1373e7A2cdf5573aAf0D9AEB5D47B4BEa18"
+
+const ARB_ABC_VAULT_ADDRESS_LEGACY_V5 = IS_PRODUCTION
+  ? "0xB3f1069B04726C145197853Db772483Bd6B9650D"
+  : "0x828912757A7e94E9f43dcb2c8B196050e1A0A13c"
 
 const ARB_LEGACY_GRAPHS_V1 = IS_PRODUCTION
   ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrum"
   : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkeby"
 
-const ARB_LEGACY_GRAPHS_V2 = IS_PRODUCTION
-  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv2"
-  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv2"
-
-const ARB_LEGACY_GRAPHS_V3 = IS_PRODUCTION
-  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv3"
-  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv3"
-
-const ARB_LEGACY_GRAPHS_V4 = IS_PRODUCTION
-  ? "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumv4"
-  : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkebyv4"
-
-export const ARB_LEGACY_GRAPHS = (legacyVersion: number) => {
-  switch (legacyVersion) {
-    case 1:
-      return ARB_LEGACY_GRAPHS_V1
-    case 2:
-      return ARB_LEGACY_GRAPHS_V2
-    case 3:
-      return ARB_LEGACY_GRAPHS_V3
-    default:
-      return ARB_LEGACY_GRAPHS_V4
-  }
-}
+export const ARB_LEGACY_GRAPHS = (legacyVersion: number) =>
+  `${ARB_LEGACY_GRAPHS_V1}${legacyVersion}`
 
 export const ARB_ABC_VAULT_ADDRESS_LEGACY = (legacyVersion: number) => {
   switch (legacyVersion) {
-    default:
+    case 4:
       return ARB_ABC_VAULT_ADDRESS_LEGACY_V4
+    default:
+      return ARB_ABC_VAULT_ADDRESS_LEGACY_V5
   }
 }
 
@@ -155,8 +143,10 @@ export const ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY = (
       return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V2
     case 3:
       return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V3
-    default:
+    case 4:
       return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V4
+    default:
+      return ARB_ABC_PRICING_SESSION_ADDRESS_LEGACY_V5
   }
 }
 
