@@ -1,4 +1,4 @@
-# Contributing to Abacus Portal
+# (Deprecated) Abacus Portal
 
 ♥ [Abacus Protocol](https://app.abacus.wtf/) and want to get involved?
 Thanks! We're actively looking for folks interested in helping out and there
