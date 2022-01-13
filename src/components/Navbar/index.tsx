@@ -61,7 +61,7 @@ const ListSectionSelector = styled.div`
   }
 
   @media ${theme.mediaMin.tablet} {
-    grid-gap: 40px;
+    grid-gap: 10px;
   }
 `
 
@@ -172,9 +172,15 @@ const Navbar = ({ location }) => {
               as="a"
               href="https://legacy.abacus.wtf"
               active={location.pathname.includes("/legacy").toString()}
-              disabled={isNetworkSymbolNone}
             >
               Legacy
+            </HeaderLink>
+            <HeaderLink
+              as="a"
+              href="https://abcdao.notion.site/Knowledge-Center-903c10f39eb24efb8e55644a992f859b"
+              active={location.pathname.includes("/faq").toString()}
+            >
+              FAQ
             </HeaderLink>
           </ListSection>
           <ListSectionSelector>
