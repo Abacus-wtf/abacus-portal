@@ -177,6 +177,7 @@ const Navbar = ({ location }) => {
             </HeaderLink>
             <HeaderLink
               as="a"
+              target="_blank"
               href="https://abcdao.notion.site/Knowledge-Center-903c10f39eb24efb8e55644a992f859b"
               active={location.pathname.includes("/faq").toString()}
             >
