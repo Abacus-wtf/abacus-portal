@@ -47,9 +47,9 @@ export function isWithinWinRange(
   finalAppraisal: number,
   winnerAmount: number
 ) {
-  if (winnerAmount === 0.05) {
+  if (winnerAmount === 0.1) {
     return (
-      appraisal >= finalAppraisal * 0.95 && appraisal <= finalAppraisal * 1.05
+      appraisal >= finalAppraisal * 0.9 && appraisal <= finalAppraisal * 1.1
     )
   }
   return (
