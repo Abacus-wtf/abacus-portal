@@ -122,7 +122,9 @@ const ARB_LEGACY_GRAPHS_V1 = IS_PRODUCTION
   : "https://api.thegraph.com/subgraphs/name/0xinsanity/abacusarbitrumrinkeby"
 
 export const ARB_LEGACY_GRAPHS = (legacyVersion: number) =>
-  `${ARB_LEGACY_GRAPHS_V1}v${legacyVersion}`
+  legacyVersion === 1
+    ? ARB_LEGACY_GRAPHS_V1
+    : `${ARB_LEGACY_GRAPHS_V1}v${legacyVersion}`
 
 export const ARB_ABC_VAULT_ADDRESS_LEGACY = (legacyVersion: number) => {
   switch (legacyVersion) {
